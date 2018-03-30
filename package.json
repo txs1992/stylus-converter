@@ -1,0 +1,28 @@
+{
+  "name": "stylus-converter",
+  "version": "0.0.1",
+  "description": "A tool that converts a stylus into sass, or less, or other precompiled CSS.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1969290646/stylus-converter.git"
+  },
+  "keywords": [
+    "stylus",
+    "stylus-converter",
+    "stylus-to",
+    "stylus2"
+  ],
+  "author": "MT",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/1969290646/stylus-converter/issues"
+  },
+  "homepage": "https://github.com/1969290646/stylus-converter#readme",
+  "devDependencies": {
+    "rollup": "^0.57.1"
+  }
+}
