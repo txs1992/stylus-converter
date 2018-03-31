@@ -5,9 +5,6 @@ import {
   Compiler
 } from 'stylus'
 
-export {
-  Parser,
-  Evaluator,
-  Normalizer,
-  Compiler
-}
+import fs from 'fs'
+
+fs.readFile('../test/simple.styl', )

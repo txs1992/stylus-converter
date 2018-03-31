@@ -1,0 +1,33 @@
+//  定义一些颜色变量
+$gray = #9d9d9d
+$white = #fff
+$light-gray = #e9e9e9
+
+//  定义一些函数
+//  切换字体颜色
+toggle-color($oc, $nc)
+  color: $oc
+  &:hover
+    color: $nc
+
+//  切换背景色
+toggle-bg($oc, $nc)
+  background: $oc
+  &:hover
+    background: $nc
+
+//  设置图标大与对其方式
+set-icon($size, $align)
+  font-size: $size
+  vertical-align: $align
+
+//  设置a标签状态的颜色
+set-link-color($color)
+  &:link
+    color: $color
+  &:visited
+    color: $color
+  &:hover
+    color: $color
+  &:active
+    color: $color
