@@ -24,5 +24,8 @@
   "homepage": "https://github.com/1969290646/stylus-converter#readme",
   "devDependencies": {
     "rollup": "^0.57.1"
+  },
+  "dependencies": {
+    "stylus": "^0.54.5"
   }
 }

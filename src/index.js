@@ -1,3 +1,13 @@
-import Test from './test.js'
+import {
+  Parser,
+  Evaluator,
+  Normalizer,
+  Compiler
+} from 'stylus'
 
-console.log(Test)
+export {
+  Parser,
+  Evaluator,
+  Normalizer,
+  Compiler
+}
