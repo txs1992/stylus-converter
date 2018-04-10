@@ -1,10 +1,16 @@
-import {
-  Parser,
-  Evaluator,
-  Normalizer,
-  Compiler
-} from 'stylus'
+import Parser from 'stylus/lib/parser.js'
+import { get as _get } from 'noshjs'
 
-import fs from 'fs'
+import visitor from './visitor/index.js'
 
-fs.readFile('../test/simple.styl', )
+export default function converter (result) {
+  console.log(typeof result)
+  if (typeof result !== 'string') return result
+  console.log('\n--converter')
+  const ast = new Parser(result).parse()
+  console.log(ast)
+  if (_get(ast, ['nodes', 'length'])) {
+    return visitor(ast.nodes)
+  }
+  return result
+}
