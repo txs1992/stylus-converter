@@ -4,7 +4,8 @@
   "description": "A tool that converts a stylus into sass, or less, or other precompiled CSS.",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "dev": "node ./test"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "rollup": "^0.57.1"
   },
   "dependencies": {
+    "noshjs": "^0.3.0",
     "stylus": "^0.54.5"
   }
 }
