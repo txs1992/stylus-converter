@@ -7,8 +7,5 @@ import { nodesToJSON } from './util.js'
 export default function converter (result) {
   if (typeof result !== 'string') return result
   const ast = new Parser(result).parse()
-  if (_get(ast, ['nodes', 'length'])) {
-    return visitor(nodesToJSON(ast.nodes))
-  }
-  return result
+  return visitor(ast)
 }
