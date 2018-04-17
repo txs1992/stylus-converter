@@ -6,10 +6,22 @@ export function nodesToJSON (nodes) {
   return nodes.map(node => node.toJSON())
 }
 
-export function handleLineno (old, lineno) {
-  return repeatString('\n', lineno - old)
+export function trimEdeg (str) {
+  return str.replace(/(^\s*)|(\s*$)/g, '')
 }
 
-export function handleColumn (old, column) {
-  return repeatString(' ', column - old)
+export function trimFirst (str) {
+  return str.replace(/(^\s*)/g, '')
+}
+
+export function tirmFirstLength (str) {
+  return str.length - trimFirst(str).length
+}
+
+export function trimLinefeed (str) {
+  return str.replace(/^\n*/, '')
+}
+
+export function trimFirstLinefeedLength (str) {
+  return tirmFirstLength(trimLinefeed(str))
 }

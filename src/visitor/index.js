@@ -1,13 +1,12 @@
-import { get as _get } from 'noshjs'
-
 import {
   nodesToJSON,
-  handleLineno,
-  handleColumn
+  repeatString,
+  trimFirstLinefeedLength
 } from '../util.js'
 
 let oldLineno = 1
 let oldColumn = 1
+let transfrom = ''
 
 const COMPIL_CONFIT = {
   scss: {
@@ -21,48 +20,81 @@ const COMPIL_CONFIT = {
 const TYPE_VISITOR_MAP = {
   Group: visitGroup,
   Import: visitImport,
-  Selector: visitSelector
+  Selector: visitSelector,
+  Literal: visitLiteral
 }
 
-function handleNode (node) {
+function handleLineno (lineno) {
+  return repeatString('\n', lineno - oldLineno)
+}
+
+function handleColumn (column) {
+  return repeatString(' ', column - oldColumn)
+}
+
+function handleLinenoAndColumn ({ lineno, column }) {
+  return handleLineno(lineno) + handleColumn(column)
+}
+
+function findNodesType (list, type) {
+  const nodes = nodesToJSON(list)
+  return nodes.find(node => node.__type === type)
+}
+
+function visitNode (node) {
   const handler = TYPE_VISITOR_MAP[node.__type]
   return handler ? handler(node) : ''
 }
 
 // 处理 nodes
-function handleNodes (nodes) {
+function visitNodes (list = []) {
   let text = ''
-  const nodes = nodesToJSON(node.path.nodes || [])
-  nodes.forEach(node => { text += handleNode(node) })
+  const nodes = nodesToJSON(list)
+  nodes.forEach(node => { text += visitNode(node) })
   return text
 }
 
-// 处理 stylus 语法树；handle stylus Syntax Tree
-function visitor (ast) {
-  return handleNodes(ast.nodes) || ''
-}
-
-export default visitor
-
 // 处理 import；handler import
 function visitImport (node) {
-  const last = '@import '
+  const before = handleLineno(node.lineno) + '@import '
+  oldLineno = node.lineno
   let quote = ''
-  let text = handleColumn(oldColumn， node.column)
+  let text = ''
   const nodes = nodesToJSON(node.path.nodes || [])
   nodes.forEach(node => {
     text += node.val
     if (!quote && node.quote) quote = node.quote
-    if (node.lineno) oldLineno = node.lineno
   })
-  oldColumn = 1
-  return `${last}${quote}${text}${quote};`
+  return `${before}${quote}${text}${quote};`
 }
 
 function visitSelector (node) {
-  let text = ''
+  let text = handleLinenoAndColumn(node)
+  oldLineno = node.lineno
+  return text + visitNodes(node.segments)
 }
 
 function visitGroup (node) {
-  let text = handleColumn(oldColumn, node.column) + handleNodes(node.nodes)
+  const selector = visitNodes(node.nodes)
+  const blockEnd = findNodesType(node.nodes, 'Selector') && selector || ''
+  const block = visitBlock(node.block, blockEnd)
+  return selector + block
+}
+
+function visitBlock (node, selector) {
+  const before = ' {'
+  const after = selector && `\n${handleColumn(trimFirstLinefeedLength(selector) + 1)}}`
+  let text = ''
+  text += visitNodes(node.nodes)
+  return `${before}${text}${after}`
+}
+
+function visitLiteral (node) {
+  return node.val || ''
+}
+
+// 处理 stylus 语法树；handle stylus Syntax Tree
+export default function visitor (ast, option) {
+  transfrom = option
+  return visitNodes(ast.nodes) || ''
 }
