@@ -18,10 +18,17 @@ const COMPIL_CONFIT = {
 }
 
 const TYPE_VISITOR_MAP = {
+  Unit: visitUnit,
+  RGBA: visitRGBA,
+  Call: visitCall,
+  Ident: visitIdent,
   Group: visitGroup,
   Import: visitImport,
   Selector: visitSelector,
-  Literal: visitLiteral
+  Literal: visitLiteral,
+  Property: visitProperty,
+  Expression: visitExpression,
+  Arguments: visitArguments
 }
 
 function handleLineno (lineno) {
@@ -91,6 +98,42 @@ function visitBlock (node, selector) {
 
 function visitLiteral (node) {
   return node.val || ''
+}
+
+function visitProperty (node) {
+  let text = handleLinenoAndColumn(node)
+  oldLineno = node.lineno
+  return `${text + visitNodes(node.segments)}: ${visitExpression(node.expr)};`
+}
+
+function visitIdent (node) {
+  return node.name
+}
+
+function visitExpression (node) {
+  return visitNodes(node.nodes)
+}
+
+function visitCall (node) {
+  return `${node.name}(${visitArguments(node.args)})`
+}
+
+function visitArguments (node) {
+  const nodes = nodesToJSON(node.nodes)
+  let text = ''
+  nodes.forEach((node, idx) => {
+    const prefix = idx ? ', ' : ''
+    text += prefix + visitNode(node)
+  })
+  return text
+}
+
+function visitRGBA (node, prop) {
+  return node.raw
+}
+
+function visitUnit (node) {
+  return node.val + node.type
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
