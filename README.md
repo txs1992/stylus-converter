@@ -7,7 +7,7 @@
 
 ## 注意
 
-> 本项目还在测试中，请不要将该库转换你公司的生产代码。由于 stylus 不支持浏览器端，所以依赖 stylus 的本库暂时也不支持浏览器端，后期视情况考虑提供 node 服务。
+> 本项目还在测试中，请不要使用该工具转换您公司的项目代码。由于 stylus 不支持浏览器端，所以依赖 stylus 的本库暂时也不支持浏览器端，后期视情况考虑提供 node 服务。
 
 ## 为什么要做这个工具
 
@@ -24,7 +24,7 @@
 - [x] 转换 css property
 - [x] 转换表达式
 - [x] 转换参数列表
-- [ ] 转换 mixin
+- [x] 转换 mixin
 - [ ] 转换调用函数
 - [ ] 转换调用 mixin
 
@@ -64,7 +64,7 @@ npm run dev
 // 下载转换器
 npm install stylus-converter
 
-// src/function.styl
+// src/simple.styl
 add(a, b)
   if a > b
     a - b
@@ -73,27 +73,54 @@ add(a, b)
   else
     a * b
 
+default-border-radius(n)
+  -webkit-border-radius n
+  -moz-border-radius n
+  border-radius n
+
+body
+  padding add(10px, 5)
+  default-border-radius(5px)
+
+  div
+    color red
+
 // src/test.js
 const fs = require('fs')
 const converter = require('stylus-converter')
 
-fs.readFile('src/function.styl', (err, res) => {
+fs.readFile('src/simple.styl', (err, res) => {
   if (err) return
   const result = res.toString()
   const scss = converter(result)
-  fs.writeFile('src/function.scss', scss)
+  fs.writeFile('src/simple.scss', scss)
 })
 
 // 执行 node src/test.js
 
-// 编译后的 scss 源码, src/function.scss
-@function (a, b) {
+// 编译后的 scss 源码, src/simple.scss
+@function add (a, b) {
   @if a > b {
     @return a - b
   } @else if a < b {
     @return a + b
   } @else {
     @return a * b
+  }
+}
+
+@mixin  default-border-radius (n) {
+  -webkit-border-radius: n;
+  -moz-border-radius: n;
+  border-radius: n;
+}
+
+body {
+  padding: add(10px, 5);
+  default-border-radius(5px);
+
+  div {
+    color: red;
   }
 }
 ```
