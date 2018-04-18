@@ -14,32 +14,17 @@ function nodesToJSON(nodes) {
   });
 }
 
-function trimFirst(str) {
-  return str.replace(/(^\s*)/g, '');
-}
-
-function tirmFirstLength(str) {
-  return str.length - trimFirst(str).length;
-}
-
-function trimLinefeed(str) {
-  return str.replace(/^\n*/, '');
-}
-
-function trimFirstLinefeedLength(str) {
-  return tirmFirstLength(trimLinefeed(str));
-}
-
 function replaceFirstATSymbol(str) {
   var temp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '$';
 
   return str.replace(/^\$|/, temp);
 }
 
-var isIfExpression = false;
 var oldLineno = 1;
 var oldColumn = 1;
 var returnSymbol = '';
+var isProperty = false;
+var isIfExpression = false;
 
 var TYPE_VISITOR_MAP = {
   If: visitIf,
@@ -122,7 +107,7 @@ function visitSelector(node) {
 function visitGroup(node) {
   var selector = visitNodes(node.nodes);
   var blockEnd = findNodesType(node.nodes, 'Selector') && selector || '';
-  var endSymbol = handleColumn(node.column + 1 - trimFirstLinefeedLength(blockEnd));
+  var endSymbol = handleColumn(node.block.column);
   var block = visitBlock(node.block, endSymbol);
   return selector + block;
 }
@@ -141,16 +126,23 @@ function visitLiteral(node) {
 }
 
 function visitProperty(node) {
+  var hasCall = findNodesType(node.expr.nodes, 'Call');
+  var suffix = hasCall ? '' : ';';
   var before = handleLinenoAndColumn(node);
   oldLineno = node.lineno;
-  return before + visitNodes(node.segments) + ': ' + visitExpression(node.expr) + ';';
+  isProperty = true;
+  var result = before + visitNodes(node.segments) + ': ' + (visitExpression(node.expr) + suffix);
+  isProperty = false;
+  return result;
 }
 
 function visitIdent(node) {
   var val = node.val && node.val.toJSON() || '';
   if (val.__type === 'Null' || !val) return node.name;
   if (val.__type === 'Function') {
-    return visitFunction(val);
+    var result = visitFunction(val);
+    oldLineno = node.lineno;
+    return result;
   } else {
     var before = handleLineno(node.lineno);
     oldLineno = node.lineno;
@@ -166,10 +158,20 @@ function visitExpression(node) {
   return before + returnSymbol + result;
 }
 
-function visitCall(node) {
-  var before = handleLineno(node.lineno);
-  oldLineno = node.lineno;
-  return before + node.name + '(' + visitArguments(node.args) + ');';
+function visitCall(_ref2) {
+  var name = _ref2.name,
+      args = _ref2.args,
+      lineno = _ref2.lineno,
+      column = _ref2.column;
+
+  var before = handleLineno(lineno);
+  var argsText = visitArguments(args);
+  oldLineno = lineno;
+  if (!isProperty) {
+    var exprLen = name.length + argsText.length + 1;
+    before += handleColumn(column - exprLen);
+  }
+  return before + name + '(' + argsText + ');';
 }
 
 function visitArguments(node) {
@@ -186,8 +188,11 @@ function visitRGBA(node, prop) {
   return node.raw;
 }
 
-function visitUnit(node) {
-  return node.val + node.type;
+function visitUnit(_ref3) {
+  var val = _ref3.val,
+      type = _ref3.type;
+
+  return type ? val + type : val;
 }
 
 function visitBoolean(node) {
@@ -225,11 +230,17 @@ function visitIf(node) {
 function visitFunction(node) {
   var isFn = !findNodesType(node.block.nodes, 'Property');
   var hasIf = findNodesType(node.block.nodes, 'If');
-  var before = handleLineno(node);
+  var before = handleLineno(node.lineno);
+  var symbol = '';
   oldLineno = node.lineno;
-  var symbol = isFn ? '@function ' : '@mixin ';
-  var fnName = symbol + '(' + visitArguments(node.params) + ')';
-  returnSymbol = '@return ';
+  if (isFn) {
+    returnSymbol = '@return ';
+    symbol = '@function';
+  } else {
+    returnSymbol = '';
+    symbol = '@mixin ';
+  }
+  var fnName = symbol + ' ' + node.name + ' (' + visitArguments(node.params) + ')';
   var block = visitBlock(node.block);
   returnSymbol = '';
   return before + fnName + block;
