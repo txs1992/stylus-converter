@@ -170,6 +170,7 @@ function visitCall(_ref2) {
   if (!isProperty) {
     var exprLen = name.length + argsText.length + 1;
     before += handleColumn(column - exprLen);
+    before += '@include ';
   }
   return before + name + '(' + argsText + ');';
 }
@@ -240,7 +241,7 @@ function visitFunction(node) {
     returnSymbol = '';
     symbol = '@mixin ';
   }
-  var fnName = symbol + ' ' + node.name + ' (' + visitArguments(node.params) + ')';
+  var fnName = symbol + ' ' + node.name + '(' + visitArguments(node.params) + ')';
   var block = visitBlock(node.block);
   returnSymbol = '';
   return before + fnName + block;

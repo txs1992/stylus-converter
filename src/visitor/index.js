@@ -149,6 +149,7 @@ function visitCall ({ name, args, lineno, column }) {
   if (!isProperty) {
     const exprLen = name.length + argsText.length + 1
     before += handleColumn(column - exprLen)
+    before += '@include '
   }
   return `${before + name}(${argsText});`
 }
@@ -214,7 +215,7 @@ function visitFunction (node) {
     returnSymbol = ''
     symbol = '@mixin '
   }
-  const fnName = `${symbol} ${node.name} (${visitArguments(node.params)})`
+  const fnName = `${symbol} ${node.name}(${visitArguments(node.params)})`
   const block = visitBlock(node.block)
   returnSymbol = ''
   return before + fnName + block

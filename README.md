@@ -1,6 +1,6 @@
 # stylus-converter
 
-![](http://img.shields.io/travis/1969290646/stylus-converter.svg)
+![](http://img.shields.io/travis/TaoXuSheng/stylus-converter.svg)
 ![](https://img.shields.io/npm/dt/stylus-converter.svg)
 ![](https://img.shields.io/npm/v/stylus-converter.svg)
 ![](https://img.shields.io/npm/l/stylus-converter.svg)
@@ -99,7 +99,7 @@ fs.readFile('src/simple.styl', (err, res) => {
 // 执行 node src/test.js
 
 // 编译后的 scss 源码, src/simple.scss
-@function add (a, b) {
+@function add(a, b) {
   @if a > b {
     @return a - b
   } @else if a < b {
@@ -109,7 +109,7 @@ fs.readFile('src/simple.styl', (err, res) => {
   }
 }
 
-@mixin  default-border-radius (n) {
+@mixin  default-border-radius(n) {
   -webkit-border-radius: n;
   -moz-border-radius: n;
   border-radius: n;
@@ -117,7 +117,7 @@ fs.readFile('src/simple.styl', (err, res) => {
 
 body {
   padding: add(10px, 5);
-  default-border-radius(5px);
+  @include fault-border-radius(5px);
 
   div {
     color: red;
