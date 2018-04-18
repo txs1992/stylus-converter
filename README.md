@@ -5,14 +5,14 @@
 ![](https://img.shields.io/npm/l/stylus-converter.svg)
 
 ## 注意
-> 由于 stylus 不支持浏览器端，所以依赖 stylus 的本库暂时也支持浏览器端，后期考虑提供公用 node 服务。
+> 由于 stylus 不支持浏览器端，所以依赖 stylus 的本库暂时也不支持浏览器端，后期视情况考虑提供 node 服务。
 
 ## 为什么要做这个工具
 
 > 因为早期有个项目用到了 stylus，stylus 开发起来很爽，但维护起来让人崩溃。加上 stylus 作者本人已经都已经放弃维护了，所以准备转换其他预编译 CSS 语言。但是本人又很懒，手动转换 stylus 浪费时间，且出错率大，所以灵机一动就有了这个项目。
 
-## stylus converter 进度 
-### stylus to SCSS
+## stylus converter 进度表
+### stylus to scss
 - [x] 转换选择器
 - [x] 转换语法块
 - [x] 转换 if / else 语法
@@ -35,10 +35,10 @@
 - [ ] 转换 mixin
 - [ ] 转换调用函数
 - [ ] 转换调用 mixin
-	
+
 
 ## 搭建开发环境
-```text 
+```text
 1. 先 fork 项目再 clone 项目到本地
 git clone git@github.com:<your github>/focus-outside.git
 
@@ -54,6 +54,7 @@ npm run dev
 
 ## 使用示例
 ```javascript
+// 下载转换器
 npm install stylus-converter
 
 // src/function.styl
@@ -67,12 +68,7 @@ add(a, b)
 
 // src/test.js
 const fs = require('fs')
-const path = require('path')
 const converter = require('stylus-converter')
-
-function getPath (address) {
-  return path.resolve(__dirname, address)
-}
 
 fs.readFile('src/function.styl', (err, res) => {
   if (err) return
@@ -81,7 +77,7 @@ fs.readFile('src/function.styl', (err, res) => {
   fs.writeFile('src/function.scss', scss)
 })
 
-执行 node src/test.js
+// 执行 node src/test.js
 
 // 编译后的 scss 源码, src/function.scss
 @function (a, b) {
