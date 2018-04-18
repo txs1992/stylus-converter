@@ -9,6 +9,6 @@ function getPath (address) {
 fs.readFile(getPath('./stylus-files/function.styl'), (err, res) => {
   if (err) return
   const result = res.toString()
-  // console.log(converter(result))
-  converter(result)
+  console.log(converter(result))
+  // converter(result)
 })

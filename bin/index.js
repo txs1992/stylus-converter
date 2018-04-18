@@ -150,7 +150,7 @@ function visitIdent(node) {
   var val = node.val && node.val.toJSON() || '';
   if (val.__type === 'Null' || !val) return node.name;
   if (val.__type === 'Function') {
-    visitFunction(val);
+    return visitFunction(val);
   } else {
     var before = handleLineno(node.lineno);
     oldLineno = node.lineno;
@@ -161,8 +161,8 @@ function visitIdent(node) {
 function visitExpression(node) {
   var result = visitNodes(node.nodes);
   if (!returnSymbol || isIfExpression) return result;
-  var before = handleLineno(node.lineno);
-  before += handleColumn(node.column - result.length);
+  var before = '\n';
+  before += handleColumn(node.column + 1 - result.length);
   return before + returnSymbol + result;
 }
 
@@ -197,23 +197,25 @@ function visitBoolean(node) {
 function visitIf(node) {
   var symbol = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '@if ';
 
-  var before = handleLineno(node.lineno);
-  oldLineno = node.lineno;
+  var before = '';
   isIfExpression = true;
   var condText = visitExpression(node.cond);
   isIfExpression = false;
-  var condLen = node.column - condText.length;
-  console.log(condLen);
-  before += handleColumn(condLen);
+  var condLen = node.column - (condText.length + 2);
+  if (symbol === '@if ') {
+    before += handleLineno(node.lineno);
+    oldLineno = node.lineno;
+    before += handleColumn(condLen);
+  }
   var block = visitBlock(node.block, handleColumn(condLen));
   var elseText = '';
   if (node.elses && node.elses.length) {
     var elses = nodesToJSON(node.elses);
     elses.forEach(function (node) {
       if (node.__type === 'If') {
-        elseText += visitIf(node, '@else if ');
+        elseText += visitIf(node, ' @else if ');
       } else {
-        elseText += '@else ' + visitBlock(node, handleColumn(condLen));
+        elseText += ' @else' + visitBlock(node, handleColumn(condLen));
       }
     });
   }
@@ -228,10 +230,9 @@ function visitFunction(node) {
   var symbol = isFn ? '@function ' : '@mixin ';
   var fnName = symbol + '(' + visitArguments(node.params) + ')';
   returnSymbol = '@return ';
-  var block = visitBlock(node.block, fnName.length);
+  var block = visitBlock(node.block);
   returnSymbol = '';
-  console.log(before + fnName + block);
-  return fnName + block;
+  return before + fnName + block;
 }
 
 function visitBinOp(node) {

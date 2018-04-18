@@ -118,7 +118,7 @@ function visitIdent (node) {
   const val = node.val && node.val.toJSON() || ''
   if (val.__type === 'Null' || !val) return node.name
   if (val.__type === 'Function') {
-    visitFunction(val)
+    return visitFunction(val)
   } else {
     const before = handleLineno(node.lineno)
     oldLineno = node.lineno
@@ -129,8 +129,8 @@ function visitIdent (node) {
 function visitExpression (node) {
   const result = visitNodes(node.nodes)
   if (!returnSymbol || isIfExpression) return result
-  let before = handleLineno(node.lineno)
-  before += handleColumn(node.column - result.length)
+  let before = '\n'
+  before += handleColumn((node.column + 1) - result.length)
   return before + returnSymbol + result
 }
 
@@ -163,23 +163,25 @@ function visitBoolean (node) {
 }
 
 function visitIf (node, symbol = '@if ') {
-  let before = handleLineno(node.lineno)
-  oldLineno = node.lineno
+  let before = ''
   isIfExpression = true
   const condText = visitExpression(node.cond)
   isIfExpression = false
-  const condLen = node.column - condText.length
-  console.log(condLen)
-  before += handleColumn(condLen)
+  const condLen = node.column - (condText.length + 2)
+  if (symbol === '@if ') {
+    before += handleLineno(node.lineno)
+    oldLineno = node.lineno
+    before += handleColumn(condLen)
+  }
   const block = visitBlock(node.block, handleColumn(condLen))
   let elseText = ''
   if (node.elses && node.elses.length) {
     const elses = nodesToJSON(node.elses)
     elses.forEach(node => {
       if (node.__type === 'If') {
-        elseText += visitIf(node, '@else if ')
+        elseText += visitIf(node, ' @else if ')
       } else {
-        elseText += '@else ' + visitBlock(node, handleColumn(condLen))
+        elseText += ' @else' + visitBlock(node, handleColumn(condLen))
       }
     })
   }
@@ -194,10 +196,9 @@ function visitFunction (node) {
   const symbol = isFn ? '@function ' : '@mixin '
   const fnName = `${symbol}(${visitArguments(node.params)})`
   returnSymbol = '@return '
-  const block = visitBlock(node.block, fnName.length)
+  const block = visitBlock(node.block)
   returnSymbol = ''
-  console.log(before + fnName + block)
-  return fnName + block
+  return before + fnName + block
 }
 
 function visitBinOp (node) {
