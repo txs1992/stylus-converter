@@ -1,0 +1,414 @@
+{
+  "__type": "Root",
+  "nodes": [
+    {
+      "__type": "Group",
+      "nodes": [
+        {
+          "__type": "Selector",
+          "inherits": true,
+          "segments": [
+            {
+              "__type": "Literal",
+              "val": ".",
+              "string": ".",
+              "prefixed": false,
+              "lineno": 1,
+              "column": 1
+            },
+            {
+              "__type": "Literal",
+              "val": "page-view",
+              "string": "page-view",
+              "prefixed": false,
+              "lineno": 1,
+              "column": 2
+            }
+          ],
+          "optional": false,
+          "val": ".page-view",
+          "lineno": 1,
+          "column": 1
+        }
+      ],
+      "block": {
+        "__type": "Block",
+        "scope": true,
+        "lineno": 1,
+        "column": 2,
+        "nodes": [
+          {
+            "__type": "Property",
+            "segments": [
+              {
+                "__type": "Ident",
+                "name": "flex",
+                "val": {
+                  "__type": "Null"
+                },
+                "mixin": false,
+                "lineno": 2,
+                "column": 3
+              }
+            ],
+            "name": "flex",
+            "lineno": 2,
+            "column": 3,
+            "expr": {
+              "__type": "Expression",
+              "lineno": 2,
+              "column": 9,
+              "nodes": [
+                {
+                  "__type": "Unit",
+                  "val": 1,
+                  "lineno": 2,
+                  "column": 9
+                }
+              ]
+            },
+            "literal": true
+          },
+          {
+            "__type": "Property",
+            "segments": [
+              {
+                "__type": "Ident",
+                "name": "overflow",
+                "val": {
+                  "__type": "Null"
+                },
+                "mixin": false,
+                "lineno": 3,
+                "column": 3
+              }
+            ],
+            "name": "overflow",
+            "lineno": 3,
+            "column": 3,
+            "expr": {
+              "__type": "Expression",
+              "lineno": 3,
+              "column": 13,
+              "nodes": [
+                {
+                  "__type": "Ident",
+                  "name": "auto",
+                  "val": {
+                    "__type": "Null"
+                  },
+                  "mixin": false,
+                  "lineno": 3,
+                  "column": 13
+                }
+              ]
+            },
+            "literal": true
+          },
+          {
+            "__type": "Property",
+            "segments": [
+              {
+                "__type": "Ident",
+                "name": "padding",
+                "val": {
+                  "__type": "Null"
+                },
+                "mixin": false,
+                "lineno": 4,
+                "column": 3
+              }
+            ],
+            "name": "padding",
+            "lineno": 4,
+            "column": 3,
+            "expr": {
+              "__type": "Expression",
+              "lineno": 4,
+              "column": 12,
+              "nodes": [
+                {
+                  "__type": "Unit",
+                  "val": 0,
+                  "lineno": 4,
+                  "column": 12
+                },
+                {
+                  "__type": "Unit",
+                  "val": 20,
+                  "type": "px",
+                  "lineno": 4,
+                  "column": 14
+                }
+              ]
+            },
+            "literal": true
+          },
+          {
+            "__type": "Group",
+            "nodes": [
+              {
+                "__type": "Selector",
+                "inherits": true,
+                "segments": [
+                  {
+                    "__type": "Literal",
+                    "val": ".",
+                    "string": ".",
+                    "prefixed": false,
+                    "lineno": 6,
+                    "column": 3
+                  },
+                  {
+                    "__type": "Literal",
+                    "val": "download-button",
+                    "string": "download-button",
+                    "prefixed": false,
+                    "lineno": 6,
+                    "column": 4
+                  }
+                ],
+                "optional": false,
+                "val": ".download-button",
+                "lineno": 6,
+                "column": 3
+              }
+            ],
+            "block": {
+              "__type": "Block",
+              "scope": true,
+              "lineno": 6,
+              "column": 4,
+              "nodes": [
+                {
+                  "__type": "Property",
+                  "segments": [
+                    {
+                      "__type": "Ident",
+                      "name": "color",
+                      "val": {
+                        "__type": "Null"
+                      },
+                      "mixin": false,
+                      "lineno": 7,
+                      "column": 5
+                    }
+                  ],
+                  "name": "color",
+                  "lineno": 7,
+                  "column": 5,
+                  "expr": {
+                    "__type": "Expression",
+                    "lineno": 7,
+                    "column": 12,
+                    "nodes": [
+                      {
+                        "__type": "RGBA",
+                        "r": 32,
+                        "g": 160,
+                        "b": 255,
+                        "a": 1,
+                        "raw": "#20a0ff",
+                        "name": "",
+                        "lineno": 7,
+                        "column": 12
+                      }
+                    ]
+                  },
+                  "literal": true
+                },
+                {
+                  "__type": "Property",
+                  "segments": [
+                    {
+                      "__type": "Ident",
+                      "name": "padding",
+                      "val": {
+                        "__type": "Null"
+                      },
+                      "mixin": false,
+                      "lineno": 8,
+                      "column": 5
+                    }
+                  ],
+                  "name": "padding",
+                  "lineno": 8,
+                  "column": 5,
+                  "expr": {
+                    "__type": "Expression",
+                    "lineno": 8,
+                    "column": 14,
+                    "nodes": [
+                      {
+                        "__type": "Unit",
+                        "val": 5,
+                        "type": "px",
+                        "lineno": 8,
+                        "column": 14
+                      },
+                      {
+                        "__type": "Unit",
+                        "val": 10,
+                        "type": "px",
+                        "lineno": 8,
+                        "column": 18
+                      }
+                    ]
+                  },
+                  "literal": true
+                },
+                {
+                  "__type": "Property",
+                  "segments": [
+                    {
+                      "__type": "Ident",
+                      "name": "border-radius",
+                      "val": {
+                        "__type": "Null"
+                      },
+                      "mixin": false,
+                      "lineno": 9,
+                      "column": 5
+                    }
+                  ],
+                  "name": "border-radius",
+                  "lineno": 9,
+                  "column": 5,
+                  "expr": {
+                    "__type": "Expression",
+                    "lineno": 9,
+                    "column": 20,
+                    "nodes": [
+                      {
+                        "__type": "Unit",
+                        "val": 5,
+                        "type": "px",
+                        "lineno": 9,
+                        "column": 20
+                      }
+                    ]
+                  },
+                  "literal": true
+                },
+                {
+                  "__type": "Property",
+                  "segments": [
+                    {
+                      "__type": "Ident",
+                      "name": "text-decoration",
+                      "val": {
+                        "__type": "Null"
+                      },
+                      "mixin": false,
+                      "lineno": 10,
+                      "column": 5
+                    }
+                  ],
+                  "name": "text-decoration",
+                  "lineno": 10,
+                  "column": 5,
+                  "expr": {
+                    "__type": "Expression",
+                    "lineno": 10,
+                    "column": 22,
+                    "nodes": [
+                      {
+                        "__type": "Ident",
+                        "name": "underline",
+                        "val": {
+                          "__type": "Null"
+                        },
+                        "mixin": false,
+                        "lineno": 10,
+                        "column": 22
+                      }
+                    ]
+                  },
+                  "literal": true
+                }
+              ]
+            },
+            "lineno": 4,
+            "column": 18
+          },
+          {
+            "__type": "Group",
+            "nodes": [
+              {
+                "__type": "Selector",
+                "inherits": true,
+                "segments": [
+                  {
+                    "__type": "Literal",
+                    "val": ".",
+                    "string": ".",
+                    "prefixed": false,
+                    "lineno": 12,
+                    "column": 3
+                  },
+                  {
+                    "__type": "Literal",
+                    "val": "filter-wrapper",
+                    "string": "filter-wrapper",
+                    "prefixed": false,
+                    "lineno": 12,
+                    "column": 4
+                  }
+                ],
+                "optional": false,
+                "val": ".filter-wrapper",
+                "lineno": 12,
+                "column": 3
+              }
+            ],
+            "block": {
+              "__type": "Block",
+              "scope": true,
+              "lineno": 12,
+              "column": 4,
+              "nodes": [
+                {
+                  "__type": "Property",
+                  "segments": [
+                    {
+                      "__type": "Ident",
+                      "name": "margin-bottom",
+                      "val": {
+                        "__type": "Null"
+                      },
+                      "mixin": false,
+                      "lineno": 13,
+                      "column": 5
+                    }
+                  ],
+                  "name": "margin-bottom",
+                  "lineno": 13,
+                  "column": 5,
+                  "expr": {
+                    "__type": "Expression",
+                    "lineno": 13,
+                    "column": 20,
+                    "nodes": [
+                      {
+                        "__type": "Unit",
+                        "val": 15,
+                        "type": "px",
+                        "lineno": 13,
+                        "column": 20
+                      }
+                    ]
+                  },
+                  "literal": true
+                }
+              ]
+            },
+            "lineno": 10,
+            "column": 31
+          }
+        ]
+      },
+      "lineno": 1,
+      "column": 1
+    }
+  ]
+}

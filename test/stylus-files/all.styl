@@ -1,0 +1,147 @@
+@import './mixin'
+@import '~@/styles/mixin.styl'
+
+$gray = #9d9d9d
+$white = #fff
+$light-gray = #e9e9e9
+
+red(#c00)
+
+overload-padding = true
+
+if overload-padding
+  padding(y, x)
+    margin y x
+
+body
+  padding 5px 10px
+
+body
+  for num in 1 2 3
+    foo num
+
+@media print
+  #header
+  #footer
+    display none
+
+@font-face
+  font-family Geo
+  font-style normal
+  src url(fonts/geo_sans_light/GensansLight.ttf)
+
+@keyframes pulse
+  0%
+    background-color red
+    opacity 1.0
+    -webkit-transform scale(1.0) rotate(0deg)
+  100%
+    background-color red
+    opacity 1.0
+    -webkit-transform scale(1.0) rotate(0deg)
+
+.ingeo
+  font-family Geo
+
+//  定义一些函数
+//  切换字体颜色
+toggle-color($oc, $nc)
+  color: $oc
+  &:hover
+    color: $nc
+
+font-size = 14px
+
+vendor(prop, args)
+  -webkit-{prop} args
+  -moz-{prop} args
+  {prop} args
+
+border-radius()
+  vendor('border-radius', arguments)
+
+button
+  border-radius 1px 2px / 3px 4px
+
+body
+  font font-size Arial, sans-seri
+
+html
+  body,
+  div
+    color white
+
+textarea
+input
+  border 1px solid #eee
+
+textarea, input
+  border 1px solid #eee
+
+textarea
+input
+  color #A7A7A7
+  &:hover
+    color #000
+
+#logo
+  position: absolute
+  top: 50%
+  left: 50%
+  width: w = 150px
+  height: h = 80px
+  margin-left: -(w / 2)
+  margin-top: -(h / 2)
+
+.page-view
+  flex: 1
+  overflow: auto
+  padding: 0 20px
+
+  .download-button
+    color: #20a0ff
+    padding: 5px 10px
+    border-radius: 5px
+    text-decoration: underline
+
+  .filter-wrapper
+    margin-bottom: 15px
+
+  label
+    margin-right: 10px
+    display: inline-block
+
+    .el-select, .el-input
+      width: 100px
+      margin-bottom: 5px
+
+    .el-date-editor
+      width: 220px
+
+    .text-input
+      width: 150px
+
+    .el-select .el-input
+      width: 100%
+
+  .tooltip-wrapper .cell
+    & > .el-tooltip, & > span, & > a
+      margin-right: 15px
+      display: inline-block
+
+    i, .icon-mixed-chart
+      color: #20a0ff
+      font-size: 18px
+      cursor: pointer
+      vertical-align: middle
+      margin-left: 5px
+
+    i.icon-stop
+      font-size: 16px
+
+    i.icon-view
+      font-size: 22px
+
+  .el-pagination
+    text-align: right
+    margin-bottom: 30px

@@ -25,3 +25,7 @@ export function trimLinefeed (str) {
 export function trimFirstLinefeedLength (str) {
   return tirmFirstLength(trimLinefeed(str))
 }
+
+export function replaceFirstATSymbol (str, temp = '$') {
+  return str.replace(/^\$|/, temp)
+}
