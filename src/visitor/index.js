@@ -5,11 +5,12 @@ import {
   trimFirstLinefeedLength
 } from '../util.js'
 
-let isIfExpression = false
 let oldLineno = 1
 let oldColumn = 1
 let transfrom = ''
 let returnSymbol = ''
+let isProperty = false
+let isIfExpression = false
 
 const COMPIL_CONFIT = {
   scss: {
@@ -92,7 +93,7 @@ function visitSelector (node) {
 function visitGroup (node) {
   const selector = visitNodes(node.nodes)
   const blockEnd = findNodesType(node.nodes, 'Selector') && selector || ''
-  const endSymbol = handleColumn(node.column + 1 - trimFirstLinefeedLength(blockEnd))
+  const endSymbol = handleColumn(node.block.column)
   const block = visitBlock(node.block, endSymbol)
   return selector + block
 }
@@ -109,16 +110,23 @@ function visitLiteral (node) {
 }
 
 function visitProperty (node) {
+  const hasCall = findNodesType(node.expr.nodes, 'Call')
+  const suffix = hasCall ? '' : ';'
   let before = handleLinenoAndColumn(node)
   oldLineno = node.lineno
-  return `${before + visitNodes(node.segments)}: ${visitExpression(node.expr)};`
+  isProperty = true
+  const result = `${before + visitNodes(node.segments)}: ${visitExpression(node.expr) + suffix}`
+  isProperty = false
+  return result
 }
 
 function visitIdent (node) {
   const val = node.val && node.val.toJSON() || ''
   if (val.__type === 'Null' || !val) return node.name
   if (val.__type === 'Function') {
-    return visitFunction(val)
+    const result = visitFunction(val)
+    oldLineno = node.lineno
+    return result
   } else {
     const before = handleLineno(node.lineno)
     oldLineno = node.lineno
@@ -134,10 +142,15 @@ function visitExpression (node) {
   return before + returnSymbol + result
 }
 
-function visitCall (node) {
-  let before = handleLineno(node.lineno)
-  oldLineno = node.lineno
-  return `${before + node.name}(${visitArguments(node.args)});`
+function visitCall ({ name, args, lineno, column }) {
+  let before = handleLineno(lineno)
+  const argsText = visitArguments(args)
+  oldLineno = lineno
+  if (!isProperty) {
+    const exprLen = name.length + argsText.length + 1
+    before += handleColumn(column - exprLen)
+  }
+  return `${before + name}(${argsText});`
 }
 
 function visitArguments (node) {
@@ -154,8 +167,8 @@ function visitRGBA (node, prop) {
   return node.raw
 }
 
-function visitUnit (node) {
-  return node.val + node.type
+function visitUnit ({ val, type }) {
+  return type ? val + type : val
 }
 
 function visitBoolean (node) {
@@ -191,11 +204,17 @@ function visitIf (node, symbol = '@if ') {
 function visitFunction (node) {
   const isFn = !findNodesType(node.block.nodes, 'Property')
   const hasIf = findNodesType(node.block.nodes, 'If')
-  const before = handleLineno(node)
+  const before = handleLineno(node.lineno)
+  let symbol = ''
   oldLineno = node.lineno
-  const symbol = isFn ? '@function ' : '@mixin '
-  const fnName = `${symbol}(${visitArguments(node.params)})`
-  returnSymbol = '@return '
+  if (isFn) {
+    returnSymbol = '@return '
+    symbol = '@function'
+  } else {
+    returnSymbol = ''
+    symbol = '@mixin '
+  }
+  const fnName = `${symbol} ${node.name} (${visitArguments(node.params)})`
   const block = visitBlock(node.block)
   returnSymbol = ''
   return before + fnName + block
