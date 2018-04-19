@@ -117,7 +117,7 @@ fs.readFile('src/simple.styl', (err, res) => {
   const scss = converter(result)
   fs.writeFile('src/simple.scss', scss)
 })
-
+a
 // 执行 node src/test.js
 
 // 编译后的 scss 源码, src/simple.scss
