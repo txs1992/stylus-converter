@@ -213,7 +213,7 @@ function visitFunction (node) {
     symbol = '@function'
   } else {
     returnSymbol = ''
-    symbol = '@mixin '
+    symbol = '@mixin'
   }
   const fnName = `${symbol} ${node.name}(${visitArguments(node.params)})`
   const block = visitBlock(node.block)

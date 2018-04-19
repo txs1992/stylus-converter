@@ -17,44 +17,66 @@
 
 ### stylus to scss
 
+- [x] 转换变量
+- [x] 转换运算符
 - [x] 转换选择器
 - [x] 转换语法块
-- [x] 转换 if / else 语法
+- [x] 转换导入语法
+- [x] 转换条件语句
 - [x] 转换自定义函数
 - [x] 转换 css property
 - [x] 转换表达式
 - [x] 转换参数列表
-- [x] 转换 mixin
-- [ ] 转换调用函数
-- [ ] 转换调用 mixin
+- [x] 转换
+- [ ] 转换插值
+- [ ] 转换 url()
+- [ ] 转换循环语法
+- [ ] 转换 extend
+- [ ] 转换 Feature
+- [ ] 转换 keyframes
+- [ ] 转换 CSS 字面量
+- [ ] 转换 call mixin
+- [ ] 转换 call function
 
 ### stylus to less
 
+- [ ] 转换变量
+- [ ] 转换运算符
 - [ ] 转换选择器
 - [ ] 转换语法块
-- [ ] 转换 if / else 语法
+- [ ] 转换导入语法
+- [ ] 转换条件语句
 - [ ] 转换自定义函数
 - [ ] 转换 css property
 - [ ] 转换表达式
 - [ ] 转换参数列表
 - [ ] 转换 mixin
-- [ ] 转换调用函数
-- [ ] 转换调用 mixin
-
+- [ ] 转换插值
+- [ ] 转换 url()
+- [ ] 转换循环语法
+- [ ] 转换 extend
+- [ ] 转换 Feature
+- [ ] 转换 CSS 字面量
+- [ ] 转换 keyframes
+- [ ] 转换 call mixin
+- [ ] 转换 call function
 
 ## 搭建开发环境
 
 ```text
 1. 先 fork 项目再 clone 项目到本地
-git clone git@github.com:<your github>/focus-outside.git
+git clone git@github.com:<your github>/stylus-converter.git
 
-2. 安装项目依赖
+2. 进入项目目录
+cd stylus-converter
+
+3. 安装项目依赖
 npm install
 
-3. 打包编译源文件
+4. 打包编译源文件
 npm run build
 
-4. 本地运行
+5. 本地运行
 npm run dev
 ```
 
@@ -109,7 +131,7 @@ fs.readFile('src/simple.styl', (err, res) => {
   }
 }
 
-@mixin  default-border-radius(n) {
+@mixin default-border-radius(n) {
   -webkit-border-radius: n;
   -moz-border-radius: n;
   border-radius: n;
@@ -117,7 +139,7 @@ fs.readFile('src/simple.styl', (err, res) => {
 
 body {
   padding: add(10px, 5);
-  @include fault-border-radius(5px);
+  @include dfault-border-radius(5px);
 
   div {
     color: red;
