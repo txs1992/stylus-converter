@@ -23,7 +23,9 @@ function replaceFirstATSymbol(str) {
 var oldLineno = 1;
 var oldColumn = 1;
 var returnSymbol = '';
+var isFunction = false;
 var isProperty = false;
+var isExpression = false;
 var isIfExpression = false;
 
 var TYPE_VISITOR_MAP = {
@@ -125,44 +127,57 @@ function visitLiteral(node) {
   return node.val || '';
 }
 
-function visitProperty(node) {
-  var hasCall = findNodesType(node.expr.nodes, 'Call');
+function visitProperty(_ref2) {
+  var expr = _ref2.expr,
+      column = _ref2.column,
+      lineno = _ref2.lineno,
+      segments = _ref2.segments;
+
+  var hasCall = findNodesType(expr && expr.nodes || [], 'Call');
   var suffix = hasCall ? '' : ';';
-  var before = handleLinenoAndColumn(node);
-  oldLineno = node.lineno;
+  var before = handleLineno(lineno);
+  oldLineno = lineno;
   isProperty = true;
-  var result = before + visitNodes(node.segments) + ': ' + (visitExpression(node.expr) + suffix);
+  var segmentText = visitNodes(segments);
+  var result = segmentText + ': ' + visitExpression(expr);
+  var trimSymbolSegment = segmentText.replace(/#|\$/g, '');
+  before += handleColumn(column - (trimSymbolSegment.length - 1));
   isProperty = false;
-  return result;
+  return before + result + suffix;
 }
 
-function visitIdent(node) {
-  var val = node.val && node.val.toJSON() || '';
-  if (val.__type === 'Null' || !val) return node.name;
-  if (val.__type === 'Function') {
-    var result = visitFunction(val);
-    oldLineno = node.lineno;
-    return result;
-  } else {
-    var before = handleLineno(node.lineno);
-    oldLineno = node.lineno;
-    return before + replaceFirstATSymbol(node.name) + ' = ' + visitNode(val) + ';';
+function visitIdent(_ref3) {
+  var val = _ref3.val,
+      name = _ref3.name,
+      mixin = _ref3.mixin,
+      lineno = _ref3.lineno;
+
+  var identVal = val && val.toJSON() || '';
+  if (identVal.__type === 'Null' || !val) {
+    if (mixin) return '#{$' + name + '}';
+    return '' + (isExpression ? '$' : '') + name;
   }
+  var before = handleLineno(lineno);
+  oldLineno = lineno;
+  if (identVal.__type === 'Function') return visitFunction(identVal);
+  return before + replaceFirstATSymbol(name) + ' = ' + visitNode(identVal) + ';';
 }
 
 function visitExpression(node) {
+  isExpression = true;
   var result = visitNodes(node.nodes);
+  isExpression = false;
   if (!returnSymbol || isIfExpression) return result;
   var before = '\n';
   before += handleColumn(node.column + 1 - result.length);
   return before + returnSymbol + result;
 }
 
-function visitCall(_ref2) {
-  var name = _ref2.name,
-      args = _ref2.args,
-      lineno = _ref2.lineno,
-      column = _ref2.column;
+function visitCall(_ref4) {
+  var name = _ref4.name,
+      args = _ref4.args,
+      lineno = _ref4.lineno,
+      column = _ref4.column;
 
   var before = handleLineno(lineno);
   var argsText = visitArguments(args);
@@ -178,9 +193,10 @@ function visitCall(_ref2) {
 function visitArguments(node) {
   var nodes = nodesToJSON(node.nodes);
   var text = '';
+  var symbol = isFunction ? '$' : '';
   nodes.forEach(function (node, idx) {
     var prefix = idx ? ', ' : '';
-    text += prefix + visitNode(node);
+    text += prefix + symbol + visitNode(node);
   });
   return text || '';
 }
@@ -189,9 +205,9 @@ function visitRGBA(node, prop) {
   return node.raw;
 }
 
-function visitUnit(_ref3) {
-  var val = _ref3.val,
-      type = _ref3.type;
+function visitUnit(_ref5) {
+  var val = _ref5.val,
+      type = _ref5.type;
 
   return type ? val + type : val;
 }
@@ -229,21 +245,23 @@ function visitIf(node) {
 }
 
 function visitFunction(node) {
-  var isFn = !findNodesType(node.block.nodes, 'Property');
+  isFunction = true;
+  var notMixin = !findNodesType(node.block.nodes, 'Property');
   var hasIf = findNodesType(node.block.nodes, 'If');
   var before = handleLineno(node.lineno);
   var symbol = '';
   oldLineno = node.lineno;
-  if (isFn) {
+  if (notMixin) {
     returnSymbol = '@return ';
     symbol = '@function';
   } else {
     returnSymbol = '';
-    symbol = '@mixin ';
+    symbol = '@mixin';
   }
   var fnName = symbol + ' ' + node.name + '(' + visitArguments(node.params) + ')';
   var block = visitBlock(node.block);
   returnSymbol = '';
+  isFunction = false;
   return before + fnName + block;
 }
 

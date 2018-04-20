@@ -9,7 +9,9 @@ let oldLineno = 1
 let oldColumn = 1
 let transfrom = ''
 let returnSymbol = ''
+let isFunction = false
 let isProperty = false
+let isExpression = false
 let isIfExpression = false
 
 const COMPIL_CONFIT = {
@@ -109,33 +111,36 @@ function visitLiteral (node) {
   return node.val || ''
 }
 
-function visitProperty (node) {
-  const hasCall = findNodesType(node.expr.nodes, 'Call')
+function visitProperty ({ expr, column, lineno, segments }) {
+  const hasCall = findNodesType(expr && expr.nodes || [], 'Call')
   const suffix = hasCall ? '' : ';'
-  let before = handleLinenoAndColumn(node)
-  oldLineno = node.lineno
+  let before = handleLineno(lineno)
+  oldLineno = lineno
   isProperty = true
-  const result = `${before + visitNodes(node.segments)}: ${visitExpression(node.expr) + suffix}`
+  const segmentText = visitNodes(segments)
+  const result = `${segmentText}: ${visitExpression(expr)}`
+  const trimSymbolSegment = segmentText.replace(/#|\$/g, '')
+  before += handleColumn(column - (trimSymbolSegment.length - 1))
   isProperty = false
-  return result
+  return before + result + suffix
 }
 
-function visitIdent (node) {
-  const val = node.val && node.val.toJSON() || ''
-  if (val.__type === 'Null' || !val) return node.name
-  if (val.__type === 'Function') {
-    const result = visitFunction(val)
-    oldLineno = node.lineno
-    return result
-  } else {
-    const before = handleLineno(node.lineno)
-    oldLineno = node.lineno
-    return `${before + replaceFirstATSymbol(node.name)} = ${visitNode(val)};`
+function visitIdent ({ val, name, mixin, lineno }) {
+  const identVal = val && val.toJSON() || ''
+  if (identVal.__type === 'Null' || !val) {
+    if (mixin) return `#{$${name}}`
+    return `${isExpression ? '$': ''}${name}`
   }
+  let before = handleLineno(lineno)
+  oldLineno = lineno
+  if (identVal.__type === 'Function') return visitFunction(identVal)
+  return `${before + replaceFirstATSymbol(name)} = ${visitNode(identVal)};`
 }
 
 function visitExpression (node) {
+  isExpression = true
   const result = visitNodes(node.nodes)
+  isExpression = false
   if (!returnSymbol || isIfExpression) return result
   let before = '\n'
   before += handleColumn((node.column + 1) - result.length)
@@ -157,9 +162,10 @@ function visitCall ({ name, args, lineno, column }) {
 function visitArguments (node) {
   const nodes = nodesToJSON(node.nodes)
   let text = ''
+  const symbol = isFunction ? '$' : ''
   nodes.forEach((node, idx) => {
     const prefix = idx ? ', ' : ''
-    text += prefix + visitNode(node)
+    text += prefix + symbol + visitNode(node)
   })
   return text || ''
 }
@@ -203,12 +209,13 @@ function visitIf (node, symbol = '@if ') {
 }
 
 function visitFunction (node) {
-  const isFn = !findNodesType(node.block.nodes, 'Property')
+  isFunction = true
+  const notMixin = !findNodesType(node.block.nodes, 'Property')
   const hasIf = findNodesType(node.block.nodes, 'If')
   const before = handleLineno(node.lineno)
   let symbol = ''
   oldLineno = node.lineno
-  if (isFn) {
+  if (notMixin) {
     returnSymbol = '@return '
     symbol = '@function'
   } else {
@@ -218,6 +225,7 @@ function visitFunction (node) {
   const fnName = `${symbol} ${node.name}(${visitArguments(node.params)})`
   const block = visitBlock(node.block)
   returnSymbol = ''
+  isFunction = false
   return before + fnName + block
 }
 

@@ -6,7 +6,7 @@ function getPath (address) {
   return path.resolve(__dirname, address)
 }
 
-fs.readFile(getPath('./stylus-files/function.styl'), (err, res) => {
+fs.readFile(getPath('./test.styl'), (err, res) => {
   if (err) return
   const result = res.toString()
   console.log(converter(result))
