@@ -28,7 +28,7 @@
 - [x] 转换表达式
 - [x] 转换参数列表
 - [x] 转换
-- [ ] 转换插值
+- [x] 转换插值
 - [ ] 转换 url()
 - [ ] 转换循环语法
 - [ ] 转换 extend
@@ -82,11 +82,29 @@ npm run dev
 
 ## 使用示例
 
+### 下载并执行
 ```javascript
-// 下载转换器
+// 下载 stylus-converter
 npm install stylus-converter
 
-// src/simple.styl
+// 编写测试代码读取 stylus 源文件
+// src/test.js
+const fs = require('fs')
+const converter = require('stylus-converter')
+
+fs.readFile('src/test.styl', (err, res) => {
+  if (err) return
+  const result = res.toString()
+  const scss = converter(result)
+  fs.writeFile('src/test.scss', scss)
+})
+
+// 执行测试代码
+node src/test.js
+```
+
+### 转换前的 stylus 源码
+```stylus
 add(a, b)
   if a > b
     a - b
@@ -95,10 +113,10 @@ add(a, b)
   else
     a * b
 
-default-border-radius(n)
-  -webkit-border-radius n
-  -moz-border-radius n
-  border-radius n
+default-border-radius(prop, n)
+  -webkit-{border}-radius n
+  -moz-{border}-radius n
+  {border}-radius n
 
 body
   padding add(10px, 5)
@@ -106,35 +124,24 @@ body
 
   div
     color red
+```
 
-// src/test.js
-const fs = require('fs')
-const converter = require('stylus-converter')
-
-fs.readFile('src/simple.styl', (err, res) => {
-  if (err) return
-  const result = res.toString()
-  const scss = converter(result)
-  fs.writeFile('src/simple.scss', scss)
-})
-
-// 执行 node src/test.js
-
-// 编译后的 scss 源码, src/simple.scss
-@function add(a, b) {
-  @if a > b {
-    @return a - b
-  } @else if a < b {
-    @return a + b
+### 转换后的 sass 源码
+```sass
+@function add($a, $b) {
+  @if $a > $b {
+    @return $a - $b
+  } @else if $a < $b {
+    @return $a + $b
   } @else {
-    @return a * b
+    @return $a * $b
   }
 }
 
-@mixin default-border-radius(n) {
-  -webkit-border-radius: n;
-  -moz-border-radius: n;
-  border-radius: n;
+@mixin default-border-radius($prop, $n) {
+  -webkit-#{$prop}-radius: $n;
+  -moz-#{$prop}-radius: $n;
+  #{$prop}-radius: $n;
 }
 
 body {
