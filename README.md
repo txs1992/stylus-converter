@@ -49,10 +49,10 @@ add(a, b)
   else
     a * b
 
-default-border-radius(prop, n)
-  -webkit-{border}-radius n
-  -moz-{border}-radius n
-  {border}-radius n
+default-border-radius(prop, args)
+  -webkit-{prop}-radius args
+  -moz-{prop}-radius args
+  {prop}-radius args
 
 body
   padding add(10px, 5)
@@ -74,10 +74,10 @@ body
   }
 }
 
-@mixin default-border-radius($prop, $n) {
-  -webkit-#{$prop}-radius: $n;
-  -moz-#{$prop}-radius: $n;
-  #{$prop}-radius: $n;
+@mixin default-border-radius($prop, $args) {
+  -webkit-#{$prop}-radius: $args;
+  -moz-#{$prop}-radius: $args;
+  #{$prop}-radius: $args;
 }
 
 body {
