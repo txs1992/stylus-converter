@@ -9,6 +9,9 @@ function getPath (address) {
 fs.readFile(getPath('./test.styl'), (err, res) => {
   if (err) return
   const result = res.toString()
-  console.log(converter(result))
+  const scss = converter(result)
+  console.log(scss)
+  // fs.writeFile('./test.scss', scss)
+  // console.log()
   // converter(result)
 })

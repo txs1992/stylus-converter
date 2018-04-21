@@ -187,7 +187,8 @@ function visitIf (node, symbol = '@if ') {
   isIfExpression = true
   const condText = visitExpression(node.cond)
   isIfExpression = false
-  const condLen = node.column - (condText.length + 2)
+  const condLen = node.column - (condText.replace(/\$/g, '').length + 2)
+  console.log(condLen)
   if (symbol === '@if ') {
     before += handleLineno(node.lineno)
     oldLineno = node.lineno
