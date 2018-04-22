@@ -132,7 +132,7 @@ function visitIdent ({ val, name, mixin, lineno }) {
     return `${isExpression ? '$': ''}${name}`
   }
   let before = handleLineno(lineno)
-  oldLineno = lineno
+  // oldLineno = lineno
   if (identVal.__type === 'Function') return visitFunction(identVal)
   return `${before + replaceFirstATSymbol(name)} = ${visitNode(identVal)};`
 }
@@ -143,7 +143,7 @@ function visitExpression (node) {
   isExpression = false
   if (!returnSymbol || isIfExpression) return result
   let before = '\n'
-  before += handleColumn((node.column + 1) - result.length)
+  before += handleColumn((node.column + 1) - result.replace(/\$/g, '').length)
   return before + returnSymbol + result
 }
 
@@ -188,7 +188,6 @@ function visitIf (node, symbol = '@if ') {
   const condText = visitExpression(node.cond)
   isIfExpression = false
   const condLen = node.column - (condText.replace(/\$/g, '').length + 2)
-  console.log(condLen)
   if (symbol === '@if ') {
     before += handleLineno(node.lineno)
     oldLineno = node.lineno
@@ -213,9 +212,12 @@ function visitFunction (node) {
   isFunction = true
   const notMixin = !findNodesType(node.block.nodes, 'Property')
   const hasIf = findNodesType(node.block.nodes, 'If')
-  const before = handleLineno(node.lineno)
-  let symbol = ''
+  let before = handleLineno(node.lineno)
+  // if (!before && oldLineno > 1) before = '\n'
+  console.log(node.lineno)
+  console.log(oldLineno)
   oldLineno = node.lineno
+  let symbol = ''
   if (notMixin) {
     returnSymbol = '@return '
     symbol = '@function'

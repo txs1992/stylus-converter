@@ -158,7 +158,7 @@ function visitIdent(_ref3) {
     return '' + (isExpression ? '$' : '') + name;
   }
   var before = handleLineno(lineno);
-  oldLineno = lineno;
+  // oldLineno = lineno
   if (identVal.__type === 'Function') return visitFunction(identVal);
   return before + replaceFirstATSymbol(name) + ' = ' + visitNode(identVal) + ';';
 }
@@ -169,7 +169,7 @@ function visitExpression(node) {
   isExpression = false;
   if (!returnSymbol || isIfExpression) return result;
   var before = '\n';
-  before += handleColumn(node.column + 1 - result.length);
+  before += handleColumn(node.column + 1 - result.replace(/\$/g, '').length);
   return before + returnSymbol + result;
 }
 
@@ -224,7 +224,6 @@ function visitIf(node) {
   var condText = visitExpression(node.cond);
   isIfExpression = false;
   var condLen = node.column - (condText.replace(/\$/g, '').length + 2);
-  console.log(condLen);
   if (symbol === '@if ') {
     before += handleLineno(node.lineno);
     oldLineno = node.lineno;
@@ -250,8 +249,11 @@ function visitFunction(node) {
   var notMixin = !findNodesType(node.block.nodes, 'Property');
   var hasIf = findNodesType(node.block.nodes, 'If');
   var before = handleLineno(node.lineno);
-  var symbol = '';
+  // if (!before && oldLineno > 1) before = '\n'
+  console.log(node.lineno);
+  console.log(oldLineno);
   oldLineno = node.lineno;
+  var symbol = '';
   if (notMixin) {
     returnSymbol = '@return ';
     symbol = '@function';
