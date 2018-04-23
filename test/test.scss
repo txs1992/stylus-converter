@@ -1,7 +1,7 @@
 @function add($a, $b) {
-  @if if a > b && a > b + b {
+  @if if $a > $b && $a > $b + $b {
     @return $a - $b
-  } @else if else if a < b || b - a > a {
+  } @else if else if $a < $b || $b - $a > $a {
     @return $a + $b
   } @else {
     @return $a * $b
@@ -22,6 +22,9 @@ body {
     color: $red;
     @for $num from 1 through 5 {
       foo: $num;
+    }
+    @each $str in 1, 2, 3, 4, 5 {
+      bar: $str;
     }
   }
 }

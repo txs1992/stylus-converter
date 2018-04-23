@@ -223,9 +223,10 @@ function visitIf(node) {
   var before = '';
   isIfExpression = true;
   var condNode = node.cond && node.cond.toJSON() || { column: 0 };
-  var condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode).replace(/\$/g, '');
+  var condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode);
+  var filterText = condText.replace(/\$/g, '');
   isIfExpression = false;
-  var condLen = condNode.column - condText.length + 1;
+  var condLen = condNode.column - filterText.length + 1;
   if (symbol === '@if ') {
     before += handleLineno(node.lineno);
     oldLineno = node.lineno;

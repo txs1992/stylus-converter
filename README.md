@@ -42,9 +42,9 @@ node src/test.js
 ### 转换前的 stylus 源码
 ```stylus
 add(a, b)
-  if a > b
+  if a > b && a > b + b
     a - b
-  else if a < b
+  else if a < b || b - a > a
     a + b
   else
     a * b
@@ -60,14 +60,18 @@ body
 
   div
     color red
+    for num in (1..5)
+      foo num
+    for str in 1 2 3 4 5
+      bar str
 ```
 
 ### 转换后的 sass 源码
 ```sass
 @function add($a, $b) {
-  @if $a > $b {
+  @if if $a > $b && $a > $b + $b {
     @return $a - $b
-  } @else if $a < $b {
+  } @else if else if $a < $b || $b - $a > $a {
     @return $a + $b
   } @else {
     @return $a * $b
@@ -77,15 +81,21 @@ body
 @mixin default-border-radius($prop, $args) {
   -webkit-#{$prop}-radius: $args;
   -moz-#{$prop}-radius: $args;
-  #{$prop}-radius: $args;
+   #{$prop}-radius: $args;
 }
 
 body {
   padding: add(10px, 5);
-  @include dfault-border-radius(5px);
+  @include default-border-radius(5px);
 
   div {
-    color: red;
+    color: $red;
+    @for $num from 1 through 5 {
+      foo: $num;
+    }
+    @each $str in 1, 2, 3, 4, 5 {
+      bar: $str;
+    }
   }
 }
 ```
@@ -106,7 +116,7 @@ npm install
 4. 打包编译源文件
 npm run build
 
-5. 本地运行
+5. 本地运行 dev 打包并转换 stylus 测试文件
 npm run dev
 ```
 
