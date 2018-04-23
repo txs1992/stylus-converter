@@ -20,5 +20,8 @@ body {
 
   div {
     color: $red;
+    @for $num from 1 through 5 {
+      foo: $num;
+    }
   }
 }

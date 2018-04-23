@@ -25,6 +25,7 @@ const COMPIL_CONFIT = {
 
 const TYPE_VISITOR_MAP = {
   If: visitIf,
+  Each: visitEach,
   RGBA: visitRGBA,
   Unit: visitUnit,
   Call: visitCall,
@@ -124,14 +125,16 @@ function visitProperty ({ expr, lineno, segments }) {
   return before + result + suffix
 }
 
-function visitIdent ({ val, name, mixin, lineno }) {
+function visitIdent ({ val, name, mixin, lineno, column }) {
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
     if (mixin) return `#{$${name}}`
     return `${isExpression ? '$': ''}${name}`
   }
   if (identVal.__type === 'Function') return visitFunction(identVal)
-  return `${replaceFirstATSymbol(name)} = ${visitNode(identVal)};`
+  let before = ''
+  let identText = visitNode(identVal)
+  return `${before + replaceFirstATSymbol(name)}: ${identText};`
 }
 
 function visitExpression (node) {
@@ -233,6 +236,36 @@ function visitBinOp ({ op, left, right }) {
   const leftExp = left && left.toJSON()
   const rightExp = right && right.toJSON()
   return `${visitNode(leftExp)} ${op} ${visitNode(rightExp)}`
+}
+
+function visitEach (node) {
+  let before = handleLineno(node.lineno)
+  oldLineno = node.lineno
+  const expr = node.expr && node.expr.toJSON()
+  const exprNodes = nodesToJSON(expr.nodes)
+  let exprText = `@each $${node.val} in `
+  const filters = []
+  exprNodes.forEach((node, idx) => {
+    const prefix = node.__type === 'Ident' ? '$' : ''
+    const exp = prefix + visitNode(node)
+    exprText += idx ? `, ${exp}` : exp
+    const val = node.val && node.val.toJSON && node.val.toJSON() || {}
+    if (val.__type === 'Null') filters.push(exp)
+  })
+  let filteredText = exprText
+  filters.forEach(filter => {
+    filteredText = filteredText.replace(filter, '-')
+  })
+  const replaceExpr = filteredText.replace(/\$|@|,/g, '')
+  if (/\.\./.test(exprText)) {
+    exprText = exprText.replace('@each', '@for').replace('..', 'through').replace('in', 'from')
+  }
+  // for -> each, and default oldLineno = 1
+  const len = replaceExpr.length - 2
+  const blank = handleColumn(node.column - len)
+  before += blank
+  const block = visitBlock(node.block, blank).replace(`$${node.key}`, '')
+  return before + exprText + block
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree

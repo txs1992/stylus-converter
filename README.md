@@ -128,13 +128,13 @@ npm run dev
 - [x] 转换
 - [x] 转换插值
 - [ ] 转换 url()
-- [ ] 转换循环语法
+- [x] 转换循环语法
 - [ ] 转换 extend
 - [ ] 转换 Feature
 - [ ] 转换 keyframes
 - [ ] 转换 CSS 字面量
-- [ ] 转换 call mixin
-- [ ] 转换 call function
+- [x] 转换 call mixin
+- [x] 转换 call function
 
 ### stylus to less
 

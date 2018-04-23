@@ -30,6 +30,7 @@ var isIfExpression = false;
 
 var TYPE_VISITOR_MAP = {
   If: visitIf,
+  Each: visitEach,
   RGBA: visitRGBA,
   Unit: visitUnit,
   Call: visitCall,
@@ -148,7 +149,8 @@ function visitIdent(_ref3) {
   var val = _ref3.val,
       name = _ref3.name,
       mixin = _ref3.mixin,
-      lineno = _ref3.lineno;
+      lineno = _ref3.lineno,
+      column = _ref3.column;
 
   var identVal = val && val.toJSON() || '';
   if (identVal.__type === 'Null' || !val) {
@@ -156,7 +158,9 @@ function visitIdent(_ref3) {
     return '' + (isExpression ? '$' : '') + name;
   }
   if (identVal.__type === 'Function') return visitFunction(identVal);
-  return replaceFirstATSymbol(name) + ' = ' + visitNode(identVal) + ';';
+  var before = '';
+  var identText = visitNode(identVal);
+  return before + replaceFirstATSymbol(name) + ': ' + identText + ';';
 }
 
 function visitExpression(node) {
@@ -272,6 +276,36 @@ function visitBinOp(_ref6) {
   var leftExp = left && left.toJSON();
   var rightExp = right && right.toJSON();
   return visitNode(leftExp) + ' ' + op + ' ' + visitNode(rightExp);
+}
+
+function visitEach(node) {
+  var before = handleLineno(node.lineno);
+  oldLineno = node.lineno;
+  var expr = node.expr && node.expr.toJSON();
+  var exprNodes = nodesToJSON(expr.nodes);
+  var exprText = '@each $' + node.val + ' in ';
+  var filters = [];
+  exprNodes.forEach(function (node, idx) {
+    var prefix = node.__type === 'Ident' ? '$' : '';
+    var exp = prefix + visitNode(node);
+    exprText += idx ? ', ' + exp : exp;
+    var val = node.val && node.val.toJSON && node.val.toJSON() || {};
+    if (val.__type === 'Null') filters.push(exp);
+  });
+  var filteredText = exprText;
+  filters.forEach(function (filter) {
+    filteredText = filteredText.replace(filter, '-');
+  });
+  var replaceExpr = filteredText.replace(/\$|@|,/g, '');
+  if (/\.\./.test(exprText)) {
+    exprText = exprText.replace('@each', '@for').replace('..', 'through').replace('in', 'from');
+  }
+  // for -> each, and default oldLineno = 1
+  var len = replaceExpr.length - 2;
+  var blank = handleColumn(node.column - len);
+  before += blank;
+  var block = visitBlock(node.block, blank).replace('$' + node.key, '');
+  return before + exprText + block;
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree

@@ -4,6 +4,7 @@
   "description": "A tool that converts a stylus into sass, or less, or other precompiled CSS.",
   "main": "index.js",
   "scripts": {
+    "ast": "rollup -c && node src/test.js",
     "build": "rollup -c",
     "dev": "rollup -c && node ./test"
   },
