@@ -218,9 +218,10 @@ function visitIf(node) {
 
   var before = '';
   isIfExpression = true;
-  var condText = visitExpression(node.cond);
+  var condNode = node.cond && node.cond.toJSON() || { column: 0 };
+  var condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode).replace(/\$/g, '');
   isIfExpression = false;
-  var condLen = node.column - (condText.replace(/\$/g, '').length + 2);
+  var condLen = condNode.column - condText.length + 1;
   if (symbol === '@if ') {
     before += handleLineno(node.lineno);
     oldLineno = node.lineno;
@@ -263,8 +264,14 @@ function visitFunction(node) {
   return before + fnName + block;
 }
 
-function visitBinOp(node) {
-  return visitIdent(node.left) + ' ' + node.op + ' ' + visitIdent(node.right);
+function visitBinOp(_ref6) {
+  var op = _ref6.op,
+      left = _ref6.left,
+      right = _ref6.right;
+
+  var leftExp = left && left.toJSON();
+  var rightExp = right && right.toJSON();
+  return visitNode(leftExp) + ' ' + op + ' ' + visitNode(rightExp);
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree

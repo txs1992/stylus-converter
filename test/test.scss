@@ -1,7 +1,7 @@
 @function add($a, $b) {
-  @if $a > $b {
+  @if if a > b && a > b + b {
     @return $a - $b
-  } @else if $a < $b {
+  } @else if else if a < b || b - a > a {
     @return $a + $b
   } @else {
     @return $a * $b
