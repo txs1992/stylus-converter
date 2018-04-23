@@ -187,9 +187,10 @@ function visitIf (node, symbol = '@if ') {
   let before = ''
   isIfExpression = true
   const condNode = node.cond && node.cond.toJSON() || { column: 0 }
-  const condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode).replace(/\$/g, '')
+  const condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode)
+  const filterText = condText.replace(/\$/g, '')
   isIfExpression = false
-  const condLen = condNode.column - condText.length + 1
+  const condLen = condNode.column - filterText.length + 1
   if (symbol === '@if ') {
     before += handleLineno(node.lineno)
     oldLineno = node.lineno
