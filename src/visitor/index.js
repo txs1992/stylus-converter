@@ -183,9 +183,10 @@ function visitBoolean (node) {
 function visitIf (node, symbol = '@if ') {
   let before = ''
   isIfExpression = true
-  const condText = visitExpression(node.cond)
+  const condNode = node.cond && node.cond.toJSON() || { column: 0 }
+  const condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode).replace(/\$/g, '')
   isIfExpression = false
-  const condLen = node.column - (condText.replace(/\$/g, '').length + 2)
+  const condLen = condNode.column - condText.length + 1
   if (symbol === '@if ') {
     before += handleLineno(node.lineno)
     oldLineno = node.lineno
@@ -228,8 +229,10 @@ function visitFunction (node) {
   return before + fnName + block
 }
 
-function visitBinOp (node) {
-  return `${visitIdent(node.left)} ${node.op} ${visitIdent(node.right)}`
+function visitBinOp ({ op, left, right }) {
+  const leftExp = left && left.toJSON()
+  const rightExp = right && right.toJSON()
+  return `${visitNode(leftExp)} ${op} ${visitNode(rightExp)}`
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
