@@ -129,7 +129,6 @@ function visitLiteral(node) {
 
 function visitProperty(_ref2) {
   var expr = _ref2.expr,
-      column = _ref2.column,
       lineno = _ref2.lineno,
       segments = _ref2.segments;
 
@@ -138,10 +137,9 @@ function visitProperty(_ref2) {
   var before = handleLineno(lineno);
   oldLineno = lineno;
   isProperty = true;
-  var segmentText = visitNodes(segments);
-  var result = segmentText + ': ' + visitExpression(expr);
-  var trimSymbolSegment = segmentText.replace(/#|\$/g, '');
-  before += handleColumn(column - (trimSymbolSegment.length - 1));
+  var firstNode = segments.length && segments[0].toJSON() || {};
+  var result = visitNodes(segments) + ': ' + visitExpression(expr);
+  before += handleColumn(firstNode.column);
   isProperty = false;
   return before + result + suffix;
 }
@@ -157,10 +155,8 @@ function visitIdent(_ref3) {
     if (mixin) return '#{$' + name + '}';
     return '' + (isExpression ? '$' : '') + name;
   }
-  var before = handleLineno(lineno);
-  // oldLineno = lineno
   if (identVal.__type === 'Function') return visitFunction(identVal);
-  return before + replaceFirstATSymbol(name) + ' = ' + visitNode(identVal) + ';';
+  return replaceFirstATSymbol(name) + ' = ' + visitNode(identVal) + ';';
 }
 
 function visitExpression(node) {
@@ -168,7 +164,8 @@ function visitExpression(node) {
   var result = visitNodes(node.nodes);
   isExpression = false;
   if (!returnSymbol || isIfExpression) return result;
-  var before = '\n';
+  var before = handleLineno(node.lineno);
+  oldLineno = node.lineno;
   before += handleColumn(node.column + 1 - result.replace(/\$/g, '').length);
   return before + returnSymbol + result;
 }
@@ -234,6 +231,7 @@ function visitIf(node) {
   if (node.elses && node.elses.length) {
     var elses = nodesToJSON(node.elses);
     elses.forEach(function (node) {
+      oldLineno++;
       if (node.__type === 'If') {
         elseText += visitIf(node, ' @else if ');
       } else {
@@ -249,9 +247,6 @@ function visitFunction(node) {
   var notMixin = !findNodesType(node.block.nodes, 'Property');
   var hasIf = findNodesType(node.block.nodes, 'If');
   var before = handleLineno(node.lineno);
-  // if (!before && oldLineno > 1) before = '\n'
-  console.log(node.lineno);
-  console.log(oldLineno);
   oldLineno = node.lineno;
   var symbol = '';
   if (notMixin) {

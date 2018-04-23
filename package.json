@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c && node ./test"
+    "test": "rollup -c && node ./test"
   },
   "repository": {
     "type": "git",
@@ -46,7 +46,6 @@
     "rollup-plugin-babel": "^3.0.3"
   },
   "dependencies": {
-    "noshjs": "^0.3.0",
     "stylus": "^0.54.5"
   }
 }

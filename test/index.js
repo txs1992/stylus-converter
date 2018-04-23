@@ -10,8 +10,5 @@ fs.readFile(getPath('./test.styl'), (err, res) => {
   if (err) return
   const result = res.toString()
   const scss = converter(result)
-  console.log(scss)
-  // fs.writeFile('./test.scss', scss)
-  // console.log()
-  // converter(result)
+  fs.writeFile(getPath('./test.scss'), scss)
 })
