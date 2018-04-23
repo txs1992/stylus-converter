@@ -1,4 +1,19 @@
-vendor(prop, args)
-  -webkit-{prop} args
-  -moz-{prop} args
-  {prop} args
+add(a, b)
+  if a > b
+    a - b
+  else if a < b
+    a + b
+  else
+    a * b
+
+default-border-radius(prop, args)
+  -webkit-{prop}-radius args
+  -moz-{prop}-radius args
+  {prop}-radius args
+
+body
+  padding add(10px, 5)
+  default-border-radius(5px)
+
+  div
+    color red

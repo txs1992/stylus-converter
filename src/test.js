@@ -11,5 +11,5 @@ fs.readFile(getPath('../test/test.styl'), (err, res) => {
   const result = res.toString()
   const ast = new Parser(res.toString()).parse()
   const text = JSON.stringify(ast)
-  fs.writeFile(getPath('../ast/test.json'), text, () => {})
+  fs.writeFile(getPath('./test.json'), text, () => {})
 })

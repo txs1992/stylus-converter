@@ -111,16 +111,15 @@ function visitLiteral (node) {
   return node.val || ''
 }
 
-function visitProperty ({ expr, column, lineno, segments }) {
+function visitProperty ({ expr, lineno, segments }) {
   const hasCall = findNodesType(expr && expr.nodes || [], 'Call')
   const suffix = hasCall ? '' : ';'
   let before = handleLineno(lineno)
   oldLineno = lineno
   isProperty = true
-  const segmentText = visitNodes(segments)
-  const result = `${segmentText}: ${visitExpression(expr)}`
-  const trimSymbolSegment = segmentText.replace(/#|\$/g, '')
-  before += handleColumn(column - (trimSymbolSegment.length - 1))
+  const firstNode = segments.length && segments[0].toJSON() || {}
+  const result = `${visitNodes(segments)}: ${visitExpression(expr)}`
+  before += handleColumn(firstNode.column)
   isProperty = false
   return before + result + suffix
 }
@@ -131,10 +130,8 @@ function visitIdent ({ val, name, mixin, lineno }) {
     if (mixin) return `#{$${name}}`
     return `${isExpression ? '$': ''}${name}`
   }
-  let before = handleLineno(lineno)
-  oldLineno = lineno
   if (identVal.__type === 'Function') return visitFunction(identVal)
-  return `${before + replaceFirstATSymbol(name)} = ${visitNode(identVal)};`
+  return `${replaceFirstATSymbol(name)} = ${visitNode(identVal)};`
 }
 
 function visitExpression (node) {
@@ -142,8 +139,9 @@ function visitExpression (node) {
   const result = visitNodes(node.nodes)
   isExpression = false
   if (!returnSymbol || isIfExpression) return result
-  let before = '\n'
-  before += handleColumn((node.column + 1) - result.length)
+  let before = handleLineno(node.lineno)
+  oldLineno = node.lineno
+  before += handleColumn((node.column + 1) - result.replace(/\$/g, '').length)
   return before + returnSymbol + result
 }
 
@@ -187,7 +185,7 @@ function visitIf (node, symbol = '@if ') {
   isIfExpression = true
   const condText = visitExpression(node.cond)
   isIfExpression = false
-  const condLen = node.column - (condText.length + 2)
+  const condLen = node.column - (condText.replace(/\$/g, '').length + 2)
   if (symbol === '@if ') {
     before += handleLineno(node.lineno)
     oldLineno = node.lineno
@@ -198,6 +196,7 @@ function visitIf (node, symbol = '@if ') {
   if (node.elses && node.elses.length) {
     const elses = nodesToJSON(node.elses)
     elses.forEach(node => {
+      oldLineno++
       if (node.__type === 'If') {
         elseText += visitIf(node, ' @else if ')
       } else {
@@ -212,9 +211,9 @@ function visitFunction (node) {
   isFunction = true
   const notMixin = !findNodesType(node.block.nodes, 'Property')
   const hasIf = findNodesType(node.block.nodes, 'If')
-  const before = handleLineno(node.lineno)
-  let symbol = ''
+  let before = handleLineno(node.lineno)
   oldLineno = node.lineno
+  let symbol = ''
   if (notMixin) {
     returnSymbol = '@return '
     symbol = '@function'

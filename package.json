@@ -1,6 +1,6 @@
 {
   "name": "stylus-converter",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A tool that converts a stylus into sass, or less, or other precompiled CSS.",
   "main": "index.js",
   "scripts": {
@@ -46,7 +46,6 @@
     "rollup-plugin-babel": "^3.0.3"
   },
   "dependencies": {
-    "noshjs": "^0.3.0",
     "stylus": "^0.54.5"
   }
 }
