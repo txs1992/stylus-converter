@@ -6,7 +6,7 @@
   "scripts": {
     "ast": "rollup -c && node src/test.js",
     "build": "rollup -c",
-    "dev": "rollup -c && node ./test",
+    "dev": "rollup -c && node ./test/converter-test.js",
     "test": "mocha"
   },
   "repository": {
