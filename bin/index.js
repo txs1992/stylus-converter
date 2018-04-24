@@ -2,6 +2,7 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+var noshjs = require('noshjs');
 var Parser = _interopDefault(require('stylus/lib/parser.js'));
 
 function repeatString(str, num) {
@@ -14,6 +15,10 @@ function nodesToJSON(nodes) {
   });
 }
 
+function trimFirst(str) {
+  return str.replace(/(^\s*)/g, '');
+}
+
 function replaceFirstATSymbol(str) {
   var temp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '$';
 
@@ -24,9 +29,11 @@ var oldLineno = 1;
 var returnSymbol = '';
 var isFunction = false;
 var isProperty = false;
-var isExpression = false;
 var isIfExpression = false;
 var indentationLevel = 0;
+var PROPERTY_KEY_List = [];
+var PROPERTY_VAL_LIST = [];
+var VARIABLE_NAME_LIST = [];
 
 var TYPE_VISITOR_MAP = {
   If: visitIf,
@@ -134,13 +141,30 @@ function visitProperty(_ref2) {
 
   var hasCall = findNodesType(expr && expr.nodes || [], 'Call');
   var suffix = hasCall ? '' : ';';
-  var before = handleLineno(lineno);
+  var before = handleLinenoAndIndentation({ lineno: lineno });
   oldLineno = lineno;
   isProperty = true;
-  var result = visitNodes(segments) + ': ' + visitExpression(expr);
-  before += getIndentation();
+  var segmentsText = visitNodes(segments);
+  PROPERTY_KEY_List.unshift(segmentsText);
+  if (noshjs.get(expr, ['nodes', 'length']) === 1) {
+    var expNode = expr.nodes[0];
+    var ident = expNode.toJSON && expNode.toJSON() || {};
+    if (ident.__type === 'Ident') {
+      var identVal = noshjs.get(ident, ['val', 'toJSON']) && ident.val.toJSON() || {};
+      if (identVal.__type === 'Expression') {
+        VARIABLE_NAME_LIST.push(ident.name);
+        var beforeExpText = before + trimFirst(visitExpression(expr));
+        var _expText = '' + before + segmentsText + ': $' + ident.name;
+        PROPERTY_VAL_LIST.unshift('$' + ident.name);
+        isProperty = false;
+        return beforeExpText + _expText;
+      }
+    }
+  }
+  var expText = visitExpression(expr);
+  PROPERTY_VAL_LIST.unshift(expText);
   isProperty = false;
-  return before + result + suffix;
+  return before + segmentsText + ': ' + (expText + suffix);
 }
 
 function visitIdent(_ref3) {
@@ -152,23 +176,32 @@ function visitIdent(_ref3) {
 
   var identVal = val && val.toJSON() || '';
   if (identVal.__type === 'Null' || !val) {
+    var len = PROPERTY_KEY_List.indexOf(name);
+    if (len > -1) return PROPERTY_VAL_LIST[len];
     if (mixin) return '#{$' + name + '}';
-    return '' + (isExpression ? '$' : '') + name;
+    return VARIABLE_NAME_LIST.indexOf(name) > -1 ? '$' + name : name;
+  }
+  if (identVal.__type === 'Expression') {
+    var before = handleLinenoAndIndentation(identVal);
+    oldLineno = identVal.lineno;
+    var nodes = nodesToJSON(identVal.nodes || []);
+    var expText = '';
+    nodes.forEach(function (node, idx) {
+      expText += idx ? ' ' + visitNode(node) : visitNode(node);
+    });
+    VARIABLE_NAME_LIST.push(name);
+    return before + '$' + name + ': ' + expText + ';';
   }
   if (identVal.__type === 'Function') return visitFunction(identVal);
-  var before = '';
   var identText = visitNode(identVal);
-  return before + replaceFirstATSymbol(name) + ': ' + identText + ';';
+  return replaceFirstATSymbol(name) + ': ' + identText + ';';
 }
 
 function visitExpression(node) {
-  isExpression = true;
-  var result = visitNodes(node.nodes);
-  isExpression = false;
-  if (!returnSymbol || isIfExpression) return result;
-  var before = handleLineno(node.lineno);
+  var before = handleLinenoAndIndentation(node);
   oldLineno = node.lineno;
-  before += getIndentation();
+  var result = visitNodes(node.nodes);
+  if (!returnSymbol || isIfExpression) return result;
   return before + returnSymbol + result;
 }
 
@@ -179,9 +212,10 @@ function visitCall(_ref4) {
       column = _ref4.column;
 
   var before = handleLineno(lineno);
-  var argsText = visitArguments(args);
   oldLineno = lineno;
+  var argsText = visitArguments(args);
   if (!isProperty) {
+    before = before || '\n';
     before += getIndentation();
     before += '@include ';
   }
@@ -219,14 +253,13 @@ function visitIf(node) {
 
   var before = '';
   isIfExpression = true;
+  if (symbol === '@if ') {
+    before += handleLinenoAndIndentation(node);
+    oldLineno = node.lineno;
+  }
   var condNode = node.cond && node.cond.toJSON() || { column: 0 };
   var condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode);
   isIfExpression = false;
-  if (symbol === '@if ') {
-    before += handleLineno(node.lineno);
-    oldLineno = node.lineno;
-    before += getIndentation();
-  }
   var block = visitBlock(node.block);
   var elseText = '';
   if (node.elses && node.elses.length) {
