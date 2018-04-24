@@ -1,8 +1,10 @@
+import { get as _get } from 'noshjs'
+
 import {
+  trimFirst,
   nodesToJSON,
   repeatString,
-  replaceFirstATSymbol,
-  trimFirstLinefeedLength
+  replaceFirstATSymbol
 } from '../util.js'
 
 let oldLineno = 1
@@ -14,6 +16,9 @@ let isProperty = false
 let isExpression = false
 let isIfExpression = false
 let indentationLevel = 0
+const PROPERTY_KEY_List = []
+const PROPERTY_VAL_LIST = []
+const VARIABLE_NAME_LIST = []
 
 const COMPIL_CONFIT = {
   scss: {
@@ -118,43 +123,72 @@ function visitLiteral (node) {
 function visitProperty ({ expr, lineno, segments }) {
   const hasCall = findNodesType(expr && expr.nodes || [], 'Call')
   const suffix = hasCall ? '' : ';'
-  let before = handleLineno(lineno)
+  const before = handleLinenoAndIndentation({ lineno })
   oldLineno = lineno
   isProperty = true
-  const result = `${visitNodes(segments)}: ${visitExpression(expr)}`
-  before += getIndentation()
+  const segmentsText = visitNodes(segments)
+  PROPERTY_KEY_List.unshift(segmentsText)
+  if (_get(expr, ['nodes', 'length']) === 1) {
+    const expNode = expr.nodes[0]
+    const ident = expNode.toJSON && expNode.toJSON() || {}
+    if (ident.__type === 'Ident') {
+      const identVal = _get(ident, ['val', 'toJSON']) && ident.val.toJSON() || {}
+      if (identVal.__type === 'Expression') {
+        VARIABLE_NAME_LIST.push(ident.name)
+        const beforeExpText = before + trimFirst(visitExpression(expr))
+        const expText = `${before}${segmentsText}: $${ident.name}`
+        PROPERTY_VAL_LIST.unshift('$' + ident.name)
+        isProperty = false
+        return beforeExpText + expText
+      }
+    }
+  }
+  const expText = visitExpression(expr)
+  PROPERTY_VAL_LIST.unshift(expText)
   isProperty = false
-  return before + result + suffix
+  return `${before + segmentsText}: ${expText + suffix}`
 }
 
 function visitIdent ({ val, name, mixin, lineno, column }) {
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
+    const len = PROPERTY_KEY_List.indexOf(name)
+    if (len > -1) return PROPERTY_VAL_LIST[len]
     if (mixin) return `#{$${name}}`
-    return `${isExpression ? '$': ''}${name}`
+    return VARIABLE_NAME_LIST.indexOf(name) > -1 ? `$${name}` : name
+  }
+  if (identVal.__type === 'Expression') {
+    const before = handleLinenoAndIndentation(identVal)
+    oldLineno = identVal.lineno
+    const nodes = nodesToJSON(identVal.nodes || [])
+    let expText = ''
+    nodes.forEach((node, idx) => {
+      expText += idx ? ` ${visitNode(node)}`: visitNode(node)
+    })
+    VARIABLE_NAME_LIST.push(name)
+    return `${before}$${name}: ${expText};`
   }
   if (identVal.__type === 'Function') return visitFunction(identVal)
-  let before = ''
   let identText = visitNode(identVal)
-  return `${before + replaceFirstATSymbol(name)}: ${identText};`
+  return `${replaceFirstATSymbol(name)}: ${identText};`
 }
 
 function visitExpression (node) {
   isExpression = true
+  let before = handleLinenoAndIndentation(node)
+  oldLineno = node.lineno
   const result = visitNodes(node.nodes)
   isExpression = false
   if (!returnSymbol || isIfExpression) return result
-  let before = handleLineno(node.lineno)
-  oldLineno = node.lineno
-  before += getIndentation()
   return before + returnSymbol + result
 }
 
 function visitCall ({ name, args, lineno, column }) {
   let before = handleLineno(lineno)
-  const argsText = visitArguments(args)
   oldLineno = lineno
+  const argsText = visitArguments(args)
   if (!isProperty) {
+    before = before || '\n'
     before += getIndentation()
     before += '@include '
   }
@@ -187,14 +221,13 @@ function visitBoolean (node) {
 function visitIf (node, symbol = '@if ') {
   let before = ''
   isIfExpression = true
+  if (symbol === '@if ') {
+    before += handleLinenoAndIndentation(node)
+    oldLineno = node.lineno
+  }
   const condNode = node.cond && node.cond.toJSON() || { column: 0 }
   const condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode)
   isIfExpression = false
-  if (symbol === '@if ') {
-    before += handleLineno(node.lineno)
-    oldLineno = node.lineno
-    before += getIndentation()
-  }
   const block = visitBlock(node.block)
   let elseText = ''
   if (node.elses && node.elses.length) {
