@@ -302,5 +302,8 @@ export default function visitor (ast, option) {
   transfrom = option
   const result = visitNodes(ast.nodes) || ''
   oldLineno = 1
+  PROPERTY_KEY_List = []
+  PROPERTY_VAL_LIST = []
+  VARIABLE_NAME_LIST = []
   return result
 }

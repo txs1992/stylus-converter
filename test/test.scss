@@ -5,9 +5,9 @@ $default-width: 200px;
   border: $default-border;
   width: $default-width;
   $h: 80px;
-  height: $h
-  margin-top: $h;
-  padding-top: $default-border;
+  height: $h;
+  margin-top: -($h / 2);
+  padding-top: -($default-border * 3);
 }
 
 @function add($a, $b) {
