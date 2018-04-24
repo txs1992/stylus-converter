@@ -16,7 +16,7 @@ let isProperty = false
 let isExpression = false
 let isIfExpression = false
 let indentationLevel = 0
-let PROPERTY_KEY_List = []
+let PROPERTY_KEY_LIST = []
 let PROPERTY_VAL_LIST = []
 let VARIABLE_NAME_LIST = []
 
@@ -134,7 +134,7 @@ function visitProperty ({ expr, lineno, segments }) {
   oldLineno = lineno
   isProperty = true
   const segmentsText = visitNodes(segments)
-  PROPERTY_KEY_List.unshift(segmentsText)
+  PROPERTY_KEY_LIST.unshift(segmentsText)
   if (_get(expr, ['nodes', 'length']) === 1) {
     const expNode = expr.nodes[0]
     const ident = expNode.toJSON && expNode.toJSON() || {}
@@ -159,7 +159,7 @@ function visitProperty ({ expr, lineno, segments }) {
 function visitIdent ({ val, name, mixin, lineno, column }) {
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
-    const len = PROPERTY_KEY_List.indexOf(name)
+    const len = PROPERTY_KEY_LIST.indexOf(name)
     if (len > -1) return PROPERTY_VAL_LIST[len]
     if (mixin) return `#{$${name}}`
     return VARIABLE_NAME_LIST.indexOf(name) > -1 ? `$${name}` : name
@@ -316,7 +316,7 @@ export default function visitor (ast, option) {
   transfrom = option
   const result = visitNodes(ast.nodes) || ''
   oldLineno = 1
-  PROPERTY_KEY_List = []
+  PROPERTY_KEY_LIST = []
   PROPERTY_VAL_LIST = []
   VARIABLE_NAME_LIST = []
   return result
