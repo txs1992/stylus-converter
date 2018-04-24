@@ -29,6 +29,12 @@ const COMPIL_CONFIT = {
   }
 }
 
+const OPEARTION_MAP = {
+  '&&': 'and',
+  '!': 'not',
+  '||': 'or'
+}
+
 const TYPE_VISITOR_MAP = {
   If: visitIf,
   Each: visitEach,
@@ -268,7 +274,7 @@ function visitFunction (node) {
 function visitBinOp ({ op, left, right }) {
   const leftExp = left && left.toJSON()
   const rightExp = right && right.toJSON()
-  return `${visitNode(leftExp)} ${op} ${visitNode(rightExp)}`
+  return `${visitNode(leftExp)} ${OPEARTION_MAP[op] || op} ${visitNode(rightExp)}`
 }
 
 function visitEach (node) {

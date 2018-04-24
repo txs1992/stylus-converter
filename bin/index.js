@@ -35,6 +35,12 @@ var PROPERTY_KEY_List = [];
 var PROPERTY_VAL_LIST = [];
 var VARIABLE_NAME_LIST = [];
 
+var OPEARTION_MAP = {
+  '&&': 'and',
+  '!': 'not',
+  '||': 'or'
+};
+
 var TYPE_VISITOR_MAP = {
   If: visitIf,
   Each: visitEach,
@@ -304,7 +310,7 @@ function visitBinOp(_ref6) {
 
   var leftExp = left && left.toJSON();
   var rightExp = right && right.toJSON();
-  return visitNode(leftExp) + ' ' + op + ' ' + visitNode(rightExp);
+  return visitNode(leftExp) + ' ' + (OPEARTION_MAP[op] || op) + ' ' + visitNode(rightExp);
 }
 
 function visitEach(node) {

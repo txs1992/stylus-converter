@@ -11,9 +11,9 @@ $default-width: 200px;
 }
 
 @function add($a, $b) {
-  @if if a > b && a > b + b {
+  @if if a > b and a > b + b {
     @return a - b
-  } @else if else if a < b || b - a > a {
+  } @else if else if a < b or b - a > a {
     @return a + b
   } @else {
     @return a * b
