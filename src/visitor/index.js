@@ -159,8 +159,10 @@ function visitProperty ({ expr, lineno, segments }) {
 function visitIdent ({ val, name, mixin, lineno, column }) {
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
-    const len = PROPERTY_KEY_LIST.indexOf(name)
-    if (len > -1) return PROPERTY_VAL_LIST[len]
+    if (isExpression) {
+      const len = PROPERTY_KEY_LIST.indexOf(name)
+      if (len > -1) return PROPERTY_VAL_LIST[len]
+    }
     if (mixin) return `#{$${name}}`
     return VARIABLE_NAME_LIST.indexOf(name) > -1 ? `$${name}` : name
   }
