@@ -31,7 +31,7 @@ var isFunction = false;
 var isProperty = false;
 var isIfExpression = false;
 var indentationLevel = 0;
-var PROPERTY_KEY_List = [];
+var PROPERTY_KEY_LIST = [];
 var PROPERTY_VAL_LIST = [];
 var VARIABLE_NAME_LIST = [];
 
@@ -152,7 +152,7 @@ function visitProperty(_ref2) {
   oldLineno = lineno;
   isProperty = true;
   var segmentsText = visitNodes(segments);
-  PROPERTY_KEY_List.unshift(segmentsText);
+  PROPERTY_KEY_LIST.unshift(segmentsText);
   if (noshjs.get(expr, ['nodes', 'length']) === 1) {
     var expNode = expr.nodes[0];
     var ident = expNode.toJSON && expNode.toJSON() || {};
@@ -183,7 +183,7 @@ function visitIdent(_ref3) {
 
   var identVal = val && val.toJSON() || '';
   if (identVal.__type === 'Null' || !val) {
-    var len = PROPERTY_KEY_List.indexOf(name);
+    var len = PROPERTY_KEY_LIST.indexOf(name);
     if (len > -1) return PROPERTY_VAL_LIST[len];
     if (mixin) return '#{$' + name + '}';
     return VARIABLE_NAME_LIST.indexOf(name) > -1 ? '$' + name : name;
@@ -354,7 +354,7 @@ function visitEach(node) {
 function visitor(ast, option) {
   var result = visitNodes(ast.nodes) || '';
   oldLineno = 1;
-  PROPERTY_KEY_List = [];
+  PROPERTY_KEY_LIST = [];
   PROPERTY_VAL_LIST = [];
   VARIABLE_NAME_LIST = [];
   return result;
