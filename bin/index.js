@@ -29,6 +29,7 @@ var oldLineno = 1;
 var returnSymbol = '';
 var isFunction = false;
 var isProperty = false;
+var isExpression = false;
 var isIfExpression = false;
 var indentationLevel = 0;
 var PROPERTY_KEY_LIST = [];
@@ -183,8 +184,10 @@ function visitIdent(_ref3) {
 
   var identVal = val && val.toJSON() || '';
   if (identVal.__type === 'Null' || !val) {
-    var len = PROPERTY_KEY_LIST.indexOf(name);
-    if (len > -1) return PROPERTY_VAL_LIST[len];
+    if (isExpression) {
+      var len = PROPERTY_KEY_LIST.indexOf(name);
+      if (len > -1) return PROPERTY_VAL_LIST[len];
+    }
     if (mixin) return '#{$' + name + '}';
     return VARIABLE_NAME_LIST.indexOf(name) > -1 ? '$' + name : name;
   }
@@ -205,9 +208,11 @@ function visitIdent(_ref3) {
 }
 
 function visitExpression(node) {
+  isExpression = true;
   var before = handleLinenoAndIndentation(node);
   oldLineno = node.lineno;
   var result = visitNodes(node.nodes);
+  isExpression = false;
   if (!returnSymbol || isIfExpression) return result;
   return before + returnSymbol + result;
 }
