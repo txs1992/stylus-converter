@@ -91,19 +91,19 @@ $default-width: 200px;
 }
 
 @function add($a, $b) {
-  @if if a > b and a > b + b {
-    @return a - b
-  } @else if else if a < b or b - a > a {
-    @return a + b
+  @if $a > $b and $a > $b + $b {
+    @return $a - $b
+  } @else if $a < $b or $b - $a > $a {
+    @return $a + $b
   } @else {
-    @return a * b
+    @return $a * $b
   }
 }
 
 @mixin default-border-radius($prop, $args) {
-  -webkit-#{$prop}-radius: args;
-  -moz-#{$prop}-radius: args;
-  #{$prop}-radius: args;
+  -webkit-#{$prop}-radius: $args;
+  -moz-#{$prop}-radius: $args;
+  #{$prop}-radius: $args;
 }
 
 body {
@@ -113,10 +113,10 @@ body {
   div {
     color: red;
     @for $num from 1 through 5 {
-      foo: num;
+      foo: $num;
     }
     @each $str in 1, 2, 3, 4, 5 {
-      bar: str;
+      bar: $str;
     }
   }
 }
