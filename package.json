@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c && node ./test/converter-test.js",
-    "test": "npm run mocha"
+    "test": "mocha ./test/index.test.js"
   },
   "repository": {
     "type": "git",
