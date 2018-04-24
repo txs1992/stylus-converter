@@ -269,7 +269,6 @@ function visitIf(node) {
   isIfExpression = false;
   var block = visitBlock(node.block);
   var elseText = '';
-  console.log(condText);
   if (node.elses && node.elses.length) {
     var elses = nodesToJSON(node.elses);
     elses.forEach(function (node) {
