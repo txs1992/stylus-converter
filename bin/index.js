@@ -52,6 +52,7 @@ var TYPE_VISITOR_MAP = {
   Ident: visitIdent,
   Group: visitGroup,
   Import: visitImport,
+  UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
   Params: visitArguments,
   Property: visitProperty,
@@ -160,7 +161,7 @@ function visitProperty(_ref2) {
       if (identVal.__type === 'Expression') {
         VARIABLE_NAME_LIST.push(ident.name);
         var beforeExpText = before + trimFirst(visitExpression(expr));
-        var _expText = '' + before + segmentsText + ': $' + ident.name;
+        var _expText = '' + before + segmentsText + ': $' + ident.name + ';';
         PROPERTY_VAL_LIST.unshift('$' + ident.name);
         isProperty = false;
         return beforeExpText + _expText;
@@ -311,6 +312,13 @@ function visitBinOp(_ref6) {
   var leftExp = left && left.toJSON();
   var rightExp = right && right.toJSON();
   return visitNode(leftExp) + ' ' + (OPEARTION_MAP[op] || op) + ' ' + visitNode(rightExp);
+}
+
+function visitUnaryOp(_ref7) {
+  var op = _ref7.op,
+      expr = _ref7.expr;
+
+  return (OPEARTION_MAP[op] || op) + '(' + visitExpression(expr) + ')';
 }
 
 function visitEach(node) {

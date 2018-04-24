@@ -46,6 +46,7 @@ const TYPE_VISITOR_MAP = {
   Ident: visitIdent,
   Group: visitGroup,
   Import: visitImport,
+  UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
   Params: visitArguments,
   Property: visitProperty,
@@ -142,7 +143,7 @@ function visitProperty ({ expr, lineno, segments }) {
       if (identVal.__type === 'Expression') {
         VARIABLE_NAME_LIST.push(ident.name)
         const beforeExpText = before + trimFirst(visitExpression(expr))
-        const expText = `${before}${segmentsText}: $${ident.name}`
+        const expText = `${before}${segmentsText}: $${ident.name};`
         PROPERTY_VAL_LIST.unshift('$' + ident.name)
         isProperty = false
         return beforeExpText + expText
@@ -275,6 +276,10 @@ function visitBinOp ({ op, left, right }) {
   const leftExp = left && left.toJSON()
   const rightExp = right && right.toJSON()
   return `${visitNode(leftExp)} ${OPEARTION_MAP[op] || op} ${visitNode(rightExp)}`
+}
+
+function visitUnaryOp ({ op, expr }) {
+  return `${OPEARTION_MAP[op] || op}(${visitExpression(expr)})`
 }
 
 function visitEach (node) {
