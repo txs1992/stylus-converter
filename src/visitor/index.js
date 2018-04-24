@@ -16,9 +16,9 @@ let isProperty = false
 let isExpression = false
 let isIfExpression = false
 let indentationLevel = 0
-const PROPERTY_KEY_List = []
-const PROPERTY_VAL_LIST = []
-const VARIABLE_NAME_LIST = []
+let PROPERTY_KEY_List = []
+let PROPERTY_VAL_LIST = []
+let VARIABLE_NAME_LIST = []
 
 const COMPIL_CONFIT = {
   scss: {
@@ -46,6 +46,7 @@ const TYPE_VISITOR_MAP = {
   Ident: visitIdent,
   Group: visitGroup,
   Import: visitImport,
+  UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
   Params: visitArguments,
   Property: visitProperty,
@@ -142,7 +143,7 @@ function visitProperty ({ expr, lineno, segments }) {
       if (identVal.__type === 'Expression') {
         VARIABLE_NAME_LIST.push(ident.name)
         const beforeExpText = before + trimFirst(visitExpression(expr))
-        const expText = `${before}${segmentsText}: $${ident.name}`
+        const expText = `${before}${segmentsText}: $${ident.name};`
         PROPERTY_VAL_LIST.unshift('$' + ident.name)
         isProperty = false
         return beforeExpText + expText
@@ -232,7 +233,7 @@ function visitIf (node, symbol = '@if ') {
     oldLineno = node.lineno
   }
   const condNode = node.cond && node.cond.toJSON() || { column: 0 }
-  const condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode)
+  const condText = visitNode(condNode)
   isIfExpression = false
   const block = visitBlock(node.block)
   let elseText = ''
@@ -264,7 +265,15 @@ function visitFunction (node) {
     returnSymbol = ''
     symbol = '@mixin'
   }
-  const fnName = `${symbol} ${node.name}(${visitArguments(node.params)})`
+  const params = nodesToJSON(node.params.nodes || [])
+  let paramsText = ''
+  params.forEach((node, idx) => {
+    const prefix = idx ? ', $' : '$'
+    const nodeText = visitNode(node)
+    VARIABLE_NAME_LIST.push(nodeText)
+    paramsText += prefix + nodeText
+  })
+  const fnName = `${symbol} ${node.name}(${paramsText})`
   const block = visitBlock(node.block)
   returnSymbol = ''
   isFunction = false
@@ -277,12 +286,17 @@ function visitBinOp ({ op, left, right }) {
   return `${visitNode(leftExp)} ${OPEARTION_MAP[op] || op} ${visitNode(rightExp)}`
 }
 
+function visitUnaryOp ({ op, expr }) {
+  return `${OPEARTION_MAP[op] || op}(${visitExpression(expr)})`
+}
+
 function visitEach (node) {
   let before = handleLineno(node.lineno)
   oldLineno = node.lineno
   const expr = node.expr && node.expr.toJSON()
   const exprNodes = nodesToJSON(expr.nodes)
   let exprText = `@each $${node.val} in `
+  VARIABLE_NAME_LIST.push(node.val)
   exprNodes.forEach((node, idx) => {
     const prefix = node.__type === 'Ident' ? '$' : ''
     const exp = prefix + visitNode(node)

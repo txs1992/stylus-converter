@@ -265,10 +265,11 @@ function visitIf(node) {
     oldLineno = node.lineno;
   }
   var condNode = node.cond && node.cond.toJSON() || { column: 0 };
-  var condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode);
+  var condText = visitNode(condNode);
   isIfExpression = false;
   var block = visitBlock(node.block);
   var elseText = '';
+  console.log(condText);
   if (node.elses && node.elses.length) {
     var elses = nodesToJSON(node.elses);
     elses.forEach(function (node) {
@@ -297,7 +298,15 @@ function visitFunction(node) {
     returnSymbol = '';
     symbol = '@mixin';
   }
-  var fnName = symbol + ' ' + node.name + '(' + visitArguments(node.params) + ')';
+  var params = nodesToJSON(node.params.nodes || []);
+  var paramsText = '';
+  params.forEach(function (node, idx) {
+    var prefix = idx ? ', $' : '$';
+    var nodeText = visitNode(node);
+    VARIABLE_NAME_LIST.push(nodeText);
+    paramsText += prefix + nodeText;
+  });
+  var fnName = symbol + ' ' + node.name + '(' + paramsText + ')';
   var block = visitBlock(node.block);
   returnSymbol = '';
   isFunction = false;
@@ -327,6 +336,7 @@ function visitEach(node) {
   var expr = node.expr && node.expr.toJSON();
   var exprNodes = nodesToJSON(expr.nodes);
   var exprText = '@each $' + node.val + ' in ';
+  VARIABLE_NAME_LIST.push(node.val);
   exprNodes.forEach(function (node, idx) {
     var prefix = node.__type === 'Ident' ? '$' : '';
     var exp = prefix + visitNode(node);
@@ -345,6 +355,9 @@ function visitEach(node) {
 function visitor(ast, option) {
   var result = visitNodes(ast.nodes) || '';
   oldLineno = 1;
+  PROPERTY_KEY_List = [];
+  PROPERTY_VAL_LIST = [];
+  VARIABLE_NAME_LIST = [];
   return result;
 }
 
