@@ -11,7 +11,7 @@
 @mixin default-border-radius($prop, $args) {
   -webkit-#{$prop}-radius: $args;
   -moz-#{$prop}-radius: $args;
-   #{$prop}-radius: $args;
+  #{$prop}-radius: $args;
 }
 
 body {

@@ -13,6 +13,7 @@ let isFunction = false
 let isProperty = false
 let isExpression = false
 let isIfExpression = false
+let indentationLevel = 0
 
 const COMPIL_CONFIT = {
   scss: {
@@ -29,6 +30,7 @@ const TYPE_VISITOR_MAP = {
   RGBA: visitRGBA,
   Unit: visitUnit,
   Call: visitCall,
+  Block: visitBlock,
   BinOp: visitBinOp,
   Ident: visitIdent,
   Group: visitGroup,
@@ -47,12 +49,12 @@ function handleLineno (lineno) {
   return repeatString('\n', lineno - oldLineno)
 }
 
-function handleColumn (column) {
-  return repeatString(' ', column - oldColumn)
+function getIndentation () {
+  return repeatString(' ', indentationLevel * 2)
 }
 
-function handleLinenoAndColumn ({ lineno, column }) {
-  return handleLineno(lineno) + handleColumn(column)
+function handleLinenoAndIndentation ({ lineno }) {
+  return handleLineno(lineno) + getIndentation()
 }
 
 function findNodesType (list, type) {
@@ -88,7 +90,7 @@ function visitImport (node) {
 }
 
 function visitSelector (node) {
-  let text = handleLinenoAndColumn(node)
+  let text = handleLinenoAndIndentation(node)
   oldLineno = node.lineno
   return text + visitNodes(node.segments)
 }
@@ -96,15 +98,16 @@ function visitSelector (node) {
 function visitGroup (node) {
   const selector = visitNodes(node.nodes)
   const blockEnd = findNodesType(node.nodes, 'Selector') && selector || ''
-  const endSymbol = handleColumn(node.block.column)
-  const block = visitBlock(node.block, endSymbol)
+  const block = visitBlock(node.block)
   return selector + block
 }
 
-function visitBlock (node, suffix = '') {
+function visitBlock (node) {
+  indentationLevel++
   const before = ' {'
-  const after = `\n${suffix}}`
+  const after = `\n${repeatString(' ', (indentationLevel - 1) * 2)}}`
   const text = visitNodes(node.nodes)
+  indentationLevel--
   return `${before}${text}${after}`
 }
 
@@ -118,9 +121,8 @@ function visitProperty ({ expr, lineno, segments }) {
   let before = handleLineno(lineno)
   oldLineno = lineno
   isProperty = true
-  const firstNode = segments.length && segments[0].toJSON() || {}
   const result = `${visitNodes(segments)}: ${visitExpression(expr)}`
-  before += handleColumn(firstNode.column)
+  before += getIndentation()
   isProperty = false
   return before + result + suffix
 }
@@ -144,7 +146,7 @@ function visitExpression (node) {
   if (!returnSymbol || isIfExpression) return result
   let before = handleLineno(node.lineno)
   oldLineno = node.lineno
-  before += handleColumn((node.column + 1) - result.replace(/\$/g, '').length)
+  before += getIndentation()
   return before + returnSymbol + result
 }
 
@@ -153,8 +155,7 @@ function visitCall ({ name, args, lineno, column }) {
   const argsText = visitArguments(args)
   oldLineno = lineno
   if (!isProperty) {
-    const exprLen = name.length + argsText.length + 1
-    before += handleColumn(column - exprLen)
+    before += getIndentation()
     before += '@include '
   }
   return `${before + name}(${argsText});`
@@ -188,15 +189,13 @@ function visitIf (node, symbol = '@if ') {
   isIfExpression = true
   const condNode = node.cond && node.cond.toJSON() || { column: 0 }
   const condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode)
-  const filterText = condText.replace(/\$/g, '')
   isIfExpression = false
-  const condLen = condNode.column - filterText.length + 1
   if (symbol === '@if ') {
     before += handleLineno(node.lineno)
     oldLineno = node.lineno
-    before += handleColumn(condLen)
+    before += getIndentation()
   }
-  const block = visitBlock(node.block, handleColumn(condLen))
+  const block = visitBlock(node.block)
   let elseText = ''
   if (node.elses && node.elses.length) {
     const elses = nodesToJSON(node.elses)
@@ -205,7 +204,7 @@ function visitIf (node, symbol = '@if ') {
       if (node.__type === 'If') {
         elseText += visitIf(node, ' @else if ')
       } else {
-        elseText += ' @else' + visitBlock(node, handleColumn(condLen))
+        elseText += ' @else' + visitBlock(node)
       }
     })
   }
@@ -245,25 +244,15 @@ function visitEach (node) {
   const expr = node.expr && node.expr.toJSON()
   const exprNodes = nodesToJSON(expr.nodes)
   let exprText = `@each $${node.val} in `
-  const filters = []
   exprNodes.forEach((node, idx) => {
     const prefix = node.__type === 'Ident' ? '$' : ''
     const exp = prefix + visitNode(node)
     exprText += idx ? `, ${exp}` : exp
-    const val = node.val && node.val.toJSON && node.val.toJSON() || {}
-    if (val.__type === 'Null') filters.push(exp)
   })
-  let filteredText = exprText
-  filters.forEach(filter => {
-    filteredText = filteredText.replace(filter, '-')
-  })
-  const replaceExpr = filteredText.replace(/\$|@|,/g, '')
   if (/\.\./.test(exprText)) {
     exprText = exprText.replace('@each', '@for').replace('..', 'through').replace('in', 'from')
   }
-  // for -> each, and default oldLineno = 1
-  const len = replaceExpr.length - 2
-  const blank = handleColumn(node.column - len)
+  const blank = getIndentation()
   before += blank
   const block = visitBlock(node.block, blank).replace(`$${node.key}`, '')
   return before + exprText + block

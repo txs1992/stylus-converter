@@ -21,12 +21,12 @@ function replaceFirstATSymbol(str) {
 }
 
 var oldLineno = 1;
-var oldColumn = 1;
 var returnSymbol = '';
 var isFunction = false;
 var isProperty = false;
 var isExpression = false;
 var isIfExpression = false;
+var indentationLevel = 0;
 
 var TYPE_VISITOR_MAP = {
   If: visitIf,
@@ -34,6 +34,7 @@ var TYPE_VISITOR_MAP = {
   RGBA: visitRGBA,
   Unit: visitUnit,
   Call: visitCall,
+  Block: visitBlock,
   BinOp: visitBinOp,
   Ident: visitIdent,
   Group: visitGroup,
@@ -52,15 +53,14 @@ function handleLineno(lineno) {
   return repeatString('\n', lineno - oldLineno);
 }
 
-function handleColumn(column) {
-  return repeatString(' ', column - oldColumn);
+function getIndentation() {
+  return repeatString(' ', indentationLevel * 2);
 }
 
-function handleLinenoAndColumn(_ref) {
-  var lineno = _ref.lineno,
-      column = _ref.column;
+function handleLinenoAndIndentation(_ref) {
+  var lineno = _ref.lineno;
 
-  return handleLineno(lineno) + handleColumn(column);
+  return handleLineno(lineno) + getIndentation();
 }
 
 function findNodesType(list, type) {
@@ -102,7 +102,7 @@ function visitImport(node) {
 }
 
 function visitSelector(node) {
-  var text = handleLinenoAndColumn(node);
+  var text = handleLinenoAndIndentation(node);
   oldLineno = node.lineno;
   return text + visitNodes(node.segments);
 }
@@ -110,17 +110,16 @@ function visitSelector(node) {
 function visitGroup(node) {
   var selector = visitNodes(node.nodes);
   var blockEnd = findNodesType(node.nodes, 'Selector') && selector || '';
-  var endSymbol = handleColumn(node.block.column);
-  var block = visitBlock(node.block, endSymbol);
+  var block = visitBlock(node.block);
   return selector + block;
 }
 
 function visitBlock(node) {
-  var suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-
+  indentationLevel++;
   var before = ' {';
-  var after = '\n' + suffix + '}';
+  var after = '\n' + repeatString(' ', (indentationLevel - 1) * 2) + '}';
   var text = visitNodes(node.nodes);
+  indentationLevel--;
   return '' + before + text + after;
 }
 
@@ -138,9 +137,8 @@ function visitProperty(_ref2) {
   var before = handleLineno(lineno);
   oldLineno = lineno;
   isProperty = true;
-  var firstNode = segments.length && segments[0].toJSON() || {};
   var result = visitNodes(segments) + ': ' + visitExpression(expr);
-  before += handleColumn(firstNode.column);
+  before += getIndentation();
   isProperty = false;
   return before + result + suffix;
 }
@@ -170,7 +168,7 @@ function visitExpression(node) {
   if (!returnSymbol || isIfExpression) return result;
   var before = handleLineno(node.lineno);
   oldLineno = node.lineno;
-  before += handleColumn(node.column + 1 - result.replace(/\$/g, '').length);
+  before += getIndentation();
   return before + returnSymbol + result;
 }
 
@@ -184,8 +182,7 @@ function visitCall(_ref4) {
   var argsText = visitArguments(args);
   oldLineno = lineno;
   if (!isProperty) {
-    var exprLen = name.length + argsText.length + 1;
-    before += handleColumn(column - exprLen);
+    before += getIndentation();
     before += '@include ';
   }
   return before + name + '(' + argsText + ');';
@@ -224,15 +221,13 @@ function visitIf(node) {
   isIfExpression = true;
   var condNode = node.cond && node.cond.toJSON() || { column: 0 };
   var condText = symbol.replace(/@|\s*@/g, '') + visitNode(condNode);
-  var filterText = condText.replace(/\$/g, '');
   isIfExpression = false;
-  var condLen = condNode.column - filterText.length + 1;
   if (symbol === '@if ') {
     before += handleLineno(node.lineno);
     oldLineno = node.lineno;
-    before += handleColumn(condLen);
+    before += getIndentation();
   }
-  var block = visitBlock(node.block, handleColumn(condLen));
+  var block = visitBlock(node.block);
   var elseText = '';
   if (node.elses && node.elses.length) {
     var elses = nodesToJSON(node.elses);
@@ -241,7 +236,7 @@ function visitIf(node) {
       if (node.__type === 'If') {
         elseText += visitIf(node, ' @else if ');
       } else {
-        elseText += ' @else' + visitBlock(node, handleColumn(condLen));
+        elseText += ' @else' + visitBlock(node);
       }
     });
   }
@@ -285,25 +280,15 @@ function visitEach(node) {
   var expr = node.expr && node.expr.toJSON();
   var exprNodes = nodesToJSON(expr.nodes);
   var exprText = '@each $' + node.val + ' in ';
-  var filters = [];
   exprNodes.forEach(function (node, idx) {
     var prefix = node.__type === 'Ident' ? '$' : '';
     var exp = prefix + visitNode(node);
     exprText += idx ? ', ' + exp : exp;
-    var val = node.val && node.val.toJSON && node.val.toJSON() || {};
-    if (val.__type === 'Null') filters.push(exp);
   });
-  var filteredText = exprText;
-  filters.forEach(function (filter) {
-    filteredText = filteredText.replace(filter, '-');
-  });
-  var replaceExpr = filteredText.replace(/\$|@|,/g, '');
   if (/\.\./.test(exprText)) {
     exprText = exprText.replace('@each', '@for').replace('..', 'through').replace('in', 'from');
   }
-  // for -> each, and default oldLineno = 1
-  var len = replaceExpr.length - 2;
-  var blank = handleColumn(node.column - len);
+  var blank = getIndentation();
   before += blank;
   var block = visitBlock(node.block, blank).replace('$' + node.key, '');
   return before + exprText + block;
