@@ -1,6 +1,5 @@
-import { get as _get } from 'noshjs'
-
 import {
+  _get,
   trimFirst,
   nodesToJSON,
   repeatString,
