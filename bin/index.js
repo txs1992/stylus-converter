@@ -46,7 +46,7 @@ function _get(obj, pathArray, defaultValue) {
   return value;
 }
 
-var autoprefixer = false;
+var autoprefixer = true;
 var oldLineno = 1;
 var returnSymbol = '';
 var isFunction = false;
@@ -410,7 +410,8 @@ function visitKeyframes(node) {
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
-function visitor(ast, option) {
+function visitor(ast, options) {
+  autoprefixer = options.autoprefixer == null ? true : options.autoprefixer;
   var result = visitNodes(ast.nodes) || '';
   oldLineno = 1;
   PROPERTY_KEY_LIST = [];
@@ -420,12 +421,11 @@ function visitor(ast, option) {
 }
 
 function converter(result) {
-  var option = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'scss';
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { transfrom: 'sass' };
 
   if (typeof result !== 'string') return result;
   var ast = new Parser(result).parse();
-  // console.log(JSON.stringify(ast))
-  return visitor(ast, option);
+  return visitor(ast, options);
 }
 
 module.exports = converter;

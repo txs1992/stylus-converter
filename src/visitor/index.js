@@ -7,7 +7,7 @@ import {
   replaceFirstATSymbol
 } from '../util.js'
 
-let autoprefixer = false
+let autoprefixer = true
 let oldLineno = 1
 let oldColumn = 1
 let transfrom = ''
@@ -354,8 +354,8 @@ function visitKeyframes (node) {
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
-export default function visitor (ast, option) {
-  transfrom = option
+export default function visitor (ast, options) {
+  autoprefixer = options.autoprefixer == null ? true : options.autoprefixer
   const result = visitNodes(ast.nodes) || ''
   oldLineno = 1
   PROPERTY_KEY_LIST = []
