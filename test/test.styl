@@ -1,3 +1,12 @@
+@media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px)
+  .foo
+    color: #100
+
+.foo
+  for i in 1..4
+    @media (min-width: 2*(i+7)px)
+      width: 100px*i
+
 keyframe-name = pulse
 default-width = 200px
 $val = 20

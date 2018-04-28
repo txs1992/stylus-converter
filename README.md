@@ -41,6 +41,15 @@ node src/test.js
 
 ### 转换前的 stylus 源码
 ```stylus
+@media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px)
+  .foo
+    color: #100
+
+.foo
+  for i in 1..4
+    @media (min-width: 2*(i+7)px)
+      width: 100px*i
+
 keyframe-name = pulse
 default-width = 200px
 $val = 20
@@ -90,6 +99,20 @@ body
 
 ### 转换后的 sass 源码
 ```sass
+@media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px) {
+  .foo {
+    color: #100;
+  }
+}
+
+.foo {
+  @for $i from 1 through 4 {
+    @media (min-width: 2 * ($i + 7 px)) {
+      width: 100px * $i;
+    }
+  }
+}
+
 $keyframe-name: pulse;
 $default-width: 200px;
 $val: 20;
@@ -113,9 +136,9 @@ $val: 20;
 }
 
 @function add($a, $b) {
-  @if $a > $b and $a > $b + $b {
+  @if $a > $b and ($a > $b + $b) {
     @return $a - $b
-  } @else if $a < $b or $b - $a > $a {
+  } @else if $a < $b or ($b - $a > $a) {
     @return $a + $b
   } @else {
     @return $a * $b
@@ -177,20 +200,22 @@ npm run dev
 
 ### stylus to scss
 
-- [x] @Import
-- [ ] @media
-- [x] @extend
 - [x] Mixins
+- [ ] @Block
+- [x] @Media
+- [x] @Import
+- [x] @Extend
+- [ ] Comments
 - [x] Variables
 - [x] Operators
 - [x] Selectors
 - [x] Iteration
 - [x] Functions
-- [x] @keyframes
-- [ ] @font-face
+- [x] @Keyframes
+- [ ] @Font-face
 - [x] CSS Literal
-- [x] Syntax Block
 - [x] Call Mixins
+- [x] Syntax Block
 - [x] Conditionals
 - [x] Cll Functions
 - [x] Interpolation
@@ -199,20 +224,23 @@ npm run dev
 
 ### stylus to less
 
-- [ ] @Import
-- [ ] @media
-- [ ] @extend
+
 - [ ] Mixins
+- [ ] @Block
+- [ ] @Media
+- [ ] @Import
+- [ ] @Extend
+- [ ] Comments
 - [ ] Variables
 - [ ] Operators
 - [ ] Selectors
 - [ ] Iteration
 - [ ] Functions
-- [ ] @keyframes
-- [ ] @font-face
+- [ ] @Keyframes
+- [ ] @Font-face
 - [ ] CSS Literal
-- [ ] Syntax Block
 - [ ] Call Mixins
+- [ ] Syntax Block
 - [ ] Conditionals
 - [ ] Cll Functions
 - [ ] Interpolation

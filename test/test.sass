@@ -1,3 +1,17 @@
+@media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px) {
+  .foo {
+    color: #100;
+  }
+}
+
+.foo {
+  @for $i from 1 through 4 {
+    @media (min-width: 2 * ($i + 7 px)) {
+      width: 100px * $i;
+    }
+  }
+}
+
 $keyframe-name: pulse;
 $default-width: 200px;
 $val: 20;
@@ -53,9 +67,9 @@ $val: 20;
 }
 
 @function add($a, $b) {
-  @if $a > $b and $a > $b + $b {
+  @if $a > $b and ($a > $b + $b) {
     @return $a - $b
-  } @else if $a < $b or $b - $a > $a {
+  } @else if $a < $b or ($b - $a > $a) {
     @return $a + $b
   } @else {
     @return $a * $b

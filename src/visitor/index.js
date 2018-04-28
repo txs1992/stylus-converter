@@ -56,8 +56,11 @@ const TYPE_VISITOR_MAP = {
   BinOp: visitBinOp,
   Ident: visitIdent,
   Group: visitGroup,
+  Query: visitQuery,
+  Media: visitMedia,
   Import: visitImport,
   Extend: visitExtend,
+  Feature: visitFeature,
   UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
   Params: visitArguments,
@@ -67,6 +70,7 @@ const TYPE_VISITOR_MAP = {
   Selector: visitSelector,
   Arguments: visitArguments,
   Keyframes: visitKeyframes,
+  QueryList: visitQueryList,
   Expression: visitExpression
 }
 
@@ -88,7 +92,9 @@ function findNodesType (list, type) {
 }
 
 function visitNode (node) {
-  const handler = TYPE_VISITOR_MAP[node.__type]
+  if (!node) return ''
+  const json = node.__type ? node : node.toJSON && node.toJSON()
+  const handler = TYPE_VISITOR_MAP[json.__type]
   return handler ? handler(node) : ''
 }
 
@@ -306,7 +312,9 @@ function visitFunction (node) {
 function visitBinOp ({ op, left, right }) {
   const leftExp = left && left.toJSON()
   const rightExp = right && right.toJSON()
-  return `${visitNode(leftExp)} ${OPEARTION_MAP[op] || op} ${visitNode(rightExp)}`
+  const isExp = rightExp.__type === 'Expression'
+  const expText = isExp ? `(${visitNode(rightExp)})`: visitNode(rightExp)
+  return `${visitNode(leftExp)} ${OPEARTION_MAP[op] || op} ${expText}`
 }
 
 function visitUnaryOp ({ op, expr }) {
@@ -359,6 +367,43 @@ function visitExtend (node) {
   oldLineno = node.lineno
   const text = visitNodes(node.selectors)
   return `${before}@extend ${trimFirst(text)};`
+}
+
+function visitQueryList (node) {
+  let text = ''
+  const nodes = nodesToJSON(node.nodes)
+  nodes.forEach((node, idx) => {
+    const nodeText = visitNode(node)
+    text += idx ? `, ${nodeText}` : nodeText
+  })
+  return text
+}
+
+function visitQuery (node) {
+  const type = visitNode(node.type)
+  const nodes = nodesToJSON(node.nodes)
+  let text = ''
+  nodes.forEach((node, idx) => {
+    const nodeText = visitNode(node)
+    text += idx ? ` and ${nodeText}` : nodeText
+  })
+  return type ? `${type} and ${text}` : text
+}
+
+function visitMedia (node) {
+  const before = handleLinenoAndIndentation(node)
+  oldLineno = node.lineno
+  const val = _get(node, ['val'], {})
+  const nodeVal = val.toJSON && val.toJSON() || {}
+  const valText = visitNode(nodeVal)
+  const block = visitBlock(node.block)
+  return `${before}@media ${valText + block}`
+}
+
+function visitFeature (node) {
+  const segmentsText = visitNodes(node.segments)
+  const expText = visitExpression(node.expr)
+  return `(${segmentsText}: ${expText})`
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree

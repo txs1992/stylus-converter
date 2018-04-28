@@ -77,8 +77,11 @@ var TYPE_VISITOR_MAP = {
   BinOp: visitBinOp,
   Ident: visitIdent,
   Group: visitGroup,
+  Query: visitQuery,
+  Media: visitMedia,
   Import: visitImport,
   Extend: visitExtend,
+  Feature: visitFeature,
   UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
   Params: visitArguments,
@@ -88,6 +91,7 @@ var TYPE_VISITOR_MAP = {
   Selector: visitSelector,
   Arguments: visitArguments,
   Keyframes: visitKeyframes,
+  QueryList: visitQueryList,
   Expression: visitExpression
 };
 
@@ -113,7 +117,9 @@ function findNodesType(list, type) {
 }
 
 function visitNode(node) {
-  var handler = TYPE_VISITOR_MAP[node.__type];
+  if (!node) return '';
+  var json = node.__type ? node : node.toJSON && node.toJSON();
+  var handler = TYPE_VISITOR_MAP[json.__type];
   return handler ? handler(node) : '';
 }
 
@@ -359,7 +365,9 @@ function visitBinOp(_ref6) {
 
   var leftExp = left && left.toJSON();
   var rightExp = right && right.toJSON();
-  return visitNode(leftExp) + ' ' + (OPEARTION_MAP[op] || op) + ' ' + visitNode(rightExp);
+  var isExp = rightExp.__type === 'Expression';
+  var expText = isExp ? '(' + visitNode(rightExp) + ')' : visitNode(rightExp);
+  return visitNode(leftExp) + ' ' + (OPEARTION_MAP[op] || op) + ' ' + expText;
 }
 
 function visitUnaryOp(_ref7) {
@@ -415,6 +423,43 @@ function visitExtend(node) {
   oldLineno = node.lineno;
   var text = visitNodes(node.selectors);
   return before + '@extend ' + trimFirst(text) + ';';
+}
+
+function visitQueryList(node) {
+  var text = '';
+  var nodes = nodesToJSON(node.nodes);
+  nodes.forEach(function (node, idx) {
+    var nodeText = visitNode(node);
+    text += idx ? ', ' + nodeText : nodeText;
+  });
+  return text;
+}
+
+function visitQuery(node) {
+  var type = visitNode(node.type);
+  var nodes = nodesToJSON(node.nodes);
+  var text = '';
+  nodes.forEach(function (node, idx) {
+    var nodeText = visitNode(node);
+    text += idx ? ' and ' + nodeText : nodeText;
+  });
+  return type ? type + ' and ' + text : text;
+}
+
+function visitMedia(node) {
+  var before = handleLinenoAndIndentation(node);
+  oldLineno = node.lineno;
+  var val = _get(node, ['val'], {});
+  var nodeVal = val.toJSON && val.toJSON() || {};
+  var valText = visitNode(nodeVal);
+  var block = visitBlock(node.block);
+  return before + '@media ' + (valText + block);
+}
+
+function visitFeature(node) {
+  var segmentsText = visitNodes(node.segments);
+  var expText = visitExpression(node.expr);
+  return '(' + segmentsText + ': ' + expText + ')';
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
