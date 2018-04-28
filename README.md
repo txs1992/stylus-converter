@@ -47,7 +47,7 @@ node src/test.js
 
 .foo
   for i in 1..4
-    @media (min-width: 2*(i+7)px)
+    @media (min-width: 2 * (i + 7) px)
       width: 100px*i
 
 keyframe-name = pulse
@@ -107,7 +107,7 @@ body
 
 .foo {
   @for $i from 1 through 4 {
-    @media (min-width: 2 * ($i + 7 px)) {
+    @media (min-width: 2 * ($i + 7) px) {
       width: 100px * $i;
     }
   }
