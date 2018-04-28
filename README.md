@@ -173,48 +173,48 @@ npm run dev
 ```
 
 
-## stylus converter 进度表
+## stylus 转换器进度表 stylus Converter Schedule
 
 ### stylus to scss
 
-- [x] 转换变量
-- [x] 转换运算符
-- [x] 转换选择器
-- [x] 转换语法块
-- [x] 转换导入语法
-- [x] 转换条件语句
-- [x] 转换自定义函数
-- [x] 转换 css property
-- [x] 转换表达式
-- [x] 转换参数列表
-- [x] 转换
-- [x] 转换插值
-- [x] 转换循环语法
-- [ ] 转换 extend
-- [ ] 转换 Feature
-- [x] 转换 keyframes
-- [x] 转换 CSS 字面量
-- [x] 转换 call mixin
-- [x] 转换 call function
+- [x] @Import
+- [ ] @media
+- [x] @extend
+- [x] Mixins
+- [x] Variables
+- [x] Operators
+- [x] Selectors
+- [x] Iteration
+- [x] Functions
+- [x] @keyframes
+- [ ] @font-face
+- [x] CSS Literal
+- [x] Syntax Block
+- [x] Call Mixins
+- [x] Conditionals
+- [x] Cll Functions
+- [x] Interpolation
+- [x] Keyword Arguments
+- [x] Built-in Functions
 
 ### stylus to less
 
-- [ ] 转换变量
-- [ ] 转换运算符
-- [ ] 转换选择器
-- [ ] 转换语法块
-- [ ] 转换导入语法
-- [ ] 转换条件语句
-- [ ] 转换自定义函数
-- [ ] 转换 css property
-- [ ] 转换表达式
-- [ ] 转换参数列表
-- [ ] 转换 mixin
-- [ ] 转换插值
-- [ ] 转换循环语法
-- [ ] 转换 extend
-- [ ] 转换 Feature
-- [ ] 转换 CSS 字面量
-- [ ] 转换 keyframes
-- [ ] 转换 call mixin
-- [ ] 转换 call function
+- [ ] @Import
+- [ ] @media
+- [ ] @extend
+- [ ] Mixins
+- [ ] Variables
+- [ ] Operators
+- [ ] Selectors
+- [ ] Iteration
+- [ ] Functions
+- [ ] @keyframes
+- [ ] @font-face
+- [ ] CSS Literal
+- [ ] Syntax Block
+- [ ] Call Mixins
+- [ ] Conditionals
+- [ ] Cll Functions
+- [ ] Interpolation
+- [ ] Keyword Arguments
+- [ ] Built-in Functions
