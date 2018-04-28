@@ -42,112 +42,6 @@ $val: 20;
   }
 }
 
-@-webkit-keyframes auto-color {
-  0% {
-    color: red;
-  }
-  50% {
-    color: blue;
-  }
-  100% {
-    color: yellow;
-  }
-}
-
-@-moz-keyframes auto-color {
-  0% {
-    color: red;
-  }
-  50% {
-    color: blue;
-  }
-  100% {
-    color: yellow;
-  }
-}
-
-@-ms-keyframes auto-color {
-  0% {
-    color: red;
-  }
-  50% {
-    color: blue;
-  }
-  100% {
-    color: yellow;
-  }
-}
-
-@-o-keyframes auto-color {
-  0% {
-    color: red;
-  }
-  50% {
-    color: blue;
-  }
-  100% {
-    color: yellow;
-  }
-}
-
-@keyframes auto-color {
-  0% {
-    color: red;
-  }
-  50% {
-    color: blue;
-  }
-  100% {
-    color: yellow;
-  }
-}
-
-@-webkit-keyframes foo {
-  from {
-    color: black;
-  }
-  to {
-    color: white;
-  }
-}
-
-@-moz-keyframes foo {
-  from {
-    color: black;
-  }
-  to {
-    color: white;
-  }
-}
-
-@-ms-keyframes foo {
-  from {
-    color: black;
-  }
-  to {
-    color: white;
-  }
-}
-
-@-o-keyframes foo {
-  from {
-    color: black;
-  }
-  to {
-    color: white;
-  }
-}
-
-@keyframes foo {
-  from {
-    color: black;
-  }
-  to {
-    color: white;
-  }
-}
-
-
 #logo {
   $default-border: 1px solid #ccc;
   border: $default-border;
@@ -174,7 +68,13 @@ $val: 20;
   #{$prop}-radius: $args;
 }
 
+.message {
+  margin: 10px;
+  border: 1px solid #eee;
+}
+
 body {
+  @extend .message;
   padding: add(10px, 5);
   @include default-border-radius(5px);
 

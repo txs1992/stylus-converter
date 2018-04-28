@@ -50,21 +50,6 @@ $val = 20
     {20% * i}
       opacity (i / $val)
 
-@keyframes auto-color
-  0%
-    color red
-  50%
-    color blue
-  100%
-    color yellow
-
-@keyframes foo
-  from
-    color: black
-  to
-    color: white
-
-
 #logo
   default-border = 1px solid #ccc
   border default-border
@@ -86,7 +71,12 @@ default-border-radius(prop, args)
   -moz-{prop}-radius args
   {prop}-radius args
 
+.message
+  margin: 10px
+  border: 1px solid #eee
+
 body
+  @extend .message
   padding add(10px, 5)
   default-border-radius(5px)
 
@@ -104,38 +94,6 @@ $keyframe-name: pulse;
 $default-width: 200px;
 $val: 20;
 
-@-webkit-keyframes #{$keyframe-name} {
-  @for $i from 0 through 5 {
-    #{20% * $i} {
-      opacity: $i / $val;
-    }
-  }
-}
-
-@-moz-keyframes #{$keyframe-name} {
-  @for $i from 0 through 5 {
-    #{20% * $i} {
-      opacity: $i / $val;
-    }
-  }
-}
-
-@-ms-keyframes #{$keyframe-name} {
-  @for $i from 0 through 5 {
-    #{20% * $i} {
-      opacity: $i / $val;
-    }
-  }
-}
-
-@-o-keyframes #{$keyframe-name} {
-  @for $i from 0 through 5 {
-    #{20% * $i} {
-      opacity: $i / $val;
-    }
-  }
-}
-
 @keyframes #{$keyframe-name} {
   @for $i from 0 through 5 {
     #{20% * $i} {
@@ -143,112 +101,6 @@ $val: 20;
     }
   }
 }
-
-@-webkit-keyframes auto-color {
-  0% {
-    color: red;
-  }
-  50% {
-    color: blue;
-  }
-  100% {
-    color: yellow;
-  }
-}
-
-@-moz-keyframes auto-color {
-  0% {
-    color: red;
-  }
-  50% {
-    color: blue;
-  }
-  100% {
-    color: yellow;
-  }
-}
-
-@-ms-keyframes auto-color {
-  0% {
-    color: red;
-  }
-  50% {
-    color: blue;
-  }
-  100% {
-    color: yellow;
-  }
-}
-
-@-o-keyframes auto-color {
-  0% {
-    color: red;
-  }
-  50% {
-    color: blue;
-  }
-  100% {
-    color: yellow;
-  }
-}
-
-@keyframes auto-color {
-  0% {
-    color: red;
-  }
-  50% {
-    color: blue;
-  }
-  100% {
-    color: yellow;
-  }
-}
-
-@-webkit-keyframes foo {
-  from {
-    color: black;
-  }
-  to {
-    color: white;
-  }
-}
-
-@-moz-keyframes foo {
-  from {
-    color: black;
-  }
-  to {
-    color: white;
-  }
-}
-
-@-ms-keyframes foo {
-  from {
-    color: black;
-  }
-  to {
-    color: white;
-  }
-}
-
-@-o-keyframes foo {
-  from {
-    color: black;
-  }
-  to {
-    color: white;
-  }
-}
-
-@keyframes foo {
-  from {
-    color: black;
-  }
-  to {
-    color: white;
-  }
-}
-
 
 #logo {
   $default-border: 1px solid #ccc;
@@ -276,7 +128,13 @@ $val: 20;
   #{$prop}-radius: $args;
 }
 
+.message {
+  margin: 10px;
+  border: 1px solid #eee;
+}
+
 body {
+  @extend .message;
   padding: add(10px, 5);
   @include default-border-radius(5px);
 
@@ -331,12 +189,11 @@ npm run dev
 - [x] 转换参数列表
 - [x] 转换
 - [x] 转换插值
-- [ ] 转换 url()
 - [x] 转换循环语法
 - [ ] 转换 extend
 - [ ] 转换 Feature
-- [ ] 转换 keyframes
-- [ ] 转换 CSS 字面量
+- [x] 转换 keyframes
+- [x] 转换 CSS 字面量
 - [x] 转换 call mixin
 - [x] 转换 call function
 
@@ -354,7 +211,6 @@ npm run dev
 - [ ] 转换参数列表
 - [ ] 转换 mixin
 - [ ] 转换插值
-- [ ] 转换 url()
 - [ ] 转换循环语法
 - [ ] 转换 extend
 - [ ] 转换 Feature

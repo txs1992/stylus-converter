@@ -56,3 +56,20 @@ describe('测试 keyframes', () => {
     })
   })
 })
+
+
+describe('测试 @Extend', () => {
+  it('test @extend', done => {
+    fs.readFile(getPath('./stylus/extend.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/extend.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
