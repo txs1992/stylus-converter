@@ -71,7 +71,12 @@ default-border-radius(prop, args)
   -moz-{prop}-radius args
   {prop}-radius args
 
+.message
+  margin: 10px
+  border: 1px solid #eee
+
 body
+  @extend .message
   padding add(10px, 5)
   default-border-radius(5px)
 
@@ -123,7 +128,13 @@ $val: 20;
   #{$prop}-radius: $args;
 }
 
+.message {
+  margin: 10px;
+  border: 1px solid #eee;
+}
+
 body {
+  @extend .message;
   padding: add(10px, 5);
   @include default-border-radius(5px);
 
