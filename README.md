@@ -41,7 +41,29 @@ node src/test.js
 
 ### 转换前的 stylus 源码
 ```stylus
+keyframe-name = pulse
 default-width = 200px
+$val = 20
+
+@keyframes { $keyframe-name }
+  for i in 0..5
+    {20% * i}
+      opacity (i / $val)
+
+@keyframes auto-color
+  0%
+    color red
+  50%
+    color blue
+  100%
+    color yellow
+
+@keyframes foo
+  from
+    color: black
+  to
+    color: white
+
 
 #logo
   default-border = 1px solid #ccc
@@ -78,7 +100,155 @@ body
 
 ### 转换后的 sass 源码
 ```sass
+$keyframe-name: pulse;
 $default-width: 200px;
+$val: 20;
+
+@-webkit-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-moz-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-ms-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-o-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-webkit-keyframes auto-color {
+  0% {
+    color: red;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: yellow;
+  }
+}
+
+@-moz-keyframes auto-color {
+  0% {
+    color: red;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: yellow;
+  }
+}
+
+@-ms-keyframes auto-color {
+  0% {
+    color: red;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: yellow;
+  }
+}
+
+@-o-keyframes auto-color {
+  0% {
+    color: red;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: yellow;
+  }
+}
+
+@keyframes auto-color {
+  0% {
+    color: red;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: yellow;
+  }
+}
+
+@-webkit-keyframes foo {
+  from {
+    color: black;
+  }
+  to {
+    color: white;
+  }
+}
+
+@-moz-keyframes foo {
+  from {
+    color: black;
+  }
+  to {
+    color: white;
+  }
+}
+
+@-ms-keyframes foo {
+  from {
+    color: black;
+  }
+  to {
+    color: white;
+  }
+}
+
+@-o-keyframes foo {
+  from {
+    color: black;
+  }
+  to {
+    color: white;
+  }
+}
+
+@keyframes foo {
+  from {
+    color: black;
+  }
+  to {
+    color: white;
+  }
+}
+
 
 #logo {
   $default-border: 1px solid #ccc;
@@ -121,6 +291,8 @@ body {
   }
 }
 ```
+
+> 如果你不想你转换的 @keyframes 添加默认前缀，请设置 `options.autoprefixer = false`
 
 
 ## 搭建开发环境
