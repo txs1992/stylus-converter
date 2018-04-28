@@ -6,5 +6,6 @@ import { nodesToJSON } from './util.js'
 export default function converter (result, option = 'scss') {
   if (typeof result !== 'string') return result
   const ast = new Parser(result).parse()
+  // console.log(JSON.stringify(ast))
   return visitor(ast, option)
 }

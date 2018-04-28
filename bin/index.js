@@ -2,7 +2,6 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var noshjs = require('noshjs');
 var Parser = _interopDefault(require('stylus/lib/parser.js'));
 
 function repeatString(str, num) {
@@ -25,10 +24,34 @@ function replaceFirstATSymbol(str) {
   return str.replace(/^\$|/, temp);
 }
 
+function getCharLength(str, char) {
+  return str.split(char).length - 1;
+}
+
+function _get(obj, pathArray, defaultValue) {
+  if (obj == null) return defaultValue;
+
+  var value = obj;
+
+  pathArray = [].concat(pathArray);
+
+  for (var i = 0; i < pathArray.length; i += 1) {
+    var key = pathArray[i];
+    value = value[key];
+    if (value == null) {
+      return defaultValue;
+    }
+  }
+
+  return value;
+}
+
+var autoprefixer = false;
 var oldLineno = 1;
 var returnSymbol = '';
 var isFunction = false;
 var isProperty = false;
+var isKeyframes = false;
 var isExpression = false;
 var isIfExpression = false;
 var indentationLevel = 0;
@@ -41,6 +64,8 @@ var OPEARTION_MAP = {
   '!': 'not',
   '||': 'or'
 };
+
+var KEYFRAMES_LIST = ['@-webkit-keyframes ', '@-moz-keyframes ', '@-ms-keyframes ', '@-o-keyframes ', '@keyframes '];
 
 var TYPE_VISITOR_MAP = {
   If: visitIf,
@@ -61,6 +86,7 @@ var TYPE_VISITOR_MAP = {
   'Function': visitFunction,
   Selector: visitSelector,
   Arguments: visitArguments,
+  Keyframes: visitKeyframes,
   Expression: visitExpression
 };
 
@@ -124,8 +150,11 @@ function visitSelector(node) {
 
 function visitGroup(node) {
   var selector = visitNodes(node.nodes);
-  var blockEnd = findNodesType(node.nodes, 'Selector') && selector || '';
   var block = visitBlock(node.block);
+  if (isKeyframes && /-|\*|\+|\/|\$/.test(selector)) {
+    var len = getCharLength(selector, ' ') - 2;
+    return '\n' + repeatString(' ', len) + '#{' + trimFirst(selector) + '}' + block;
+  }
   return selector + block;
 }
 
@@ -154,11 +183,11 @@ function visitProperty(_ref2) {
   isProperty = true;
   var segmentsText = visitNodes(segments);
   PROPERTY_KEY_LIST.unshift(segmentsText);
-  if (noshjs.get(expr, ['nodes', 'length']) === 1) {
+  if (_get(expr, ['nodes', 'length']) === 1) {
     var expNode = expr.nodes[0];
     var ident = expNode.toJSON && expNode.toJSON() || {};
     if (ident.__type === 'Ident') {
-      var identVal = noshjs.get(ident, ['val', 'toJSON']) && ident.val.toJSON() || {};
+      var identVal = _get(ident, ['val', 'toJSON']) && ident.val.toJSON() || {};
       if (identVal.__type === 'Expression') {
         VARIABLE_NAME_LIST.push(ident.name);
         var beforeExpText = before + trimFirst(visitExpression(expr));
@@ -186,10 +215,10 @@ function visitIdent(_ref3) {
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
       var len = PROPERTY_KEY_LIST.indexOf(name);
-      if (len > -1) return PROPERTY_VAL_LIST[len];
+      if (len > -1) return replaceFirstATSymbol(PROPERTY_VAL_LIST[len]);
     }
     if (mixin) return '#{$' + name + '}';
-    return VARIABLE_NAME_LIST.indexOf(name) > -1 ? '$' + name : name;
+    return VARIABLE_NAME_LIST.indexOf(name) > -1 ? replaceFirstATSymbol(name) : name;
   }
   if (identVal.__type === 'Expression') {
     var before = handleLinenoAndIndentation(identVal);
@@ -200,7 +229,7 @@ function visitIdent(_ref3) {
       expText += idx ? ' ' + visitNode(node) : visitNode(node);
     });
     VARIABLE_NAME_LIST.push(name);
-    return before + '$' + name + ': ' + expText + ';';
+    return '' + before + replaceFirstATSymbol(name) + ': ' + expText + ';';
   }
   if (identVal.__type === 'Function') return visitFunction(identVal);
   var identText = visitNode(identVal);
@@ -211,7 +240,12 @@ function visitExpression(node) {
   isExpression = true;
   var before = handleLinenoAndIndentation(node);
   oldLineno = node.lineno;
-  var result = visitNodes(node.nodes);
+  var result = '';
+  var nodes = nodesToJSON(node.nodes);
+  nodes.forEach(function (node, idx) {
+    var nodeText = visitNode(node);
+    result += idx ? ' ' + nodeText : nodeText;
+  });
   isExpression = false;
   if (!returnSymbol || isIfExpression) return result;
   return before + returnSymbol + result;
@@ -355,6 +389,26 @@ function visitEach(node) {
   return before + exprText + block;
 }
 
+function visitKeyframes(node) {
+  isKeyframes = true;
+  var before = handleLinenoAndIndentation(node);
+  oldLineno = node.lineno;
+  var resultText = '';
+  var name = visitNodes(node.segments);
+  var isMixin = !!findNodesType(node.segments, 'Expression');
+  var block = visitBlock(node.block);
+  var text = isMixin ? '#{' + name + '}' + block : name + block;
+  if (autoprefixer) {
+    KEYFRAMES_LIST.forEach(function (name) {
+      resultText += before + name + text;
+    });
+  } else {
+    resultText += before + '@keyframes ' + text;
+  }
+  isKeyframes = false;
+  return resultText;
+}
+
 // 处理 stylus 语法树；handle stylus Syntax Tree
 function visitor(ast, option) {
   var result = visitNodes(ast.nodes) || '';
@@ -370,6 +424,7 @@ function converter(result) {
 
   if (typeof result !== 'string') return result;
   var ast = new Parser(result).parse();
+  // console.log(JSON.stringify(ast))
   return visitor(ast, option);
 }
 

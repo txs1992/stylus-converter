@@ -1,0 +1,762 @@
+{
+  "__type": "Root",
+  "nodes": [
+    {
+      "__type": "Ident",
+      "name": "$keyframe-name",
+      "val": {
+        "__type": "Expression",
+        "lineno": 1,
+        "column": 18,
+        "nodes": [
+          {
+            "__type": "Ident",
+            "name": "pulse",
+            "val": {
+              "__type": "Null"
+            },
+            "mixin": false,
+            "lineno": 1,
+            "column": 18
+          }
+        ]
+      },
+      "mixin": false,
+      "lineno": 1,
+      "column": 18
+    },
+    {
+      "__type": "Ident",
+      "name": "$val",
+      "val": {
+        "__type": "Expression",
+        "lineno": 2,
+        "column": 8,
+        "nodes": [
+          {
+            "__type": "Unit",
+            "val": 50,
+            "lineno": 2,
+            "column": 8
+          }
+        ]
+      },
+      "mixin": false,
+      "lineno": 2,
+      "column": 8
+    },
+    {
+      "__type": "Keyframes",
+      "segments": [
+        {
+          "__type": "Expression",
+          "lineno": 4,
+          "column": 14,
+          "nodes": [
+            {
+              "__type": "Ident",
+              "name": "$keyframe-name",
+              "val": {
+                "__type": "Null"
+              },
+              "mixin": false,
+              "lineno": 4,
+              "column": 14
+            }
+          ]
+        }
+      ],
+      "prefix": "official",
+      "block": {
+        "__type": "Block",
+        "scope": true,
+        "lineno": 4,
+        "column": 29,
+        "nodes": [
+          {
+            "__type": "Each",
+            "val": "i",
+            "expr": {
+              "__type": "Expression",
+              "lineno": 5,
+              "column": 15,
+              "nodes": [
+                {
+                  "__type": "BinOp",
+                  "left": {
+                    "__type": "Unit",
+                    "val": 0,
+                    "lineno": 5,
+                    "column": 12
+                  },
+                  "right": {
+                    "__type": "Unit",
+                    "val": 2,
+                    "lineno": 5,
+                    "column": 15
+                  },
+                  "op": "..",
+                  "lineno": 5,
+                  "column": 15
+                }
+              ]
+            },
+            "block": {
+              "__type": "Block",
+              "scope": false,
+              "lineno": 5,
+              "column": 15,
+              "nodes": [
+                {
+                  "__type": "Group",
+                  "nodes": [
+                    {
+                      "__type": "Selector",
+                      "inherits": true,
+                      "segments": [
+                        {
+                          "__type": "Expression",
+                          "lineno": 6,
+                          "column": 12,
+                          "nodes": [
+                            {
+                              "__type": "BinOp",
+                              "left": {
+                                "__type": "Unit",
+                                "val": 50,
+                                "type": "%",
+                                "lineno": 6,
+                                "column": 6
+                              },
+                              "right": {
+                                "__type": "Ident",
+                                "name": "i",
+                                "val": {
+                                  "__type": "Null"
+                                },
+                                "mixin": false,
+                                "lineno": 6,
+                                "column": 12
+                              },
+                              "op": "*",
+                              "lineno": 6,
+                              "column": 12
+                            }
+                          ]
+                        }
+                      ],
+                      "optional": false,
+                      "lineno": 6,
+                      "column": 12
+                    }
+                  ],
+                  "block": {
+                    "__type": "Block",
+                    "scope": true,
+                    "lineno": 6,
+                    "column": 13,
+                    "nodes": [
+                      {
+                        "__type": "Property",
+                        "segments": [
+                          {
+                            "__type": "Ident",
+                            "name": "opacity",
+                            "val": {
+                              "__type": "Null"
+                            },
+                            "mixin": false,
+                            "lineno": 7,
+                            "column": 7
+                          }
+                        ],
+                        "lineno": 7,
+                        "column": 7,
+                        "expr": {
+                          "__type": "Expression",
+                          "lineno": 7,
+                          "column": 20,
+                          "nodes": [
+                            {
+                              "__type": "Expression",
+                              "lineno": 7,
+                              "column": 20,
+                              "nodes": [
+                                {
+                                  "__type": "Expression",
+                                  "lineno": 7,
+                                  "column": 20,
+                                  "nodes": [
+                                    {
+                                      "__type": "BinOp",
+                                      "left": {
+                                        "__type": "Ident",
+                                        "name": "i",
+                                        "val": {
+                                          "__type": "Null"
+                                        },
+                                        "mixin": false,
+                                        "lineno": 7,
+                                        "column": 16
+                                      },
+                                      "right": {
+                                        "__type": "Ident",
+                                        "name": "$val",
+                                        "val": {
+                                          "__type": "Null"
+                                        },
+                                        "mixin": false,
+                                        "lineno": 7,
+                                        "column": 20
+                                      },
+                                      "op": "/",
+                                      "lineno": 7,
+                                      "column": 20
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "lineno": 5,
+                  "column": 16
+                }
+              ]
+            },
+            "lineno": 5,
+            "column": 15
+          }
+        ]
+      },
+      "lineno": 4,
+      "column": 29
+    },
+    {
+      "__type": "Keyframes",
+      "segments": [
+        {
+          "__type": "Literal",
+          "val": "foo",
+          "string": "foo",
+          "prefixed": false,
+          "lineno": 9,
+          "column": 12
+        }
+      ],
+      "prefix": "official",
+      "block": {
+        "__type": "Block",
+        "scope": true,
+        "lineno": 9,
+        "column": 12,
+        "nodes": [
+          {
+            "__type": "Group",
+            "nodes": [
+              {
+                "__type": "Selector",
+                "inherits": true,
+                "segments": [
+                  {
+                    "__type": "Literal",
+                    "val": "from",
+                    "string": "from",
+                    "prefixed": false,
+                    "lineno": 10,
+                    "column": 3
+                  }
+                ],
+                "optional": false,
+                "lineno": 10,
+                "column": 3
+              }
+            ],
+            "block": {
+              "__type": "Block",
+              "scope": true,
+              "lineno": 10,
+              "column": 3,
+              "nodes": [
+                {
+                  "__type": "Property",
+                  "segments": [
+                    {
+                      "__type": "Ident",
+                      "name": "color",
+                      "val": {
+                        "__type": "Null"
+                      },
+                      "mixin": false,
+                      "lineno": 11,
+                      "column": 5
+                    }
+                  ],
+                  "lineno": 11,
+                  "column": 5,
+                  "expr": {
+                    "__type": "Expression",
+                    "lineno": 11,
+                    "column": 11,
+                    "nodes": [
+                      {
+                        "__type": "Ident",
+                        "name": "black",
+                        "val": {
+                          "__type": "Null"
+                        },
+                        "mixin": false,
+                        "lineno": 11,
+                        "column": 11
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "lineno": 9,
+            "column": 15
+          },
+          {
+            "__type": "Group",
+            "nodes": [
+              {
+                "__type": "Selector",
+                "inherits": true,
+                "segments": [
+                  {
+                    "__type": "Literal",
+                    "val": "to",
+                    "string": "to",
+                    "prefixed": false,
+                    "lineno": 12,
+                    "column": 3
+                  }
+                ],
+                "optional": false,
+                "lineno": 12,
+                "column": 3
+              }
+            ],
+            "block": {
+              "__type": "Block",
+              "scope": true,
+              "lineno": 12,
+              "column": 3,
+              "nodes": [
+                {
+                  "__type": "Property",
+                  "segments": [
+                    {
+                      "__type": "Ident",
+                      "name": "color",
+                      "val": {
+                        "__type": "Null"
+                      },
+                      "mixin": false,
+                      "lineno": 13,
+                      "column": 5
+                    }
+                  ],
+                  "lineno": 13,
+                  "column": 5,
+                  "expr": {
+                    "__type": "Expression",
+                    "lineno": 13,
+                    "column": 11,
+                    "nodes": [
+                      {
+                        "__type": "Ident",
+                        "name": "white",
+                        "val": {
+                          "__type": "Null"
+                        },
+                        "mixin": false,
+                        "lineno": 13,
+                        "column": 11
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "lineno": 11,
+            "column": 16
+          }
+        ]
+      },
+      "lineno": 9,
+      "column": 12
+    },
+    {
+      "__type": "Keyframes",
+      "segments": [
+        {
+          "__type": "Literal",
+          "val": "auto-color",
+          "string": "auto-color",
+          "prefixed": false,
+          "lineno": 15,
+          "column": 12
+        }
+      ],
+      "prefix": "official",
+      "block": {
+        "__type": "Block",
+        "scope": true,
+        "lineno": 15,
+        "column": 12,
+        "nodes": [
+          {
+            "__type": "Group",
+            "nodes": [
+              {
+                "__type": "Selector",
+                "inherits": true,
+                "segments": [
+                  {
+                    "__type": "Literal",
+                    "val": "0%",
+                    "string": "0%",
+                    "prefixed": false,
+                    "lineno": 16,
+                    "column": 3
+                  }
+                ],
+                "optional": false,
+                "lineno": 16,
+                "column": 3
+              }
+            ],
+            "block": {
+              "__type": "Block",
+              "scope": true,
+              "lineno": 16,
+              "column": 3,
+              "nodes": [
+                {
+                  "__type": "Property",
+                  "segments": [
+                    {
+                      "__type": "Ident",
+                      "name": "color",
+                      "val": {
+                        "__type": "Null"
+                      },
+                      "mixin": false,
+                      "lineno": 17,
+                      "column": 5
+                    }
+                  ],
+                  "lineno": 17,
+                  "column": 5,
+                  "expr": {
+                    "__type": "Expression",
+                    "lineno": 17,
+                    "column": 11,
+                    "nodes": [
+                      {
+                        "__type": "Ident",
+                        "name": "red",
+                        "val": {
+                          "__type": "Null"
+                        },
+                        "mixin": false,
+                        "lineno": 17,
+                        "column": 11
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "lineno": 15,
+            "column": 22
+          },
+          {
+            "__type": "Group",
+            "nodes": [
+              {
+                "__type": "Selector",
+                "inherits": true,
+                "segments": [
+                  {
+                    "__type": "Literal",
+                    "val": "50%",
+                    "string": "50%",
+                    "prefixed": false,
+                    "lineno": 18,
+                    "column": 3
+                  }
+                ],
+                "optional": false,
+                "lineno": 18,
+                "column": 3
+              }
+            ],
+            "block": {
+              "__type": "Block",
+              "scope": true,
+              "lineno": 18,
+              "column": 3,
+              "nodes": [
+                {
+                  "__type": "Property",
+                  "segments": [
+                    {
+                      "__type": "Ident",
+                      "name": "color",
+                      "val": {
+                        "__type": "Null"
+                      },
+                      "mixin": false,
+                      "lineno": 19,
+                      "column": 5
+                    }
+                  ],
+                  "lineno": 19,
+                  "column": 5,
+                  "expr": {
+                    "__type": "Expression",
+                    "lineno": 19,
+                    "column": 11,
+                    "nodes": [
+                      {
+                        "__type": "Ident",
+                        "name": "blue",
+                        "val": {
+                          "__type": "Null"
+                        },
+                        "mixin": false,
+                        "lineno": 19,
+                        "column": 11
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "lineno": 17,
+            "column": 14
+          },
+          {
+            "__type": "Group",
+            "nodes": [
+              {
+                "__type": "Selector",
+                "inherits": true,
+                "segments": [
+                  {
+                    "__type": "Literal",
+                    "val": "100%",
+                    "string": "100%",
+                    "prefixed": false,
+                    "lineno": 20,
+                    "column": 3
+                  }
+                ],
+                "optional": false,
+                "lineno": 20,
+                "column": 3
+              }
+            ],
+            "block": {
+              "__type": "Block",
+              "scope": true,
+              "lineno": 20,
+              "column": 3,
+              "nodes": [
+                {
+                  "__type": "Property",
+                  "segments": [
+                    {
+                      "__type": "Ident",
+                      "name": "color",
+                      "val": {
+                        "__type": "Null"
+                      },
+                      "mixin": false,
+                      "lineno": 21,
+                      "column": 5
+                    }
+                  ],
+                  "lineno": 21,
+                  "column": 5,
+                  "expr": {
+                    "__type": "Expression",
+                    "lineno": 21,
+                    "column": 11,
+                    "nodes": [
+                      {
+                        "__type": "Ident",
+                        "name": "yellow",
+                        "val": {
+                          "__type": "Null"
+                        },
+                        "mixin": false,
+                        "lineno": 21,
+                        "column": 11
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "lineno": 19,
+            "column": 15
+          }
+        ]
+      },
+      "lineno": 15,
+      "column": 12
+    },
+    {
+      "__type": "Group",
+      "nodes": [
+        {
+          "__type": "Selector",
+          "inherits": true,
+          "segments": [
+            {
+              "__type": "Literal",
+              "val": "div",
+              "string": "div",
+              "prefixed": false,
+              "lineno": 23,
+              "column": 1
+            }
+          ],
+          "optional": false,
+          "lineno": 23,
+          "column": 1
+        }
+      ],
+      "block": {
+        "__type": "Block",
+        "scope": true,
+        "lineno": 23,
+        "column": 1,
+        "nodes": [
+          {
+            "__type": "Property",
+            "segments": [
+              {
+                "__type": "Ident",
+                "name": "width",
+                "val": {
+                  "__type": "Null"
+                },
+                "mixin": false,
+                "lineno": 24,
+                "column": 3
+              }
+            ],
+            "lineno": 24,
+            "column": 3,
+            "expr": {
+              "__type": "Expression",
+              "lineno": 24,
+              "column": 9,
+              "nodes": [
+                {
+                  "__type": "Unit",
+                  "val": 100,
+                  "type": "px",
+                  "lineno": 24,
+                  "column": 9
+                }
+              ]
+            }
+          },
+          {
+            "__type": "Property",
+            "segments": [
+              {
+                "__type": "Ident",
+                "name": "height",
+                "val": {
+                  "__type": "Null"
+                },
+                "mixin": false,
+                "lineno": 25,
+                "column": 3
+              }
+            ],
+            "lineno": 25,
+            "column": 3,
+            "expr": {
+              "__type": "Expression",
+              "lineno": 25,
+              "column": 10,
+              "nodes": [
+                {
+                  "__type": "Unit",
+                  "val": 100,
+                  "type": "px",
+                  "lineno": 25,
+                  "column": 10
+                }
+              ]
+            }
+          },
+          {
+            "__type": "Property",
+            "segments": [
+              {
+                "__type": "Ident",
+                "name": "animation",
+                "val": {
+                  "__type": "Null"
+                },
+                "mixin": false,
+                "lineno": 26,
+                "column": 3
+              }
+            ],
+            "lineno": 26,
+            "column": 3,
+            "expr": {
+              "__type": "Expression",
+              "lineno": 26,
+              "column": 13,
+              "nodes": [
+                {
+                  "__type": "Ident",
+                  "name": "auto-color",
+                  "val": {
+                    "__type": "Null"
+                  },
+                  "mixin": false,
+                  "lineno": 26,
+                  "column": 13
+                },
+                {
+                  "__type": "Unit",
+                  "val": 5,
+                  "type": "s",
+                  "lineno": 26,
+                  "column": 24
+                },
+                {
+                  "__type": "Ident",
+                  "name": "infinite",
+                  "val": {
+                    "__type": "Null"
+                  },
+                  "mixin": false,
+                  "lineno": 26,
+                  "column": 27
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "lineno": 21,
+      "column": 17
+    }
+  ]
+}
