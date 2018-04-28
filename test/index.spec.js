@@ -73,3 +73,19 @@ describe('测试 @Extend', () => {
     })
   })
 })
+
+describe('测试 @Media', () => {
+  it('test @media', done => {
+    fs.readFile(getPath('./stylus/media.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/media.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})

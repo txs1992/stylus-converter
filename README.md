@@ -41,6 +41,15 @@ node src/test.js
 
 ### 转换前的 stylus 源码
 ```stylus
+@media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px)
+  .foo
+    color: #100
+
+.foo
+  for i in 1..4
+    @media (min-width: 2 * (i + 7) px)
+      width: 100px*i
+
 keyframe-name = pulse
 default-width = 200px
 $val = 20
@@ -90,6 +99,20 @@ body
 
 ### 转换后的 sass 源码
 ```sass
+@media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px) {
+  .foo {
+    color: #100;
+  }
+}
+
+.foo {
+  @for $i from 1 through 4 {
+    @media (min-width: 2 * ($i + 7) px) {
+      width: 100px * $i;
+    }
+  }
+}
+
 $keyframe-name: pulse;
 $default-width: 200px;
 $val: 20;
@@ -113,9 +136,9 @@ $val: 20;
 }
 
 @function add($a, $b) {
-  @if $a > $b and $a > $b + $b {
+  @if $a > $b and ($a > $b + $b) {
     @return $a - $b
-  } @else if $a < $b or $b - $a > $a {
+  } @else if $a < $b or ($b - $a > $a) {
     @return $a + $b
   } @else {
     @return $a * $b
@@ -173,48 +196,53 @@ npm run dev
 ```
 
 
-## stylus converter 进度表
+## stylus 转换器进度表 stylus Converter Schedule
 
 ### stylus to scss
 
-- [x] 转换变量
-- [x] 转换运算符
-- [x] 转换选择器
-- [x] 转换语法块
-- [x] 转换导入语法
-- [x] 转换条件语句
-- [x] 转换自定义函数
-- [x] 转换 css property
-- [x] 转换表达式
-- [x] 转换参数列表
-- [x] 转换
-- [x] 转换插值
-- [x] 转换循环语法
-- [ ] 转换 extend
-- [ ] 转换 Feature
-- [x] 转换 keyframes
-- [x] 转换 CSS 字面量
-- [x] 转换 call mixin
-- [x] 转换 call function
+- [x] Mixins
+- [ ] @Block
+- [x] @Media
+- [x] @Import
+- [x] @Extend
+- [ ] Comments
+- [x] Variables
+- [x] Operators
+- [x] Selectors
+- [x] Iteration
+- [x] Functions
+- [x] @Keyframes
+- [ ] @Font-face
+- [x] CSS Literal
+- [x] Call Mixins
+- [x] Syntax Block
+- [x] Conditionals
+- [x] Cll Functions
+- [x] Interpolation
+- [x] Keyword Arguments
+- [x] Built-in Functions
 
 ### stylus to less
 
-- [ ] 转换变量
-- [ ] 转换运算符
-- [ ] 转换选择器
-- [ ] 转换语法块
-- [ ] 转换导入语法
-- [ ] 转换条件语句
-- [ ] 转换自定义函数
-- [ ] 转换 css property
-- [ ] 转换表达式
-- [ ] 转换参数列表
-- [ ] 转换 mixin
-- [ ] 转换插值
-- [ ] 转换循环语法
-- [ ] 转换 extend
-- [ ] 转换 Feature
-- [ ] 转换 CSS 字面量
-- [ ] 转换 keyframes
-- [ ] 转换 call mixin
-- [ ] 转换 call function
+
+- [ ] Mixins
+- [ ] @Block
+- [ ] @Media
+- [ ] @Import
+- [ ] @Extend
+- [ ] Comments
+- [ ] Variables
+- [ ] Operators
+- [ ] Selectors
+- [ ] Iteration
+- [ ] Functions
+- [ ] @Keyframes
+- [ ] @Font-face
+- [ ] CSS Literal
+- [ ] Call Mixins
+- [ ] Syntax Block
+- [ ] Conditionals
+- [ ] Cll Functions
+- [ ] Interpolation
+- [ ] Keyword Arguments
+- [ ] Built-in Functions
