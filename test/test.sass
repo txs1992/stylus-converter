@@ -1,0 +1,190 @@
+$keyframe-name: pulse;
+$default-width: 200px;
+$val: 20;
+
+@-webkit-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-moz-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-ms-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-o-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-webkit-keyframes auto-color {
+  0% {
+    color: red;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: yellow;
+  }
+}
+
+@-moz-keyframes auto-color {
+  0% {
+    color: red;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: yellow;
+  }
+}
+
+@-ms-keyframes auto-color {
+  0% {
+    color: red;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: yellow;
+  }
+}
+
+@-o-keyframes auto-color {
+  0% {
+    color: red;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: yellow;
+  }
+}
+
+@keyframes auto-color {
+  0% {
+    color: red;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: yellow;
+  }
+}
+
+@-webkit-keyframes foo {
+  from {
+    color: black;
+  }
+  to {
+    color: white;
+  }
+}
+
+@-moz-keyframes foo {
+  from {
+    color: black;
+  }
+  to {
+    color: white;
+  }
+}
+
+@-ms-keyframes foo {
+  from {
+    color: black;
+  }
+  to {
+    color: white;
+  }
+}
+
+@-o-keyframes foo {
+  from {
+    color: black;
+  }
+  to {
+    color: white;
+  }
+}
+
+@keyframes foo {
+  from {
+    color: black;
+  }
+  to {
+    color: white;
+  }
+}
+
+
+#logo {
+  $default-border: 1px solid #ccc;
+  border: $default-border;
+  width: $default-width;
+  $h: 80px;
+  height: $h;
+  margin-top: -($h / 2);
+  padding-top: -($default-border * 3);
+}
+
+@function add($a, $b) {
+  @if $a > $b and $a > $b + $b {
+    @return $a - $b
+  } @else if $a < $b or $b - $a > $a {
+    @return $a + $b
+  } @else {
+    @return $a * $b
+  }
+}
+
+@mixin default-border-radius($prop, $args) {
+  -webkit-#{$prop}-radius: $args;
+  -moz-#{$prop}-radius: $args;
+  #{$prop}-radius: $args;
+}
+
+body {
+  padding: add(10px, 5);
+  @include default-border-radius(5px);
+
+  div {
+    color: red;
+    @for $num from 1 through 5 {
+      foo: $num;
+    }
+    @each $str in 1, 2, 3, 4, 5 {
+      bar: $str;
+    }
+  }
+}

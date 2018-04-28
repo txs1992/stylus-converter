@@ -1,0 +1,21 @@
+keyframe-name = pulse
+$val = 20
+
+@keyframes { $keyframe-name }
+  for i in 0..5
+    {20% * i}
+      opacity (i / $val)
+
+@keyframes auto-color
+  0%
+    color red
+  50%
+    color blue
+  100%
+    color yellow
+
+@keyframes foo
+  from
+    color: black
+  to
+    color: white

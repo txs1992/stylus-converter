@@ -1,24 +1,27 @@
-import { get as _get } from 'noshjs'
-
 import {
+  _get,
   trimFirst,
   nodesToJSON,
   repeatString,
+  getCharLength,
   replaceFirstATSymbol
 } from '../util.js'
 
+let autoprefixer = true
 let oldLineno = 1
 let oldColumn = 1
 let transfrom = ''
 let returnSymbol = ''
 let isFunction = false
 let isProperty = false
+let isKeyframes = false
 let isExpression = false
 let isIfExpression = false
 let indentationLevel = 0
 let PROPERTY_KEY_LIST = []
 let PROPERTY_VAL_LIST = []
 let VARIABLE_NAME_LIST = []
+
 
 const COMPIL_CONFIT = {
   scss: {
@@ -34,6 +37,14 @@ const OPEARTION_MAP = {
   '!': 'not',
   '||': 'or'
 }
+
+const KEYFRAMES_LIST = [
+  '@-webkit-keyframes ',
+  '@-moz-keyframes ',
+  '@-ms-keyframes ',
+  '@-o-keyframes ',
+  '@keyframes '
+]
 
 const TYPE_VISITOR_MAP = {
   If: visitIf,
@@ -54,6 +65,7 @@ const TYPE_VISITOR_MAP = {
   'Function': visitFunction,
   Selector: visitSelector,
   Arguments: visitArguments,
+  Keyframes: visitKeyframes,
   Expression: visitExpression
 }
 
@@ -109,8 +121,11 @@ function visitSelector (node) {
 
 function visitGroup (node) {
   const selector = visitNodes(node.nodes)
-  const blockEnd = findNodesType(node.nodes, 'Selector') && selector || ''
   const block = visitBlock(node.block)
+  if (isKeyframes && /-|\*|\+|\/|\$/.test(selector)) {
+    const len = getCharLength(selector, ' ') - 2
+    return `\n${repeatString(' ', len)}#{${trimFirst(selector)}}${block}`
+  }
   return selector + block
 }
 
@@ -161,10 +176,10 @@ function visitIdent ({ val, name, mixin, lineno, column }) {
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
       const len = PROPERTY_KEY_LIST.indexOf(name)
-      if (len > -1) return PROPERTY_VAL_LIST[len]
+      if (len > -1) return replaceFirstATSymbol(PROPERTY_VAL_LIST[len])
     }
     if (mixin) return `#{$${name}}`
-    return VARIABLE_NAME_LIST.indexOf(name) > -1 ? `$${name}` : name
+    return VARIABLE_NAME_LIST.indexOf(name) > -1 ? replaceFirstATSymbol(name) : name
   }
   if (identVal.__type === 'Expression') {
     const before = handleLinenoAndIndentation(identVal)
@@ -175,7 +190,7 @@ function visitIdent ({ val, name, mixin, lineno, column }) {
       expText += idx ? ` ${visitNode(node)}`: visitNode(node)
     })
     VARIABLE_NAME_LIST.push(name)
-    return `${before}$${name}: ${expText};`
+    return `${before}${replaceFirstATSymbol(name)}: ${expText};`
   }
   if (identVal.__type === 'Function') return visitFunction(identVal)
   let identText = visitNode(identVal)
@@ -186,7 +201,12 @@ function visitExpression (node) {
   isExpression = true
   let before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno
-  const result = visitNodes(node.nodes)
+  let result = ''
+  const nodes = nodesToJSON(node.nodes)
+  nodes.forEach((node, idx) => {
+    const nodeText = visitNode(node)
+    result += idx ? ' ' + nodeText : nodeText
+  })
   isExpression = false
   if (!returnSymbol || isIfExpression) return result
   return before + returnSymbol + result
@@ -313,9 +333,29 @@ function visitEach (node) {
   return before + exprText + block
 }
 
+function visitKeyframes (node) {
+  isKeyframes = true
+  let before = handleLinenoAndIndentation(node)
+  oldLineno = node.lineno
+  let resultText = ''
+  const name = visitNodes(node.segments)
+  const isMixin = !!findNodesType(node.segments, 'Expression')
+  const block = visitBlock(node.block)
+  const text = isMixin ? `#{${name}}${block}` :  name + block
+  if (autoprefixer) {
+    KEYFRAMES_LIST.forEach(name => {
+      resultText += before + name + text
+    })
+  } else {
+    resultText += before + '@keyframes ' + text
+  }
+  isKeyframes = false
+  return resultText
+}
+
 // 处理 stylus 语法树；handle stylus Syntax Tree
-export default function visitor (ast, option) {
-  transfrom = option
+export default function visitor (ast, options) {
+  autoprefixer = options.autoprefixer == null ? true : options.autoprefixer
   const result = visitNodes(ast.nodes) || ''
   oldLineno = 1
   PROPERTY_KEY_LIST = []

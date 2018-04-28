@@ -29,3 +29,25 @@ export function trimFirstLinefeedLength (str) {
 export function replaceFirstATSymbol (str, temp = '$') {
   return str.replace(/^\$|/, temp)
 }
+
+export function getCharLength (str, char) {
+  return str.split(char).length-1
+}
+
+export function _get(obj, pathArray, defaultValue) {
+  if (obj == null) return defaultValue
+
+  let value = obj
+
+  pathArray = [].concat(pathArray)
+
+  for (let i = 0; i < pathArray.length; i += 1) {
+    const key = pathArray[i]
+    value = value[key]
+    if (value == null) {
+      return defaultValue
+    }
+  }
+
+  return value
+}
