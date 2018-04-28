@@ -57,6 +57,7 @@ const TYPE_VISITOR_MAP = {
   Ident: visitIdent,
   Group: visitGroup,
   Import: visitImport,
+  Extend: visitExtend,
   UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
   Params: visitArguments,
@@ -351,6 +352,13 @@ function visitKeyframes (node) {
   }
   isKeyframes = false
   return resultText
+}
+
+function visitExtend (node) {
+  const before = handleLinenoAndIndentation(node)
+  oldLineno = node.lineno
+  const text = visitNodes(node.selectors)
+  return `${before}@extend ${trimFirst(text)};`
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree

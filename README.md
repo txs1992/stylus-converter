@@ -178,12 +178,11 @@ npm run dev
 - [x] 转换参数列表
 - [x] 转换
 - [x] 转换插值
-- [ ] 转换 url()
 - [x] 转换循环语法
 - [ ] 转换 extend
 - [ ] 转换 Feature
 - [x] 转换 keyframes
-- [ ] 转换 CSS 字面量
+- [x] 转换 CSS 字面量
 - [x] 转换 call mixin
 - [x] 转换 call function
 
@@ -201,7 +200,6 @@ npm run dev
 - [ ] 转换参数列表
 - [ ] 转换 mixin
 - [ ] 转换插值
-- [ ] 转换 url()
 - [ ] 转换循环语法
 - [ ] 转换 extend
 - [ ] 转换 Feature

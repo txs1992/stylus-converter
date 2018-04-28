@@ -78,6 +78,7 @@ var TYPE_VISITOR_MAP = {
   Ident: visitIdent,
   Group: visitGroup,
   Import: visitImport,
+  Extend: visitExtend,
   UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
   Params: visitArguments,
@@ -409,6 +410,13 @@ function visitKeyframes(node) {
   return resultText;
 }
 
+function visitExtend(node) {
+  var before = handleLinenoAndIndentation(node);
+  oldLineno = node.lineno;
+  var text = visitNodes(node.selectors);
+  return before + '@extend ' + trimFirst(text) + ';';
+}
+
 // 处理 stylus 语法树；handle stylus Syntax Tree
 function visitor(ast, options) {
   autoprefixer = options.autoprefixer == null ? true : options.autoprefixer;
@@ -425,6 +433,7 @@ function converter(result) {
 
   if (typeof result !== 'string') return result;
   var ast = new Parser(result).parse();
+  // console.log(JSON.stringify(ast))
   return visitor(ast, options);
 }
 
