@@ -41,6 +41,9 @@ node src/test.js
 
 ### 转换前的 stylus 源码
 ```stylus
+handleParams(args...)
+  args
+
 @media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px)
   .foo
     color: #100
@@ -87,7 +90,7 @@ default-border-radius(prop, args)
 body
   @extend .message
   padding add(10px, 5)
-  default-border-radius(5px)
+  default-border-radius(border, 4px)
 
   div
     color red
@@ -99,6 +102,10 @@ body
 
 ### 转换后的 sass 源码
 ```sass
+@function handleParams($args...) {
+  @return $args
+}
+
 @media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px) {
   .foo {
     color: #100;
@@ -146,9 +153,9 @@ $val: 20;
 }
 
 @mixin default-border-radius($prop, $args) {
-  -webkit-#{$prop}-radius: $args;
-  -moz-#{$prop}-radius: $args;
-  #{$prop}-radius: $args;
+  $-webkit-#{$prop}$-radius: $args;
+  $-moz-#{$prop}$-radius: $args;
+  #{$prop}$-radius: $args;
 }
 
 .message {
@@ -159,7 +166,7 @@ $val: 20;
 body {
   @extend .message;
   padding: add(10px, 5);
-  @include default-border-radius(5px);
+  @include default-border-radius($1px solid #eee, 4px);
 
   div {
     color: red;

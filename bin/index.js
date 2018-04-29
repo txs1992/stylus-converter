@@ -170,8 +170,19 @@ function visitBlock(node) {
   var before = ' {';
   var after = '\n' + repeatString(' ', (indentationLevel - 1) * 2) + '}';
   var text = visitNodes(node.nodes);
+  var result = text;
+  if (isFunction && !/@return/.test(text)) {
+    result = '';
+    var symbol = repeatString(' ', indentationLevel * 2);
+    if (!/\n/.test(text)) {
+      result += '\n';
+      oldLineno++;
+    }
+    if (!/\s/.test(text)) result += symbol;
+    result += returnSymbol + text;
+  }
   indentationLevel--;
-  return '' + before + text + after;
+  return '' + before + result + after;
 }
 
 function visitLiteral(node) {
@@ -214,6 +225,7 @@ function visitProperty(_ref2) {
 function visitIdent(_ref3) {
   var val = _ref3.val,
       name = _ref3.name,
+      rest = _ref3.rest,
       mixin = _ref3.mixin,
       lineno = _ref3.lineno,
       column = _ref3.column;
@@ -225,7 +237,9 @@ function visitIdent(_ref3) {
       if (len > -1) return replaceFirstATSymbol(PROPERTY_VAL_LIST[len]);
     }
     if (mixin) return '#{$' + name + '}';
-    return VARIABLE_NAME_LIST.indexOf(name) > -1 ? replaceFirstATSymbol(name) : name;
+    var nameText = VARIABLE_NAME_LIST.indexOf(name) > -1 ? replaceFirstATSymbol(name) : name;
+    nameText = isFunction ? replaceFirstATSymbol(nameText) : nameText;
+    return rest ? nameText + '...' : nameText;
   }
   if (identVal.__type === 'Expression') {
     var before = handleLinenoAndIndentation(identVal);
@@ -278,10 +292,10 @@ function visitCall(_ref4) {
 function visitArguments(node) {
   var nodes = nodesToJSON(node.nodes);
   var text = '';
-  var symbol = isFunction ? '$' : '';
   nodes.forEach(function (node, idx) {
     var prefix = idx ? ', ' : '';
-    text += prefix + symbol + visitNode(node);
+    var result = isFunction ? replaceFirstATSymbol(visitNode(node)) : visitNode(node);
+    text += prefix + result;
   });
   return text || '';
 }
@@ -346,10 +360,10 @@ function visitFunction(node) {
   var params = nodesToJSON(node.params.nodes || []);
   var paramsText = '';
   params.forEach(function (node, idx) {
-    var prefix = idx ? ', $' : '$';
+    var prefix = idx ? ', ' : '';
     var nodeText = visitNode(node);
     VARIABLE_NAME_LIST.push(nodeText);
-    paramsText += prefix + nodeText;
+    paramsText += prefix + replaceFirstATSymbol(nodeText);
   });
   var fnName = symbol + ' ' + node.name + '(' + paramsText + ')';
   var block = visitBlock(node.block);
