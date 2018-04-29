@@ -27,7 +27,7 @@ describe('测试 CSS Selector', () => {
   })
 })
 
-describe('测试 keyframes', () => {
+describe('测试 @Keyframes', () => {
   it('Autoprefixer Keyframes', done => {
     fs.readFile(getPath('./stylus/keyframes.styl'), (err, res) => {
       if (err) return

@@ -200,12 +200,20 @@ npm run dev
 
 ### stylus to scss
 
+- [ ] Atrule
+- [ ] Member
+- [ ] Return
 - [x] Mixins
 - [ ] @Block
 - [x] @Media
 - [x] @Import
 - [x] @Extend
+- [ ] Atblock
+- [ ] Charset
+- [ ] Ternary
 - [ ] Comments
+- [ ] Supports
+- [ ] NameScope
 - [x] Variables
 - [x] Operators
 - [x] Selectors
@@ -225,12 +233,20 @@ npm run dev
 ### stylus to less
 
 
+- [ ] Atrule
 - [ ] Mixins
+- [ ] Member
+- [ ] Return
 - [ ] @Block
 - [ ] @Media
 - [ ] @Import
 - [ ] @Extend
+- [ ] Atblock
+- [ ] Charset
+- [ ] Ternary
 - [ ] Comments
+- [ ] Supports
+- [ ] NameScope
 - [ ] Variables
 - [ ] Operators
 - [ ] Selectors
