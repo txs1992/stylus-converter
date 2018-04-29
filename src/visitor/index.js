@@ -141,8 +141,19 @@ function visitBlock (node) {
   const before = ' {'
   const after = `\n${repeatString(' ', (indentationLevel - 1) * 2)}}`
   const text = visitNodes(node.nodes)
+  let result = text
+  if (isFunction && !/@return/.test(text)) {
+    result = ''
+    const symbol = repeatString(' ', indentationLevel * 2)
+    if (!/\n/.test(text)) {
+      result += '\n'
+      oldLineno++
+    }
+    if (!/\s/.test(text)) result += symbol
+    result += returnSymbol + text
+  }
   indentationLevel--
-  return `${before}${text}${after}`
+  return `${before}${result}${after}`
 }
 
 function visitLiteral (node) {
@@ -178,7 +189,7 @@ function visitProperty ({ expr, lineno, segments }) {
   return `${before + segmentsText}: ${expText + suffix}`
 }
 
-function visitIdent ({ val, name, mixin, lineno, column }) {
+function visitIdent ({ val, name, rest, mixin, lineno, column }) {
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
@@ -186,7 +197,9 @@ function visitIdent ({ val, name, mixin, lineno, column }) {
       if (len > -1) return replaceFirstATSymbol(PROPERTY_VAL_LIST[len])
     }
     if (mixin) return `#{$${name}}`
-    return VARIABLE_NAME_LIST.indexOf(name) > -1 ? replaceFirstATSymbol(name) : name
+    let nameText = VARIABLE_NAME_LIST.indexOf(name) > -1 ? replaceFirstATSymbol(name) : name
+    nameText = isFunction ? replaceFirstATSymbol(nameText) : nameText
+    return rest ? `${nameText}...` : nameText
   }
   if (identVal.__type === 'Expression') {
     const before = handleLinenoAndIndentation(identVal)
@@ -234,10 +247,10 @@ function visitCall ({ name, args, lineno, column }) {
 function visitArguments (node) {
   const nodes = nodesToJSON(node.nodes)
   let text = ''
-  const symbol = isFunction ? '$' : ''
   nodes.forEach((node, idx) => {
     const prefix = idx ? ', ' : ''
-    text += prefix + symbol + visitNode(node)
+    const result = isFunction ? replaceFirstATSymbol(visitNode(node)) : visitNode(node)
+    text += prefix + result
   })
   return text || ''
 }
@@ -297,10 +310,10 @@ function visitFunction (node) {
   const params = nodesToJSON(node.params.nodes || [])
   let paramsText = ''
   params.forEach((node, idx) => {
-    const prefix = idx ? ', $' : '$'
+    const prefix = idx ? ', ' : ''
     const nodeText = visitNode(node)
     VARIABLE_NAME_LIST.push(nodeText)
-    paramsText += prefix + nodeText
+    paramsText += prefix + replaceFirstATSymbol(nodeText)
   })
   const fnName = `${symbol} ${node.name}(${paramsText})`
   const block = visitBlock(node.block)

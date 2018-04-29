@@ -89,3 +89,33 @@ describe('测试 @Media', () => {
     })
   })
 })
+
+describe('测试 Params', () => {
+  it('test params', done => {
+    fs.readFile(getPath('./stylus/params.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/params.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+
+  it('test variable parameter', done => {
+    fs.readFile(getPath('./stylus/variable-parameter.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/variable-parameter.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
