@@ -7,21 +7,23 @@ import {
   replaceFirstATSymbol
 } from '../util.js'
 
-let autoprefixer = true
 let oldLineno = 1
 let oldColumn = 1
 let transfrom = ''
 let returnSymbol = ''
-let isFunction = false
-let isProperty = false
-let isKeyframes = false
-let isExpression = false
-let isIfExpression = false
 let indentationLevel = 0
 let PROPERTY_KEY_LIST = []
 let PROPERTY_VAL_LIST = []
 let VARIABLE_NAME_LIST = []
 
+let isCall = false
+let isFunction = false
+let isProperty = false
+let isKeyframes = false
+let isExpression = false
+let isIfExpression = false
+
+let autoprefixer = true
 
 const COMPIL_CONFIT = {
   scss: {
@@ -196,11 +198,14 @@ function visitIdent ({ val, name, rest, mixin, lineno, column }) {
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
       const len = PROPERTY_KEY_LIST.indexOf(name)
+      if (isCall) return name
       if (len > -1) return replaceFirstATSymbol(PROPERTY_VAL_LIST[len])
     }
     if (mixin) return `#{$${name}}`
-    let nameText = VARIABLE_NAME_LIST.indexOf(name) > -1 ? replaceFirstATSymbol(name) : name
-    nameText = isFunction ? replaceFirstATSymbol(nameText) : nameText
+    let nameText = VARIABLE_NAME_LIST.indexOf(name) > -1
+      ? replaceFirstATSymbol(name)
+      : name
+    if (isFunction && (isExpression || !isProperty)) nameText = replaceFirstATSymbol(nameText)
     return rest ? `${nameText}...` : nameText
   }
   if (identVal.__type === 'Expression') {
@@ -235,6 +240,7 @@ function visitExpression (node) {
 }
 
 function visitCall ({ name, args, lineno, column }) {
+  isCall = true
   let before = handleLineno(lineno)
   oldLineno = lineno
   const argsText = visitArguments(args)
@@ -243,6 +249,7 @@ function visitCall ({ name, args, lineno, column }) {
     before += getIndentation()
     before += '@include '
   }
+  isCall = false
   return `${before + name}(${argsText});`
 }
 

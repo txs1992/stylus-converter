@@ -135,3 +135,19 @@ describe('测试 Comments', () => {
     })
   })
 })
+
+describe('测试 Mixins', () => {
+  it('test mixin', done => {
+    fs.readFile(getPath('./stylus/comment.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/comment.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})

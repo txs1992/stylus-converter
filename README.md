@@ -89,10 +89,11 @@ default-border-radius(prop, args)
 
 body
   @extend .message
+  border default-border
   padding add(10px, 5)
-  default-border-radius(border, 4px)
 
   div
+    default-border-radius(border, 4px)
     color red
     for num in (1..5)
       foo num
@@ -185,23 +186,24 @@ $val: 20;
 }
 
 @mixin default-border-radius($prop, $args) {
-  $-webkit-#{$prop}$-radius: $args;
-  $-moz-#{$prop}$-radius: $args;
-  #{$prop}$-radius: $args;
+  -webkit-#{$prop}-radius: $args;
+  -moz-#{$prop}-radius: $args;
+  #{$prop}-radius: $args;
 }
 
 .message {
   margin: 10px;
-  border: 1px solid #eee;
+  border: 1px $solid #eee;
 }
 
 body {
   @extend .message;
+  border: $default-border;
   padding: add(10px, 5);
-  @include default-border-radius($1px solid #eee, 4px);
 
   div {
-    color: red;
+    @include default-border-radius($default-border, 4px);
+    color: $red;
     @for $num from 1 through 5 {
       foo: $num;
     }
