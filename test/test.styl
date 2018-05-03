@@ -46,10 +46,11 @@ default-border-radius(prop, args)
 
 body
   @extend .message
+  border default-border
   padding add(10px, 5)
-  default-border-radius(border, 4px)
 
   div
+    default-border-radius(border, 4px)
     color red
     for num in (1..5)
       foo num

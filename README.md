@@ -89,10 +89,11 @@ default-border-radius(prop, args)
 
 body
   @extend .message
+  border default-border
   padding add(10px, 5)
-  default-border-radius(border, 4px)
 
   div
+    default-border-radius(border, 4px)
     color red
     for num in (1..5)
       foo num
@@ -103,7 +104,7 @@ body
 ### 转换后的 sass 源码
 ```sass
 @function handleParams($args...) {
-  @return $args
+  @return $args;
 }
 
 @media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px) {
@@ -123,6 +124,38 @@ body
 $keyframe-name: pulse;
 $default-width: 200px;
 $val: 20;
+
+@-webkit-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-moz-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-ms-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-o-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
 
 @keyframes #{$keyframe-name} {
   @for $i from 0 through 5 {
@@ -144,32 +177,33 @@ $val: 20;
 
 @function add($a, $b) {
   @if $a > $b and ($a > $b + $b) {
-    @return $a - $b
+    @return $a - $b;
   } @else if $a < $b or ($b - $a > $a) {
-    @return $a + $b
+    @return $a + $b;
   } @else {
-    @return $a * $b
-  }
+    @return $a * $b;
+  };
 }
 
 @mixin default-border-radius($prop, $args) {
-  $-webkit-#{$prop}$-radius: $args;
-  $-moz-#{$prop}$-radius: $args;
-  #{$prop}$-radius: $args;
+  -webkit-#{$prop}-radius: $args;
+  -moz-#{$prop}-radius: $args;
+  #{$prop}-radius: $args;
 }
 
 .message {
   margin: 10px;
-  border: 1px solid #eee;
+  border: 1px $solid #eee;
 }
 
 body {
   @extend .message;
+  border: $default-border;
   padding: add(10px, 5);
-  @include default-border-radius($1px solid #eee, 4px);
 
   div {
-    color: red;
+    @include default-border-radius($default-border, 4px);
+    color: $red;
     @for $num from 1 through 5 {
       foo: $num;
     }
@@ -207,18 +241,18 @@ npm run dev
 
 ### stylus to scss
 
+- [x] Block
 - [ ] Atrule
 - [ ] Member
 - [ ] Return
 - [x] Mixins
-- [ ] @Block
 - [x] @Media
 - [x] @Import
 - [x] @Extend
 - [ ] Atblock
 - [ ] Charset
 - [ ] Ternary
-- [ ] Comments
+- [x] Comments
 - [ ] Supports
 - [ ] NameScope
 - [x] Variables

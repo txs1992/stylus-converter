@@ -1,5 +1,5 @@
 @function handleParams($args...) {
-  @return $args
+  @return $args;
 }
 
 @media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px) {
@@ -72,18 +72,18 @@ $val: 20;
 
 @function add($a, $b) {
   @if $a > $b and ($a > $b + $b) {
-    @return $a - $b
+    @return $a - $b;
   } @else if $a < $b or ($b - $a > $a) {
-    @return $a + $b
+    @return $a + $b;
   } @else {
-    @return $a * $b
-  }
+    @return $a * $b;
+  };
 }
 
 @mixin default-border-radius($prop, $args) {
-  $-webkit-#{$prop}$-radius: $args;
-  $-moz-#{$prop}$-radius: $args;
-  #{$prop}$-radius: $args;
+  -webkit-#{$prop}-radius: $args;
+  -moz-#{$prop}-radius: $args;
+  #{$prop}-radius: $args;
 }
 
 .message {
@@ -93,10 +93,11 @@ $val: 20;
 
 body {
   @extend .message;
+  border: $default-border;
   padding: add(10px, 5);
-  @include default-border-radius($1px solid #eee, 4px);
 
   div {
+    @include default-border-radius(border, 4px);
     color: red;
     @for $num from 1 through 5 {
       foo: $num;

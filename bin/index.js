@@ -46,18 +46,21 @@ function _get(obj, pathArray, defaultValue) {
   return value;
 }
 
-var autoprefixer = true;
 var oldLineno = 1;
 var returnSymbol = '';
+var indentationLevel = 0;
+var PROPERTY_KEY_LIST = [];
+var PROPERTY_VAL_LIST = [];
+var VARIABLE_NAME_LIST = [];
+
+var isCall = false;
 var isFunction = false;
 var isProperty = false;
 var isKeyframes = false;
 var isExpression = false;
 var isIfExpression = false;
-var indentationLevel = 0;
-var PROPERTY_KEY_LIST = [];
-var PROPERTY_VAL_LIST = [];
-var VARIABLE_NAME_LIST = [];
+
+var autoprefixer = true;
 
 var OPEARTION_MAP = {
   '&&': 'and',
@@ -81,6 +84,7 @@ var TYPE_VISITOR_MAP = {
   Media: visitMedia,
   Import: visitImport,
   Extend: visitExtend,
+  Comment: visitComment,
   Feature: visitFeature,
   UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
@@ -181,6 +185,7 @@ function visitBlock(node) {
     if (!/\s/.test(text)) result += symbol;
     result += returnSymbol + text;
   }
+  if (isFunction) result = /;$/.test(result) ? result : result + ';';
   indentationLevel--;
   return '' + before + result + after;
 }
@@ -233,12 +238,13 @@ function visitIdent(_ref3) {
   var identVal = val && val.toJSON() || '';
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
+      if (isCall) return name;
       var len = PROPERTY_KEY_LIST.indexOf(name);
-      if (len > -1) return replaceFirstATSymbol(PROPERTY_VAL_LIST[len]);
+      if (len > -1) return PROPERTY_VAL_LIST[len];
     }
     if (mixin) return '#{$' + name + '}';
     var nameText = VARIABLE_NAME_LIST.indexOf(name) > -1 ? replaceFirstATSymbol(name) : name;
-    nameText = isFunction ? replaceFirstATSymbol(nameText) : nameText;
+    if (isFunction && (isExpression || !isProperty)) nameText = replaceFirstATSymbol(nameText);
     return rest ? nameText + '...' : nameText;
   }
   if (identVal.__type === 'Expression') {
@@ -278,6 +284,7 @@ function visitCall(_ref4) {
       lineno = _ref4.lineno,
       column = _ref4.column;
 
+  isCall = true;
   var before = handleLineno(lineno);
   oldLineno = lineno;
   var argsText = visitArguments(args);
@@ -286,6 +293,7 @@ function visitCall(_ref4) {
     before += getIndentation();
     before += '@include ';
   }
+  isCall = false;
   return before + name + '(' + argsText + ');';
 }
 
@@ -474,6 +482,12 @@ function visitFeature(node) {
   var segmentsText = visitNodes(node.segments);
   var expText = visitExpression(node.expr);
   return '(' + segmentsText + ': ' + expText + ')';
+}
+
+function visitComment(node) {
+  var before = handleLinenoAndIndentation(node);
+  oldLineno = node.lineno + 2;
+  return before + node.str;
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree

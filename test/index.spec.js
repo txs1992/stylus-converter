@@ -90,7 +90,7 @@ describe('测试 @Media', () => {
   })
 })
 
-describe('测试 Params', () => {
+describe('测试 Funciton 与 Params', () => {
   it('test params', done => {
     fs.readFile(getPath('./stylus/params.styl'), (err, res) => {
       if (err) return
@@ -111,6 +111,68 @@ describe('测试 Params', () => {
       const result = trimLast(res.toString())
       const sass = converter(result)
       fs.readFile(getPath('./sass/variable-parameter.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
+
+describe('测试 Comments', () => {
+  it('test comment', done => {
+    fs.readFile(getPath('./stylus/comment.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/comment.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
+
+describe('测试 Mixins', () => {
+  it('test mixin', done => {
+    fs.readFile(getPath('./stylus/comment.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/comment.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
+
+describe('测试 Variables', () => {
+  it('test variable assignment', done => {
+    fs.readFile(getPath('./stylus/variables.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/variables.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+
+  it('test variable search', done => {
+    fs.readFile(getPath('./stylus/variable-search.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/variable-search.sass'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
         expect(sass).to.be.equal(toText)
