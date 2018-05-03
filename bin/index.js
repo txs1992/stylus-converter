@@ -289,10 +289,10 @@ function visitExpression(node) {
   var before = handleLinenoAndIndentation(node);
   oldLineno = node.lineno;
   var result = '';
-  var symbol = isProperty ? ',' : '';
   var nodes = nodesToJSON(node.nodes);
   nodes.forEach(function (node, idx) {
     var nodeText = visitNode(node);
+    var symbol = isProperty && node.nodes && findNodesType(node.nodes, 'String') ? ',' : '';
     result += idx ? symbol + ' ' + nodeText : nodeText;
   });
   isExpression = false;

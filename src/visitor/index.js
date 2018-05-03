@@ -258,10 +258,10 @@ function visitExpression (node) {
   let before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno
   let result = ''
-  const symbol = isProperty ? ',' : ''
   const nodes = nodesToJSON(node.nodes)
   nodes.forEach((node, idx) => {
     const nodeText = visitNode(node)
+    const symbol = isProperty && node.nodes && findNodesType(node.nodes, 'String') ? ',' : ''
     result += idx ? symbol + ' ' + nodeText : nodeText
   })
   isExpression = false
