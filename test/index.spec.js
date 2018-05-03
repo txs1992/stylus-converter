@@ -261,3 +261,19 @@ describe('测试 Boolean', () => {
     })
   })
 })
+
+describe('测试 @Charset', () => {
+  it('test charset', done => {
+    fs.readFile(getPath('./stylus/charset.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/charset.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})

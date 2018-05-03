@@ -513,7 +513,7 @@ function visitNamespace ({ val, lineno }) {
 function visitAtrule ({ type, block, lineno, segments }) {
   const before = handleLineno(lineno)
   oldLineno = lineno
-  return `${before}@${type} ${visitNodes(segments) + visitBlock(block)}`
+  return `${before}@${type}${visitNodes(segments) + visitBlock(block)}`
 }
 
 function visitSupports ({ block, lineno, condition }) {

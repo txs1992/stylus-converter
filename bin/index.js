@@ -587,7 +587,7 @@ function visitAtrule(_ref12) {
 
   var before = handleLineno(lineno);
   oldLineno = lineno;
-  return before + '@' + type + ' ' + (visitNodes(segments) + visitBlock(block));
+  return before + '@' + type + (visitNodes(segments) + visitBlock(block));
 }
 
 function visitSupports(_ref13) {
