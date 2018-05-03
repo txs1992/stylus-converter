@@ -182,9 +182,8 @@ function visitBlock(node) {
     if (!/\s/.test(text)) result += symbol;
     result += returnSymbol + text;
   }
-  result = /;$/.test(result) ? result : result + ';';
+  if (isFunction) result = /;$/.test(result) ? result : result + ';';
   indentationLevel--;
-  console.log(result);
   return '' + before + result + after;
 }
 

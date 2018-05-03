@@ -103,7 +103,7 @@ body
 ### 转换后的 sass 源码
 ```sass
 @function handleParams($args...) {
-  @return $args
+  @return $args;
 }
 
 @media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px) {
@@ -123,6 +123,38 @@ body
 $keyframe-name: pulse;
 $default-width: 200px;
 $val: 20;
+
+@-webkit-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-moz-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-ms-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
+
+@-o-keyframes #{$keyframe-name} {
+  @for $i from 0 through 5 {
+    #{20% * $i} {
+      opacity: $i / $val;
+    }
+  }
+}
 
 @keyframes #{$keyframe-name} {
   @for $i from 0 through 5 {
@@ -144,12 +176,12 @@ $val: 20;
 
 @function add($a, $b) {
   @if $a > $b and ($a > $b + $b) {
-    @return $a - $b
+    @return $a - $b;
   } @else if $a < $b or ($b - $a > $a) {
-    @return $a + $b
+    @return $a + $b;
   } @else {
-    @return $a * $b
-  }
+    @return $a * $b;
+  };
 }
 
 @mixin default-border-radius($prop, $args) {
