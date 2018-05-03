@@ -7,6 +7,7 @@ import {
   replaceFirstATSymbol
 } from '../util.js'
 
+let callName = ''
 let oldLineno = 1
 let oldColumn = 1
 let transfrom = ''
@@ -61,7 +62,9 @@ const TYPE_VISITOR_MAP = {
   Query: visitQuery,
   Media: visitMedia,
   Import: visitImport,
+  Atrule: visitAtrule,
   Extend: visitExtend,
+  Member: visitMember,
   Comment: visitComment,
   Feature: visitFeature,
   UnaryOp: visitUnaryOp,
@@ -235,12 +238,14 @@ function visitExpression (node) {
     result += idx ? ' ' + nodeText : nodeText
   })
   isExpression = false
+  if (isCall && callName === 'url') return result.replace(/\s/g, '')
   if (!returnSymbol || isIfExpression) return result
   return before + returnSymbol + result
 }
 
 function visitCall ({ name, args, lineno, column }) {
   isCall = true
+  callName = name
   let before = handleLineno(lineno)
   oldLineno = lineno
   const argsText = visitArguments(args)
@@ -249,6 +254,7 @@ function visitCall ({ name, args, lineno, column }) {
     before += getIndentation()
     before += '@include '
   }
+  callName = ''
   isCall = false
   return `${before + name}(${argsText});`
 }
@@ -432,6 +438,17 @@ function visitComment (node) {
   const before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno + 2
   return before + node.str
+}
+
+function visitMember ({ left, right }) {
+  return `${visitNode(left)}.${visitNode(right)}`
+}
+
+function visitAtrule (node) {
+  let before = handleLinenoAndIndentation(node)
+  oldLineno = node.lineno
+  before += '@' + node.type
+  return before + visitBlock(node.block)
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
