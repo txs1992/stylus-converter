@@ -1,76 +1,58 @@
-palette = {
-  orange: {
-    light: lighten(#f89c48, 10%),
-    base: #f89c48,
-    dark: darken(#f89c48, 10%)
-  },
-  green: {
-    light: lighten(#28ba00, 10%),
-    base: #28ba00,
-    dark: darken(#28ba00, 10%)
-  }
-}
+handleParams(args...)
+  args
 
-.selector
-  background-color: palette.orange.base
-  border-color: palette.orange.dark
-  color: palette.green.base
+@media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px)
+  .foo
+    color: #100
 
-// handleParams(args...)
-//   args
-//
-// @media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px)
-//   .foo
-//     color: #100
-//
-// .foo
-//   for i in 1..4
-//     @media (min-width: 2 * (i + 7) px)
-//       width: 100px*i
-//
-// keyframe-name = pulse
-// default-width = 200px
-// $val = 20
-//
-// @keyframes { $keyframe-name }
-//   for i in 0..5
-//     {20% * i}
-//       opacity (i / $val)
-//
-// #logo
-//   default-border = 1px solid #ccc
-//   border default-border
-//   width: default-width
-//   height: h = 80px
-//   margin-top: -(h / 2)
-//   padding-top: -(@width * 3)
-//
-// add(a, b)
-//   if a > b && a > b + b
-//     a - b
-//   else if a < b || b - a > a
-//     a + b
-//   else
-//     a * b
-//
-// default-border-radius(prop, args)
-//   -webkit-{prop}-radius args
-//   -moz-{prop}-radius args
-//   {prop}-radius args
-//
-// .message
-//   margin: 10px
-//   border: 1px solid #eee
-//
-// body
-//   @extend .message
-//   border default-border
-//   padding add(10px, 5)
-//
-//   div
-//     default-border-radius(border, 4px)
-//     color red
-//     for num in (1..5)
-//       foo num
-//     for str in 1 2 3 4 5
-//       bar str
+.foo
+  for i in 1..4
+    @media (min-width: 2 * (i + 7) px)
+      width: 100px*i
+
+keyframe-name = pulse
+default-width = 200px
+$val = 20
+
+@keyframes { $keyframe-name }
+  for i in 0..5
+    {20% * i}
+      opacity (i / $val)
+
+#logo
+  default-border = 1px solid #ccc
+  border default-border
+  width: default-width
+  height: h = 80px
+  margin-top: -(h / 2)
+  padding-top: -(@width * 3)
+
+add(a, b)
+  if a > b && a > b + b
+    a - b
+  else if a < b || b - a > a
+    a + b
+  else
+    a * b
+
+default-border-radius(prop, args)
+  -webkit-{prop}-radius args
+  -moz-{prop}-radius args
+  {prop}-radius args
+
+.message
+  margin: 10px
+  border: 1px solid #eee
+
+body
+  @extend .message
+  border default-border
+  padding add(10px, 5)
+
+  div
+    default-border-radius(border, 4px)
+    color red
+    for num in (1..5)
+      foo num
+    for str in 1 2 3 4 5
+      bar str

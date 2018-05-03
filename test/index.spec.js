@@ -213,3 +213,19 @@ describe('测试 @Font-face', () => {
     })
   })
 })
+
+describe('测试 Object', () => {
+  it('test object', done => {
+    fs.readFile(getPath('./stylus/object.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/object.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})

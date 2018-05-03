@@ -547,7 +547,7 @@ function visitObject(_ref9) {
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
 function visitor(ast, options) {
-  autoprefixer = options.autoprefixer || true;
+  autoprefixer = options.autoprefixer == null ? true : options.autoprefixer;
   quote = options.quote || '\'';
   var result = visitNodes(ast.nodes) || '';
   oldLineno = 1;
