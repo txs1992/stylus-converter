@@ -293,3 +293,19 @@ describe('测试 @Namescope', () => {
     })
   })
 })
+
+describe('测试 @Page', () => {
+  it('test page', done => {
+    fs.readFile(getPath('./stylus/page.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/page.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
