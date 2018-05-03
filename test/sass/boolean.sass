@@ -1,0 +1,8 @@
+$a: 10;
+$b: 5;
+
+div {
+  @if $a > $b and ($a - $b >= $b or ($a - $b == $b)) {
+    color: red;
+  }
+}
