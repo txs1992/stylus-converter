@@ -16,11 +16,11 @@ describe('测试 CSS Selector', () => {
     fs.readFile(getPath('./stylus/selector.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/selector.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/selector.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -32,11 +32,11 @@ describe('测试 @Keyframes', () => {
     fs.readFile(getPath('./stylus/keyframes.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/autoprefixer-keyframes.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/autoprefixer-keyframes.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -46,11 +46,11 @@ describe('测试 @Keyframes', () => {
     fs.readFile(getPath('./stylus/keyframes.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result, { autoprefixer: false })
-      fs.readFile(getPath('./sass/keyframes.sass'), (err, sres) => {
+      const scss = converter(result, { autoprefixer: false })
+      fs.readFile(getPath('./scss/keyframes.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -63,11 +63,11 @@ describe('测试 @Extend', () => {
     fs.readFile(getPath('./stylus/extend.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/extend.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/extend.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -79,11 +79,11 @@ describe('测试 @Media', () => {
     fs.readFile(getPath('./stylus/media.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/media.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/media.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -95,11 +95,11 @@ describe('测试 Funciton 与 Params', () => {
     fs.readFile(getPath('./stylus/params.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/params.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/params.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -109,11 +109,11 @@ describe('测试 Funciton 与 Params', () => {
     fs.readFile(getPath('./stylus/variable-parameter.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/variable-parameter.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/variable-parameter.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -125,11 +125,11 @@ describe('测试 Comments', () => {
     fs.readFile(getPath('./stylus/comment.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/comment.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/comment.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -141,11 +141,11 @@ describe('测试 Mixins', () => {
     fs.readFile(getPath('./stylus/comment.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/comment.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/comment.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -157,11 +157,11 @@ describe('测试 Variables', () => {
     fs.readFile(getPath('./stylus/variables.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/variables.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/variables.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -171,11 +171,11 @@ describe('测试 Variables', () => {
     fs.readFile(getPath('./stylus/variable-search.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/variable-search.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/variable-search.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -187,11 +187,11 @@ describe('测试 Each', () => {
     fs.readFile(getPath('./stylus/each.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/each.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/each.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -203,11 +203,11 @@ describe('测试 @Font-face', () => {
     fs.readFile(getPath('./stylus/font-face.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/font-face.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/font-face.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -219,11 +219,11 @@ describe('测试 Object', () => {
     fs.readFile(getPath('./stylus/object.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/object.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/object.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -235,11 +235,11 @@ describe('测试 @IF and @else', () => {
     fs.readFile(getPath('./stylus/if.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/if.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/if.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -251,11 +251,11 @@ describe('测试 Boolean', () => {
     fs.readFile(getPath('./stylus/boolean.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/boolean.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/boolean.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -267,11 +267,11 @@ describe('测试 @Charset', () => {
     fs.readFile(getPath('./stylus/charset.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/charset.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/charset.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -283,11 +283,11 @@ describe('测试 @Namescope', () => {
     fs.readFile(getPath('./stylus/namescope.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/namescope.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/namescope.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -299,11 +299,11 @@ describe('测试 @Page', () => {
     fs.readFile(getPath('./stylus/page.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/page.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/page.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
@@ -315,11 +315,11 @@ describe('测试 @Supports', () => {
     fs.readFile(getPath('./stylus/supports.styl'), (err, res) => {
       if (err) return
       const result = trimLast(res.toString())
-      const sass = converter(result)
-      fs.readFile(getPath('./sass/supports.sass'), (err, sres) => {
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/supports.scss'), (err, sres) => {
         if (err) return
         const toText = trimLast(sres.toString())
-        expect(sass).to.be.equal(toText)
+        expect(scss).to.be.equal(toText)
         done()
       })
     })
