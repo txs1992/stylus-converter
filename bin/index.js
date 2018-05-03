@@ -81,6 +81,7 @@ var TYPE_VISITOR_MAP = {
   Media: visitMedia,
   Import: visitImport,
   Extend: visitExtend,
+  Comment: visitComment,
   Feature: visitFeature,
   UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
@@ -181,7 +182,9 @@ function visitBlock(node) {
     if (!/\s/.test(text)) result += symbol;
     result += returnSymbol + text;
   }
+  result = /;$/.test(result) ? result : result + ';';
   indentationLevel--;
+  console.log(result);
   return '' + before + result + after;
 }
 
@@ -474,6 +477,12 @@ function visitFeature(node) {
   var segmentsText = visitNodes(node.segments);
   var expText = visitExpression(node.expr);
   return '(' + segmentsText + ': ' + expText + ')';
+}
+
+function visitComment(node) {
+  var before = handleLinenoAndIndentation(node);
+  oldLineno = node.lineno + 2;
+  return before + node.str;
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree

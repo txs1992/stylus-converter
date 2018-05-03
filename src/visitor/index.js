@@ -60,6 +60,7 @@ const TYPE_VISITOR_MAP = {
   Media: visitMedia,
   Import: visitImport,
   Extend: visitExtend,
+  Comment: visitComment,
   Feature: visitFeature,
   UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
@@ -152,6 +153,7 @@ function visitBlock (node) {
     if (!/\s/.test(text)) result += symbol
     result += returnSymbol + text
   }
+  result = /;$/.test(result) ? result : result + ';'
   indentationLevel--
   return `${before}${result}${after}`
 }
@@ -417,6 +419,12 @@ function visitFeature (node) {
   const segmentsText = visitNodes(node.segments)
   const expText = visitExpression(node.expr)
   return `(${segmentsText}: ${expText})`
+}
+
+function visitComment (node) {
+  const before = handleLinenoAndIndentation(node)
+  oldLineno = node.lineno + 2
+  return before + node.str
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree

@@ -207,18 +207,18 @@ npm run dev
 
 ### stylus to scss
 
+- [x] Block
 - [ ] Atrule
 - [ ] Member
 - [ ] Return
 - [x] Mixins
-- [ ] @Block
 - [x] @Media
 - [x] @Import
 - [x] @Extend
 - [ ] Atblock
 - [ ] Charset
 - [ ] Ternary
-- [ ] Comments
+- [x] Comments
 - [ ] Supports
 - [ ] NameScope
 - [x] Variables

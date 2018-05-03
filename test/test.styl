@@ -1,57 +1,69 @@
-handleParams(args...)
-  args
-
-@media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px)
-  .foo
-    color: #100
-
-.foo
-  for i in 1..4
-    @media (min-width: 2 * (i + 7) px)
-      width: 100px*i
-
-keyframe-name = pulse
-default-width = 200px
-$val = 20
-
-@keyframes { $keyframe-name }
-  for i in 0..5
-    {20% * i}
-      opacity (i / $val)
-
-#logo
-  default-border = 1px solid #ccc
-  border default-border
-  width: default-width
-  height: h = 80px
-  margin-top: -(h / 2)
-  padding-top: -(@width * 3)
-
-add(a, b)
-  if a > b && a > b + b
-    a - b
-  else if a < b || b - a > a
-    a + b
-  else
-    a * b
-
-default-border-radius(prop, args)
-  -webkit-{prop}-radius args
-  -moz-{prop}-radius args
-  {prop}-radius args
-
-.message
-  margin: 10px
-  border: 1px solid #eee
-
+/*
+ * body 多行注释
+ */
 body
-  @extend .message
-  padding add(10px, 5)
-  default-border-radius(border, 4px)
+  padding 5px
 
-  div
-    color red
-    for num in (1..5)
-      foo num
-    for str in 1 2 3 4 5
-      bar str
+/*!
+ * 给定数值合体
+ */
+add(a, b) //some awesome padding
+  a + b
+
+// handleParams(args...)
+//   args
+//
+// @media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px)
+//   .foo
+//     color: #100
+//
+// .foo
+//   for i in 1..4
+//     @media (min-width: 2 * (i + 7) px)
+//       width: 100px*i
+//
+// keyframe-name = pulse
+// default-width = 200px
+// $val = 20
+//
+// @keyframes { $keyframe-name }
+//   for i in 0..5
+//     {20% * i}
+//       opacity (i / $val)
+//
+// #logo
+//   default-border = 1px solid #ccc
+//   border default-border
+//   width: default-width
+//   height: h = 80px
+//   margin-top: -(h / 2)
+//   padding-top: -(@width * 3)
+//
+// add(a, b)
+//   if a > b && a > b + b
+//     a - b
+//   else if a < b || b - a > a
+//     a + b
+//   else
+//     a * b
+//
+// default-border-radius(prop, args)
+//   -webkit-{prop}-radius args
+//   -moz-{prop}-radius args
+//   {prop}-radius args
+//
+// .message
+//   margin: 10px
+//   border: 1px solid #eee
+//
+// body
+//   @extend .message
+//   padding add(10px, 5)
+//   default-border-radius(border, 4px)
+//
+//   div
+//     color red
+//     for num in (1..5)
+//       foo num
+//     for str in 1 2 3 4 5
+//       bar str
