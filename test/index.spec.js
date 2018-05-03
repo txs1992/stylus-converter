@@ -309,3 +309,19 @@ describe('测试 @Page', () => {
     })
   })
 })
+
+describe('测试 @Supports', () => {
+  it('test supports', done => {
+    fs.readFile(getPath('./stylus/supports.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/supports.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
