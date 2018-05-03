@@ -197,6 +197,7 @@ function visitBlock(node) {
     result += returnSymbol + text;
   }
   if (isFunction) result = /;$/.test(result) ? result : result + ';';
+  if (!/^\n\s*/.test(result)) result = '\n' + repeatString(' ', indentationLevel * 2) + result;
   indentationLevel--;
   return '' + before + result + after;
 }

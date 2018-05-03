@@ -229,3 +229,19 @@ describe('测试 Object', () => {
     })
   })
 })
+
+describe('测试 @IF and @else', () => {
+  it('test if/else', done => {
+    fs.readFile(getPath('./stylus/if.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/if.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
