@@ -1,0 +1,12 @@
+$a: 10;
+$b: 5;
+
+div {
+  @if $a > $b {
+    color: red;
+  } @else if $a < $b {
+    color: yellow;
+  } @else {
+    color: blue;
+  }
+}

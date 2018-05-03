@@ -7,17 +7,20 @@ import {
   replaceFirstATSymbol
 } from '../util.js'
 
+let quote = `'`
 let callName = ''
 let oldLineno = 1
 let oldColumn = 1
 let transfrom = ''
 let returnSymbol = ''
 let indentationLevel = 0
+let OBJECT_KEY_LIST = []
 let PROPERTY_KEY_LIST = []
 let PROPERTY_VAL_LIST = []
 let VARIABLE_NAME_LIST = []
 
 let isCall = false
+let isObject = false
 let isFunction = false
 let isProperty = false
 let isKeyframes = false
@@ -61,6 +64,7 @@ const TYPE_VISITOR_MAP = {
   Group: visitGroup,
   Query: visitQuery,
   Media: visitMedia,
+  Object: visitObject,
   Import: visitImport,
   Atrule: visitAtrule,
   Extend: visitExtend,
@@ -102,6 +106,12 @@ function visitNode (node) {
   const json = node.__type ? node : node.toJSON && node.toJSON()
   const handler = TYPE_VISITOR_MAP[json.__type]
   return handler ? handler(node) : ''
+}
+
+function recursiveSearchName(data, property, name) {
+  return data[property]
+    ? recursiveSearchName(data[property], property, name)
+    : data[name]
 }
 
 // 处理 nodes
@@ -159,6 +169,7 @@ function visitBlock (node) {
     result += returnSymbol + text
   }
   if (isFunction) result = /;$/.test(result) ? result : result + ';'
+  if (!/^\n\s*/.test(result)) result = '\n' + repeatString(' ', indentationLevel * 2) + result
   indentationLevel--
   return `${before}${result}${after}`
 }
@@ -212,6 +223,7 @@ function visitIdent ({ val, name, rest, mixin, lineno, column }) {
     return rest ? `${nameText}...` : nameText
   }
   if (identVal.__type === 'Expression') {
+    if (findNodesType(identVal.nodes, 'Object')) OBJECT_KEY_LIST.push(name)
     const before = handleLinenoAndIndentation(identVal)
     oldLineno = identVal.lineno
     const nodes = nodesToJSON(identVal.nodes || [])
@@ -249,7 +261,7 @@ function visitCall ({ name, args, lineno, column }) {
   let before = handleLineno(lineno)
   oldLineno = lineno
   const argsText = visitArguments(args)
-  if (!isProperty) {
+  if (!isProperty && !isObject) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
@@ -441,6 +453,10 @@ function visitComment (node) {
 }
 
 function visitMember ({ left, right }) {
+  const searchName = recursiveSearchName(left, 'left', 'name')
+  if (searchName && OBJECT_KEY_LIST.indexOf(searchName) > -1) {
+    return `map-get(${visitNode(left)}, ${ quote + visitNode(right) + quote})`
+  }
   return `${visitNode(left)}.${visitNode(right)}`
 }
 
@@ -451,11 +467,32 @@ function visitAtrule (node) {
   return before + visitBlock(node.block)
 }
 
+function visitObject ({ vals, lineno }) {
+  isObject = true
+  indentationLevel++
+  const before = repeatString(' ', indentationLevel * 2)
+  let result = ``
+  let count = 0
+  for(let key in vals) {
+    const resultVal = visitNode(vals[key]).replace(/;/, '')
+    const symbol = count ? ',' : ''
+    result += `${symbol}\n${before + quote + key + quote}: ${resultVal}`
+    count++
+  }
+  const totalLineno = lineno + count + 2
+  oldLineno = totalLineno > oldLineno ? totalLineno : oldLineno
+  indentationLevel--
+  isObject = false
+  return `(${result}\n${repeatString(' ', indentationLevel * 2)})`
+}
+
 // 处理 stylus 语法树；handle stylus Syntax Tree
 export default function visitor (ast, options) {
   autoprefixer = options.autoprefixer == null ? true : options.autoprefixer
+  quote = options.quote || `'`
   const result = visitNodes(ast.nodes) || ''
   oldLineno = 1
+  OBJECT_KEY_LIST = []
   PROPERTY_KEY_LIST = []
   PROPERTY_VAL_LIST = []
   VARIABLE_NAME_LIST = []

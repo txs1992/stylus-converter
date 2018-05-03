@@ -1,0 +1,18 @@
+$palette: (
+  'orange': (
+    'light': lighten(#f89c48, 10%),
+    'base': #f89c48,
+    'dark': darken(#f89c48, 10%)
+  ),
+  'green': (
+    'light': lighten(#28ba00, 10%),
+    'base': #28ba00,
+    'dark': darken(#28ba00, 10%)
+  )
+);
+
+.selector {
+  background-color: map-get(map-get($palette, 'orange'), 'base');
+  border-color: map-get(map-get($palette, 'orange'), 'dark');
+  color: map-get(map-get($palette, 'green'), 'base');
+}

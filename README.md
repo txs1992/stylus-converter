@@ -244,6 +244,7 @@ npm run dev
 - [x] Member
 - [ ] Return
 - [x] Mixins
+- [ ] Object
 - [x] @Media
 - [x] @Import
 - [x] @Extend
@@ -259,7 +260,7 @@ npm run dev
 - [x] Iteration
 - [x] Functions
 - [x] @Keyframes
-- [ ] @Font-face
+- [x] @Font-face
 - [x] CSS Literal
 - [x] Call Mixins
 - [x] Syntax Block
@@ -274,6 +275,7 @@ npm run dev
 - [ ] Mixins
 - [ ] Member
 - [ ] Return
+- [ ] Object
 - [ ] @Block
 - [ ] @Media
 - [ ] @Import
