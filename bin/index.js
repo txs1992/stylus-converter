@@ -46,15 +46,18 @@ function _get(obj, pathArray, defaultValue) {
   return value;
 }
 
+var quote = '\'';
 var callName = '';
 var oldLineno = 1;
 var returnSymbol = '';
 var indentationLevel = 0;
+var OBJECT_KEY_LIST = [];
 var PROPERTY_KEY_LIST = [];
 var PROPERTY_VAL_LIST = [];
 var VARIABLE_NAME_LIST = [];
 
 var isCall = false;
+var isObject = false;
 var isFunction = false;
 var isProperty = false;
 var isKeyframes = false;
@@ -83,6 +86,7 @@ var TYPE_VISITOR_MAP = {
   Group: visitGroup,
   Query: visitQuery,
   Media: visitMedia,
+  Object: visitObject,
   Import: visitImport,
   Atrule: visitAtrule,
   Extend: visitExtend,
@@ -128,6 +132,10 @@ function visitNode(node) {
   var json = node.__type ? node : node.toJSON && node.toJSON();
   var handler = TYPE_VISITOR_MAP[json.__type];
   return handler ? handler(node) : '';
+}
+
+function recursiveSearchName(data, property, name) {
+  return data[property] ? recursiveSearchName(data[property], property, name) : data[name];
 }
 
 // 处理 nodes
@@ -251,6 +259,7 @@ function visitIdent(_ref3) {
     return rest ? nameText + '...' : nameText;
   }
   if (identVal.__type === 'Expression') {
+    if (findNodesType(identVal.nodes, 'Object')) OBJECT_KEY_LIST.push(name);
     var before = handleLinenoAndIndentation(identVal);
     oldLineno = identVal.lineno;
     var nodes = nodesToJSON(identVal.nodes || []);
@@ -293,7 +302,7 @@ function visitCall(_ref4) {
   var before = handleLineno(lineno);
   oldLineno = lineno;
   var argsText = visitArguments(args);
-  if (!isProperty) {
+  if (!isProperty && !isObject) {
     before = before || '\n';
     before += getIndentation();
     before += '@include ';
@@ -500,6 +509,10 @@ function visitMember(_ref8) {
   var left = _ref8.left,
       right = _ref8.right;
 
+  var searchName = recursiveSearchName(left, 'left', 'name');
+  if (searchName && OBJECT_KEY_LIST.indexOf(searchName) > -1) {
+    return 'map-get(' + visitNode(left) + ', ' + (quote + visitNode(right) + quote) + ')';
+  }
   return visitNode(left) + '.' + visitNode(right);
 }
 
@@ -510,11 +523,35 @@ function visitAtrule(node) {
   return before + visitBlock(node.block);
 }
 
+function visitObject(_ref9) {
+  var vals = _ref9.vals,
+      lineno = _ref9.lineno;
+
+  isObject = true;
+  indentationLevel++;
+  var before = repeatString(' ', indentationLevel * 2);
+  var result = '';
+  var count = 0;
+  for (var key in vals) {
+    var resultVal = visitNode(vals[key]).replace(/;/, '');
+    var symbol = count ? ',' : '';
+    result += symbol + '\n' + (before + quote + key + quote) + ': ' + resultVal;
+    count++;
+  }
+  var totalLineno = lineno + count + 2;
+  oldLineno = totalLineno > oldLineno ? totalLineno : oldLineno;
+  indentationLevel--;
+  isObject = false;
+  return '(' + result + '\n' + repeatString(' ', indentationLevel * 2) + ')';
+}
+
 // 处理 stylus 语法树；handle stylus Syntax Tree
 function visitor(ast, options) {
-  autoprefixer = options.autoprefixer == null ? true : options.autoprefixer;
+  autoprefixer = options.autoprefixer || true;
+  quote = options.quote || '\'';
   var result = visitNodes(ast.nodes) || '';
   oldLineno = 1;
+  OBJECT_KEY_LIST = [];
   PROPERTY_KEY_LIST = [];
   PROPERTY_VAL_LIST = [];
   VARIABLE_NAME_LIST = [];

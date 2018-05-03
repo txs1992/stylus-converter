@@ -1,109 +1,18 @@
-@function handleParams($args...) {
-  @return $args;
-}
+$palette: (
+  'orange': (
+    'light': lighten(#f89c48, 10%),
+    'base': #f89c48,
+    'dark': darken(#f89c48, 10%)
+  ),
+  'green': (
+    'light': lighten(#28ba00, 10%),
+    'base': #28ba00,
+    'dark': darken(#28ba00, 10%)
+  )
+);
 
-@media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px) {
-  .foo {
-    color: #100;
-  }
-}
-
-.foo {
-  @for $i from 1 through 4 {
-    @media (min-width: 2 * ($i + 7) px) {
-      width: 100px * $i;
-    }
-  }
-}
-
-$keyframe-name: pulse;
-$default-width: 200px;
-$val: 20;
-
-@-webkit-keyframes #{$keyframe-name} {
-  @for $i from 0 through 5 {
-    #{20% * $i} {
-      opacity: $i / $val;
-    }
-  }
-}
-
-@-moz-keyframes #{$keyframe-name} {
-  @for $i from 0 through 5 {
-    #{20% * $i} {
-      opacity: $i / $val;
-    }
-  }
-}
-
-@-ms-keyframes #{$keyframe-name} {
-  @for $i from 0 through 5 {
-    #{20% * $i} {
-      opacity: $i / $val;
-    }
-  }
-}
-
-@-o-keyframes #{$keyframe-name} {
-  @for $i from 0 through 5 {
-    #{20% * $i} {
-      opacity: $i / $val;
-    }
-  }
-}
-
-@keyframes #{$keyframe-name} {
-  @for $i from 0 through 5 {
-    #{20% * $i} {
-      opacity: $i / $val;
-    }
-  }
-}
-
-#logo {
-  $default-border: 1px solid #ccc;
-  border: $default-border;
-  width: $default-width;
-  $h: 80px;
-  height: $h;
-  margin-top: -($h / 2);
-  padding-top: -($default-border * 3);
-}
-
-@function add($a, $b) {
-  @if $a > $b and ($a > $b + $b) {
-    @return $a - $b;
-  } @else if $a < $b or ($b - $a > $a) {
-    @return $a + $b;
-  } @else {
-    @return $a * $b;
-  };
-}
-
-@mixin default-border-radius($prop, $args) {
-  -webkit-#{$prop}-radius: $args;
-  -moz-#{$prop}-radius: $args;
-  #{$prop}-radius: $args;
-}
-
-.message {
-  margin: 10px;
-  border: 1px solid #eee;
-}
-
-body {
-  @extend .message;
-  border: $default-border;
-  padding: add(10px, 5);
-
-  div {
-    @include default-border-radius(border, 4px);
-    color: red;
-    @for $num from 1 through 5 {
-      foo: $num;
-    }
-    @each $str in 1, 2, 3, 4, 5 {
-      bar: $str;
-    }
-  }
+.selector {
+  background-color: map-get(map-get($palette, 'orange'), 'base');
+  border-color: map-get(map-get($palette, 'orange'), 'dark');
+  color: map-get(map-get($palette, 'green'), 'base');
 }
