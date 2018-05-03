@@ -105,9 +105,8 @@ var TYPE_VISITOR_MAP = (_TYPE_VISITOR_MAP = {
   Query: visitQuery,
   Media: visitMedia,
   Atrule: visitAtrule,
-  Object: visitObject,
   Import: visitImport
-}, defineProperty(_TYPE_VISITOR_MAP, 'Atrule', visitAtrule), defineProperty(_TYPE_VISITOR_MAP, 'Extend', visitExtend), defineProperty(_TYPE_VISITOR_MAP, 'Member', visitMember), defineProperty(_TYPE_VISITOR_MAP, 'Comment', visitComment), defineProperty(_TYPE_VISITOR_MAP, 'Feature', visitFeature), defineProperty(_TYPE_VISITOR_MAP, 'UnaryOp', visitUnaryOp), defineProperty(_TYPE_VISITOR_MAP, 'Literal', visitLiteral), defineProperty(_TYPE_VISITOR_MAP, 'Charset', visitCharset), defineProperty(_TYPE_VISITOR_MAP, 'Params', visitArguments), defineProperty(_TYPE_VISITOR_MAP, 'Property', visitProperty), defineProperty(_TYPE_VISITOR_MAP, 'Boolean', visitBoolean), defineProperty(_TYPE_VISITOR_MAP, 'Selector', visitSelector), defineProperty(_TYPE_VISITOR_MAP, 'Supports', visitSupports), defineProperty(_TYPE_VISITOR_MAP, 'Function', visitFunction), defineProperty(_TYPE_VISITOR_MAP, 'Arguments', visitArguments), defineProperty(_TYPE_VISITOR_MAP, 'Keyframes', visitKeyframes), defineProperty(_TYPE_VISITOR_MAP, 'QueryList', visitQueryList), defineProperty(_TYPE_VISITOR_MAP, 'Namespace', visitNamespace), defineProperty(_TYPE_VISITOR_MAP, 'Expression', visitExpression), _TYPE_VISITOR_MAP);
+}, defineProperty(_TYPE_VISITOR_MAP, 'Atrule', visitAtrule), defineProperty(_TYPE_VISITOR_MAP, 'Extend', visitExtend), defineProperty(_TYPE_VISITOR_MAP, 'Member', visitMember), defineProperty(_TYPE_VISITOR_MAP, 'Object', visitObject), defineProperty(_TYPE_VISITOR_MAP, 'String', visitString), defineProperty(_TYPE_VISITOR_MAP, 'Feature', visitFeature), defineProperty(_TYPE_VISITOR_MAP, 'UnaryOp', visitUnaryOp), defineProperty(_TYPE_VISITOR_MAP, 'Literal', visitLiteral), defineProperty(_TYPE_VISITOR_MAP, 'Charset', visitCharset), defineProperty(_TYPE_VISITOR_MAP, 'Params', visitArguments), defineProperty(_TYPE_VISITOR_MAP, 'Comment', visitComment), defineProperty(_TYPE_VISITOR_MAP, 'Property', visitProperty), defineProperty(_TYPE_VISITOR_MAP, 'Boolean', visitBoolean), defineProperty(_TYPE_VISITOR_MAP, 'Selector', visitSelector), defineProperty(_TYPE_VISITOR_MAP, 'Supports', visitSupports), defineProperty(_TYPE_VISITOR_MAP, 'Function', visitFunction), defineProperty(_TYPE_VISITOR_MAP, 'Arguments', visitArguments), defineProperty(_TYPE_VISITOR_MAP, 'Keyframes', visitKeyframes), defineProperty(_TYPE_VISITOR_MAP, 'QueryList', visitQueryList), defineProperty(_TYPE_VISITOR_MAP, 'Namespace', visitNamespace), defineProperty(_TYPE_VISITOR_MAP, 'Expression', visitExpression), _TYPE_VISITOR_MAP);
 
 function handleLineno(lineno) {
   return repeatString('\n', lineno - oldLineno);
@@ -174,7 +173,13 @@ function visitSelector(node) {
 }
 
 function visitGroup(node) {
-  var selector = visitNodes(node.nodes);
+  var before = handleLinenoAndIndentation(node);
+  oldLineno = node.lineno;
+  var nodes = nodesToJSON(node.nodes);
+  var selector = '';
+  nodes.forEach(function (node, idx) {
+    selector += idx ? ', ' + visitNode(node).replace(/\n./, '').replace(/^\s*/, '') : visitNode(node);
+  });
   var block = visitBlock(node.block);
   if (isKeyframes && /-|\*|\+|\/|\$/.test(selector)) {
     var len = getCharLength(selector, ' ') - 2;
@@ -287,7 +292,8 @@ function visitExpression(node) {
   var nodes = nodesToJSON(node.nodes);
   nodes.forEach(function (node, idx) {
     var nodeText = visitNode(node);
-    result += idx ? ' ' + nodeText : nodeText;
+    var symbol = isProperty && node.nodes && findNodesType(node.nodes, 'String') ? ',' : '';
+    result += idx ? symbol + ' ' + nodeText : nodeText;
   });
   isExpression = false;
   if (isCall && callName === 'url') return result.replace(/\s/g, '');
@@ -600,6 +606,13 @@ function visitSupports(_ref13) {
   oldLineno = lineno;
   before += getIndentation();
   return before + '@Supports ' + (visitNode(condition) + visitBlock(block));
+}
+
+function visitString(_ref14) {
+  var val = _ref14.val,
+      quote = _ref14.quote;
+
+  return quote + val + quote;
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
