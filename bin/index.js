@@ -174,7 +174,12 @@ function visitSelector(node) {
 }
 
 function visitGroup(node) {
-  var selector = visitNodes(node.nodes);
+  var nodes = nodesToJSON(node.nodes);
+  var selector = '';
+  nodes.forEach(function (node, idx) {
+    selector += idx ? ', ' + visitNode(node) : visitNode(node);
+  });
+  // const selector = visitNodes(node.nodes)
   var block = visitBlock(node.block);
   if (isKeyframes && /-|\*|\+|\/|\$/.test(selector)) {
     var len = getCharLength(selector, ' ') - 2;
@@ -620,7 +625,7 @@ function converter(result) {
 
   if (typeof result !== 'string') return result;
   var ast = new Parser(result).parse();
-  // console.log(JSON.stringify(ast))
+  console.log(JSON.stringify(ast));
   return visitor(ast, options);
 }
 

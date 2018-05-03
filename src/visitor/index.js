@@ -148,7 +148,12 @@ function visitSelector (node) {
 }
 
 function visitGroup (node) {
-  const selector = visitNodes(node.nodes)
+  const nodes = nodesToJSON(node.nodes)
+  let selector = ''
+  nodes.forEach((node, idx) => {
+    selector += idx ? `, ${visitNode(node)}`: visitNode(node)
+  })
+  // const selector = visitNodes(node.nodes)
   const block = visitBlock(node.block)
   if (isKeyframes && /-|\*|\+|\/|\$/.test(selector)) {
     const len = getCharLength(selector, ' ') - 2
