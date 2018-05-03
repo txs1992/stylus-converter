@@ -46,6 +46,7 @@ function _get(obj, pathArray, defaultValue) {
   return value;
 }
 
+var callName = '';
 var oldLineno = 1;
 var returnSymbol = '';
 var indentationLevel = 0;
@@ -83,7 +84,9 @@ var TYPE_VISITOR_MAP = {
   Query: visitQuery,
   Media: visitMedia,
   Import: visitImport,
+  Atrule: visitAtrule,
   Extend: visitExtend,
+  Member: visitMember,
   Comment: visitComment,
   Feature: visitFeature,
   UnaryOp: visitUnaryOp,
@@ -274,6 +277,7 @@ function visitExpression(node) {
     result += idx ? ' ' + nodeText : nodeText;
   });
   isExpression = false;
+  if (isCall && callName === 'url') return result.replace(/\s/g, '');
   if (!returnSymbol || isIfExpression) return result;
   return before + returnSymbol + result;
 }
@@ -285,6 +289,7 @@ function visitCall(_ref4) {
       column = _ref4.column;
 
   isCall = true;
+  callName = name;
   var before = handleLineno(lineno);
   oldLineno = lineno;
   var argsText = visitArguments(args);
@@ -293,6 +298,7 @@ function visitCall(_ref4) {
     before += getIndentation();
     before += '@include ';
   }
+  callName = '';
   isCall = false;
   return before + name + '(' + argsText + ');';
 }
@@ -488,6 +494,20 @@ function visitComment(node) {
   var before = handleLinenoAndIndentation(node);
   oldLineno = node.lineno + 2;
   return before + node.str;
+}
+
+function visitMember(_ref8) {
+  var left = _ref8.left,
+      right = _ref8.right;
+
+  return visitNode(left) + '.' + visitNode(right);
+}
+
+function visitAtrule(node) {
+  var before = handleLinenoAndIndentation(node);
+  oldLineno = node.lineno;
+  before += '@' + node.type;
+  return before + visitBlock(node.block);
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree

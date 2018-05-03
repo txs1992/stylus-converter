@@ -181,3 +181,35 @@ describe('测试 Variables', () => {
     })
   })
 })
+
+describe('测试 Each', () => {
+  it('test each', done => {
+    fs.readFile(getPath('./stylus/each.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/each.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
+
+describe('测试 @Font-face', () => {
+  it('test @font-face', done => {
+    fs.readFile(getPath('./stylus/font-face.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/font-face.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})

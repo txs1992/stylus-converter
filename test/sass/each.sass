@@ -1,0 +1,8 @@
+div {
+  @for $num from 1 through 5 {
+    foo: $num;
+  }
+  @each $str in 1, 2, 3, 4, 5 {
+    bar: $str;
+  }
+}
