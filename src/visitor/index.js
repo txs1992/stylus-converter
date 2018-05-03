@@ -197,9 +197,9 @@ function visitIdent ({ val, name, rest, mixin, lineno, column }) {
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
-      const len = PROPERTY_KEY_LIST.indexOf(name)
       if (isCall) return name
-      if (len > -1) return replaceFirstATSymbol(PROPERTY_VAL_LIST[len])
+      const len = PROPERTY_KEY_LIST.indexOf(name)
+      if (len > -1) return PROPERTY_VAL_LIST[len]
     }
     if (mixin) return `#{$${name}}`
     let nameText = VARIABLE_NAME_LIST.indexOf(name) > -1

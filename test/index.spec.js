@@ -151,3 +151,33 @@ describe('测试 Mixins', () => {
     })
   })
 })
+
+describe('测试 Variables', () => {
+  it('test variable assignment', done => {
+    fs.readFile(getPath('./stylus/variables.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/variables.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+
+  it('test variable search', done => {
+    fs.readFile(getPath('./stylus/variable-search.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/variable-search.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
