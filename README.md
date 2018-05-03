@@ -244,16 +244,16 @@ npm run dev
 - [x] Member
 - [ ] Return
 - [x] Mixins
-- [ ] Object
+- [x] Object
 - [x] @Media
 - [x] @Import
 - [x] @Extend
 - [ ] Atblock
-- [ ] Charset
+- [x] Charset
 - [ ] Ternary
 - [x] Comments
-- [ ] Supports
-- [ ] NameScope
+- [x] Supports
+- [x] NameScope
 - [x] Variables
 - [x] Operators
 - [x] Selectors

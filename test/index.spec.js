@@ -261,3 +261,67 @@ describe('测试 Boolean', () => {
     })
   })
 })
+
+describe('测试 @Charset', () => {
+  it('test charset', done => {
+    fs.readFile(getPath('./stylus/charset.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/charset.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
+
+describe('测试 @Namescope', () => {
+  it('test namescope', done => {
+    fs.readFile(getPath('./stylus/namescope.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/namescope.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
+
+describe('测试 @Page', () => {
+  it('test page', done => {
+    fs.readFile(getPath('./stylus/page.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/page.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
+
+describe('测试 @Supports', () => {
+  it('test supports', done => {
+    fs.readFile(getPath('./stylus/supports.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/supports.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})

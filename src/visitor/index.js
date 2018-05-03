@@ -23,6 +23,7 @@ let isCall = false
 let isObject = false
 let isFunction = false
 let isProperty = false
+let isNamespace = false
 let isKeyframes = false
 let isExpression = false
 let isIfExpression = false
@@ -64,6 +65,7 @@ const TYPE_VISITOR_MAP = {
   Group: visitGroup,
   Query: visitQuery,
   Media: visitMedia,
+  Atrule: visitAtrule,
   Object: visitObject,
   Import: visitImport,
   Atrule: visitAtrule,
@@ -73,14 +75,17 @@ const TYPE_VISITOR_MAP = {
   Feature: visitFeature,
   UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
+  Charset: visitCharset,
   Params: visitArguments,
   Property: visitProperty,
   'Boolean': visitBoolean,
-  'Function': visitFunction,
   Selector: visitSelector,
+  Supports: visitSupports,
+  'Function': visitFunction,
   Arguments: visitArguments,
   Keyframes: visitKeyframes,
   QueryList: visitQueryList,
+  Namespace: visitNamespace,
   Expression: visitExpression
 }
 
@@ -261,7 +266,7 @@ function visitCall ({ name, args, lineno, column }) {
   let before = handleLineno(lineno)
   oldLineno = lineno
   const argsText = visitArguments(args)
-  if (!isProperty && !isObject) {
+  if (!isProperty && !isObject && !isNamespace) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
@@ -484,6 +489,39 @@ function visitObject ({ vals, lineno }) {
   indentationLevel--
   isObject = false
   return `(${result}\n${repeatString(' ', indentationLevel * 2)})`
+}
+
+function visitCharset ({ val: { val: value, quote }, lineno }) {
+  const before = handleLineno(lineno)
+  oldLineno = lineno
+  return `${before}@charset ${quote + value + quote};`
+}
+
+function visitNamespace ({ val, lineno }) {
+  isNamespace = true
+  const name = '@namespace '
+  const before = handleLineno(lineno)
+  oldLineno = lineno
+  if (val.type === 'string') {
+    const { val: value, quote: valQuote } = val.val
+    isNamespace = false
+    return before + name + valQuote + value + valQuote + ';'
+  }
+  return before + name + visitNode(val)
+}
+
+function visitAtrule ({ type, block, lineno, segments }) {
+  const before = handleLineno(lineno)
+  oldLineno = lineno
+  const typeText = segments.length ? `@${type} ` : `@${type}`
+  return `${before + typeText + visitNodes(segments) + visitBlock(block)}`
+}
+
+function visitSupports ({ block, lineno, condition }) {
+  let before = handleLineno(lineno)
+  oldLineno = lineno
+  before += getIndentation()
+  return `${before}@Supports ${visitNode(condition) + visitBlock(block)}`
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
