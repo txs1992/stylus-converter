@@ -46,6 +46,23 @@ function _get(obj, pathArray, defaultValue) {
   return value;
 }
 
+var defineProperty = function (obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+};
+
+var _TYPE_VISITOR_MAP;
+
 var quote = '\'';
 var callName = '';
 var oldLineno = 1;
@@ -60,6 +77,7 @@ var isCall = false;
 var isObject = false;
 var isFunction = false;
 var isProperty = false;
+var isNamespace = false;
 var isKeyframes = false;
 var isExpression = false;
 var isIfExpression = false;
@@ -74,7 +92,7 @@ var OPEARTION_MAP = {
 
 var KEYFRAMES_LIST = ['@-webkit-keyframes ', '@-moz-keyframes ', '@-ms-keyframes ', '@-o-keyframes ', '@keyframes '];
 
-var TYPE_VISITOR_MAP = {
+var TYPE_VISITOR_MAP = (_TYPE_VISITOR_MAP = {
   If: visitIf,
   Each: visitEach,
   RGBA: visitRGBA,
@@ -86,25 +104,10 @@ var TYPE_VISITOR_MAP = {
   Group: visitGroup,
   Query: visitQuery,
   Media: visitMedia,
-  Object: visitObject,
-  Import: visitImport,
   Atrule: visitAtrule,
-  Extend: visitExtend,
-  Member: visitMember,
-  Comment: visitComment,
-  Feature: visitFeature,
-  UnaryOp: visitUnaryOp,
-  Literal: visitLiteral,
-  Params: visitArguments,
-  Property: visitProperty,
-  'Boolean': visitBoolean,
-  'Function': visitFunction,
-  Selector: visitSelector,
-  Arguments: visitArguments,
-  Keyframes: visitKeyframes,
-  QueryList: visitQueryList,
-  Expression: visitExpression
-};
+  Object: visitObject,
+  Import: visitImport
+}, defineProperty(_TYPE_VISITOR_MAP, 'Atrule', visitAtrule), defineProperty(_TYPE_VISITOR_MAP, 'Extend', visitExtend), defineProperty(_TYPE_VISITOR_MAP, 'Member', visitMember), defineProperty(_TYPE_VISITOR_MAP, 'Comment', visitComment), defineProperty(_TYPE_VISITOR_MAP, 'Feature', visitFeature), defineProperty(_TYPE_VISITOR_MAP, 'UnaryOp', visitUnaryOp), defineProperty(_TYPE_VISITOR_MAP, 'Literal', visitLiteral), defineProperty(_TYPE_VISITOR_MAP, 'Charset', visitCharset), defineProperty(_TYPE_VISITOR_MAP, 'Params', visitArguments), defineProperty(_TYPE_VISITOR_MAP, 'Property', visitProperty), defineProperty(_TYPE_VISITOR_MAP, 'Boolean', visitBoolean), defineProperty(_TYPE_VISITOR_MAP, 'Selector', visitSelector), defineProperty(_TYPE_VISITOR_MAP, 'Supports', visitSupports), defineProperty(_TYPE_VISITOR_MAP, 'Function', visitFunction), defineProperty(_TYPE_VISITOR_MAP, 'Arguments', visitArguments), defineProperty(_TYPE_VISITOR_MAP, 'Keyframes', visitKeyframes), defineProperty(_TYPE_VISITOR_MAP, 'QueryList', visitQueryList), defineProperty(_TYPE_VISITOR_MAP, 'Namespace', visitNamespace), defineProperty(_TYPE_VISITOR_MAP, 'Expression', visitExpression), _TYPE_VISITOR_MAP);
 
 function handleLineno(lineno) {
   return repeatString('\n', lineno - oldLineno);
@@ -303,7 +306,7 @@ function visitCall(_ref4) {
   var before = handleLineno(lineno);
   oldLineno = lineno;
   var argsText = visitArguments(args);
-  if (!isProperty && !isObject) {
+  if (!isProperty && !isObject && !isNamespace) {
     before = before || '\n';
     before += getIndentation();
     before += '@include ';
@@ -544,6 +547,58 @@ function visitObject(_ref9) {
   indentationLevel--;
   isObject = false;
   return '(' + result + '\n' + repeatString(' ', indentationLevel * 2) + ')';
+}
+
+function visitCharset(_ref10) {
+  var _ref10$val = _ref10.val,
+      value = _ref10$val.val,
+      quote = _ref10$val.quote,
+      lineno = _ref10.lineno;
+
+  var before = handleLineno(lineno);
+  oldLineno = lineno;
+  return before + '@charset ' + (quote + value + quote) + ';';
+}
+
+function visitNamespace(_ref11) {
+  var val = _ref11.val,
+      lineno = _ref11.lineno;
+
+  isNamespace = true;
+  var name = '@namespace ';
+  var before = handleLineno(lineno);
+  oldLineno = lineno;
+  if (val.type === 'string') {
+    var _val$val = val.val,
+        value = _val$val.val,
+        valQuote = _val$val.quote;
+
+    isNamespace = false;
+    return before + name + valQuote + value + valQuote + ';';
+  }
+  return before + name + visitNode(val);
+}
+
+function visitAtrule(_ref12) {
+  var type = _ref12.type,
+      block = _ref12.block,
+      lineno = _ref12.lineno,
+      segments = _ref12.segments;
+
+  var before = handleLineno(lineno);
+  oldLineno = lineno;
+  return before + '@' + type + ' ' + (visitNodes(segments) + visitBlock(block));
+}
+
+function visitSupports(_ref13) {
+  var block = _ref13.block,
+      lineno = _ref13.lineno,
+      condition = _ref13.condition;
+
+  var before = handleLineno(lineno);
+  oldLineno = lineno;
+  before += getIndentation();
+  return before + '@Supports ' + (visitNode(condition) + visitBlock(block));
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
