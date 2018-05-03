@@ -1,12 +1,10 @@
 #app {
   color: red;
 
-  div
-  span {
+  div, span {
     width: 100px;
 
-    ul
-    & {
+    ul, & {
       padding: 10px;
     }
   }

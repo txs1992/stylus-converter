@@ -66,17 +66,18 @@ const TYPE_VISITOR_MAP = {
   Query: visitQuery,
   Media: visitMedia,
   Atrule: visitAtrule,
-  Object: visitObject,
   Import: visitImport,
   Atrule: visitAtrule,
   Extend: visitExtend,
   Member: visitMember,
-  Comment: visitComment,
+  'Object': visitObject,
+  'String': visitString,
   Feature: visitFeature,
   UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
   Charset: visitCharset,
   Params: visitArguments,
+  'Comment': visitComment,
   Property: visitProperty,
   'Boolean': visitBoolean,
   Selector: visitSelector,
@@ -148,12 +149,15 @@ function visitSelector (node) {
 }
 
 function visitGroup (node) {
+  const before = handleLinenoAndIndentation(node)
+  oldLineno = node.lineno
   const nodes = nodesToJSON(node.nodes)
   let selector = ''
   nodes.forEach((node, idx) => {
-    selector += idx ? `, ${visitNode(node)}`: visitNode(node)
+    selector += idx
+      ? `, ${visitNode(node).replace(/\n./, '').replace(/^\s*/, '')}`
+      : visitNode(node)
   })
-  // const selector = visitNodes(node.nodes)
   const block = visitBlock(node.block)
   if (isKeyframes && /-|\*|\+|\/|\$/.test(selector)) {
     const len = getCharLength(selector, ' ') - 2
@@ -254,10 +258,11 @@ function visitExpression (node) {
   let before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno
   let result = ''
+  const symbol = isProperty ? ',' : ''
   const nodes = nodesToJSON(node.nodes)
   nodes.forEach((node, idx) => {
     const nodeText = visitNode(node)
-    result += idx ? ' ' + nodeText : nodeText
+    result += idx ? symbol + ' ' + nodeText : nodeText
   })
   isExpression = false
   if (isCall && callName === 'url') return result.replace(/\s/g, '')
@@ -527,6 +532,10 @@ function visitSupports ({ block, lineno, condition }) {
   oldLineno = lineno
   before += getIndentation()
   return `${before}@Supports ${visitNode(condition) + visitBlock(block)}`
+}
+
+function visitString ({ val, quote }) {
+  return quote + val + quote
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
