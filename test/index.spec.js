@@ -277,3 +277,19 @@ describe('测试 @Charset', () => {
     })
   })
 })
+
+describe('测试 @Namescope', () => {
+  it('test namescope', done => {
+    fs.readFile(getPath('./stylus/namescope.styl'), (err, res) => {
+      if (err) return
+      const result = trimLast(res.toString())
+      const sass = converter(result)
+      fs.readFile(getPath('./sass/namescope.sass'), (err, sres) => {
+        if (err) return
+        const toText = trimLast(sres.toString())
+        expect(sass).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
