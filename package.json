@@ -2,7 +2,7 @@
   "name": "stylus-converter",
   "version": "0.0.13",
   "description": "A tool that converts a stylus into sass, or less, or other precompiled CSS.",
-  "main": "bin/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c && node ./test/converter-test.js",
