@@ -47,13 +47,13 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-es2015-rollup": "^3.0.0",
     "chai": "^4.1.2",
-    "commander": "^2.15.1",
     "mocha": "^5.1.1",
-    "optimist": "^0.6.1",
     "rollup": "^0.57.1",
     "rollup-plugin-babel": "^3.0.3"
   },
   "dependencies": {
+    "commander": "^2.15.1",
+    "optimist": "^0.6.1",
     "stylus": "^0.54.5"
   }
 }
