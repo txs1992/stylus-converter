@@ -6,12 +6,12 @@ const converFile = require('./file');
 const version = require('../package.json').version
 
 function handleOptions () {
-  const quote = argv.Q || argv.quote || 'single'
-  const input = argv.I || argv.input
-  const output = argv.O || argv.output
-  const conver = argv.C || argv.conver || 'scss'
-  const directory = argv.D || argv.directory || 'yes'
-  const autoprefixer =  argv.P || argv.autoprefixer || 'yes'
+  const quote = argv.q|| argv.quote || 'single'
+  const input = argv.i || argv.input
+  const output = argv.o || argv.output
+  const conver = argv.c || argv.conver || 'scss'
+  const directory = argv.d || argv.directory || 'yes'
+  const autoprefixer =  argv.p || argv.autoprefixer || 'yes'
   if (!input) throw new Error('Not input.')
   if (!output) throw new Error('Not output.')
   if (quote !== 'single' && quote !== 'dobule') throw new Error('The quote parameter has a problem, it can only be single or double.')
@@ -29,11 +29,11 @@ function handleOptions () {
 
 program
     .version(version)
-    .option('-Q, --quote', 'Add quote')
-    .option('-I, --input', 'Add input')
-    .option('-O, --output', 'Add output')
-    .option('-C, --conver', 'Add conver type')
-    .option('-D, --directory', 'Is directory type')
-    .option('-P, --autoprefixer', 'Whether to add a prefix')
+    .option('-q, --quote', 'Add quote')
+    .option('-i, --input', 'Add input')
+    .option('-o, --output', 'Add output')
+    .option('-c, --conver', 'Add conver type')
+    .option('-d, --directory', 'Is directory type')
+    .option('-p, --autoprefixer', 'Whether to add a prefix')
     .action(handleOptions)
     .parse(process.argv);
