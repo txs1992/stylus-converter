@@ -29,12 +29,12 @@
 
 | 参数 | 简写 | 说明 | 可选值 | 默认值 |
 | ---- | ---- | ---- | ---- | ---- |
-| `-quote` | `-q` | 转换中遇到字符串时，使用的引号类型 | single / dobule | single |
-| `-input` | `-i` | 输入名称，可以是文件或者是文件夹的路径 | - | - |
-| `-output` | `-o` | 输出名称，可以是文件或者是文件夹的路径 | - | - |
-| `-conver ` | `-c` | 转换类型，例如转换成 scss 语法 | scss | scss |
-| `-directory` | `-d` | 输入和输出路径是否是个目录 | yes / no | no |
-| `-autoprefixer ` | `-ap` | 是否添加前缀 | yes / no | yes |
+| `--quote` | `-Q` | 转换中遇到字符串时，使用的引号类型 | single / dobule | single |
+| `--input` | `-I` | 输入名称，可以是文件或者是文件夹的路径 | - | - |
+| `--output` | `-O` | 输出名称，可以是文件或者是文件夹的路径 | - | - |
+| `--conver ` | `-C` | 转换类型，例如转换成 scss 语法 | scss | scss |
+| `--directory` | `-D` | 输入和输出路径是否是个目录 | yes / no | no |
+| `--autoprefixer ` | `-P` | 是否添加前缀 | yes / no | yes |
 
 ## 使用示例
 
@@ -43,8 +43,8 @@
 ```javascript
 npm install -g stylus-converter
 
-// 转换成 scss 文件
-stylus-conver -i test.styl -o test.scss
+// 转换文件
+stylus-conver -I test.styl -O test.scss
 ```
 
 ### 在项目中运行
