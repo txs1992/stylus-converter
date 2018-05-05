@@ -1,21 +1,26 @@
-# stylus-converter
+<div  align="center">
+  <font color="#909399" size="12" face="YouYuan">
+    stylus-converter
+  </font>
+</div>
 
 ![](http://img.shields.io/travis/TaoXuSheng/stylus-converter.svg)
 ![](https://img.shields.io/npm/dt/stylus-converter.svg)
 ![](https://img.shields.io/npm/v/stylus-converter.svg)
 ![](https://img.shields.io/npm/l/stylus-converter.svg)
 
+### ^_^ 既然都已经来了，就留下 star 呗。
 
 ## 注意
 
-> 本项目还在测试中，请不要使用该工具转换您公司的项目代码。由于 stylus 不支持浏览器端，所以依赖 stylus 的本库暂时也不支持浏览器端，后期视情况考虑提供 node 服务。等完成 stylus to sass 基本功能后会添加 cli 功能，支持 vue 语法。
+> 在使用本工具转换代码时请做好备份，防止转换错误。由于 stylus 不支持浏览器端，所以依赖 stylus 的本库暂时也不支持浏览器端，后期视情况考虑提供 node 服务，添加 vue 语法支持。
 
 
 ## 为什么要做这个工具
 
 > 因为早期有个项目用到了 stylus，stylus 开发起来很爽，但维护起来让人崩溃。加上 stylus 作者本人已经都已经放弃维护了，所以准备转换其他预编译 CSS 语言。但是本人又很懒，手动转换 stylus 浪费时间，且出错率大，所以灵机一动就有了这个项目。
 
-## 配置
+## stylus-converter 配置
 
 ### converter 配置
 
@@ -61,7 +66,12 @@ const converter = require('stylus-converter')
 fs.readFile('src/test.styl', (err, res) => {
   if (err) return
   const result = res.toString()
-  const scss = converter(result)
+  const options = {
+    quote: '\'',
+    conver: 'scss',
+    autoprefixer: true
+  }
+  const scss = converter(result, options)
   fs.writeFile('src/test.scss', scss)
 })
 
