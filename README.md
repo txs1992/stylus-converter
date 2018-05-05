@@ -15,13 +15,43 @@
 
 > 因为早期有个项目用到了 stylus，stylus 开发起来很爽，但维护起来让人崩溃。加上 stylus 作者本人已经都已经放弃维护了，所以准备转换其他预编译 CSS 语言。但是本人又很懒，手动转换 stylus 浪费时间，且出错率大，所以灵机一动就有了这个项目。
 
+## 配置
+
+### converter 配置
+
+| 参数 | 说明 | 类型 | 可选值 | 默认值 |
+| ---- | ---- | ---- | ---- | ---- |
+| `quote` | 转换中遇到字符串时，使用的引号类型 | string | `'` / `"` | `'` |
+| `conver` | 转换类型，例如转换成 scss 语法 | string | scss | scss |
+| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes`。 | boolean | true / false | true |
+
+### cli 配置
+
+| 参数 | 简写 | 说明 | 可选值 | 默认值 |
+| ---- | ---- | ---- | ---- | ---- |
+| `-quote` | `-q` | 转换中遇到字符串时，使用的引号类型 | single / dobule | single |
+| `-input` | `-i` | 输入名称，可以是文件或者是文件夹的路径 | - | - |
+| `-output` | `-o` | 输出名称，可以是文件或者是文件夹的路径 | - | - |
+| `-conver ` | `-c` | 转换类型，例如转换成 scss 语法 | scss | scss |
+| `-directory` | `-d` | 输入和输出路径是否是个目录 | yes / no | no |
+| `-autoprefixer ` | `-ap` | 是否添加前缀 | yes / no | yes |
 
 ## 使用示例
 
-### 下载并执行
+### 本地运行
+
+```javascript
+npm install -g stylus-converter
+
+// 转换成 scss 文件
+stylus-conver -i test.styl -o test.scss
+```
+
+### 在项目中运行
+
 ```javascript
 // 下载 stylus-converter
-npm install stylus-converter
+npm install stylus-converter -d
 
 // 编写测试代码读取 stylus 源文件
 // src/test.js
@@ -40,6 +70,7 @@ node src/test.js
 ```
 
 ### 转换前的 stylus 源码
+
 ```stylus
 handleParams(args...)
   args
@@ -102,7 +133,8 @@ body
 ```
 
 ### 转换后的 sass 源码
-```sass
+
+```scss
 @function handleParams($args...) {
   @return $args;
 }
