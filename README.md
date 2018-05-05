@@ -1,7 +1,5 @@
 <div  align="center">
-  <font color="#909399" size="12" face="YouYuan">
-    stylus-converter
-  </font>
+  <img src="./banner.png"></img>
 </div>
 
 ![](http://img.shields.io/travis/TaoXuSheng/stylus-converter.svg)
@@ -9,11 +7,10 @@
 ![](https://img.shields.io/npm/v/stylus-converter.svg)
 ![](https://img.shields.io/npm/l/stylus-converter.svg)
 
-### ^_^ 既然都已经来了，就留下您宝贵的 👣 `star`吧。
 
 ## 注意
 
-> 在使用本工具转换代码时请做好备份，防止转换错误。由于 stylus 不支持浏览器端，所以依赖 stylus 的本库暂时也不支持浏览器端，后期视情况考虑提供 node 服务，添加 vue 语法支持。
+> 在使用本工具转换代码时请做好备份，防止转换错误。由于 stylus 不支持浏览器端，所以依赖 stylus 的本库暂时也不支持浏览器端，后期视情况考虑提供 node 服务，添加 vue 语法支持。如果对您有帮助，请留下 `star `。
 
 
 ## 为什么要做这个工具
