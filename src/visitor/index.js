@@ -8,10 +8,10 @@ import {
 } from '../util.js'
 
 let quote = `'`
+let conver = ''
 let callName = ''
 let oldLineno = 1
 let oldColumn = 1
-let transfrom = ''
 let returnSymbol = ''
 let indentationLevel = 0
 let OBJECT_KEY_LIST = []
@@ -540,8 +540,9 @@ function visitString ({ val, quote }) {
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
 export default function visitor (ast, options) {
-  autoprefixer = options.autoprefixer == null ? true : options.autoprefixer
-  quote = options.quote || `'`
+  quote = options.quote
+  conver = options.conver
+  autoprefixer = options.autoprefixer
   const result = visitNodes(ast.nodes) || ''
   oldLineno = 1
   OBJECT_KEY_LIST = []

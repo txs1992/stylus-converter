@@ -1,27 +1,62 @@
-# stylus-converter
+<div  align="center">
+  <font color="#909399" size="12" face="YouYuan">
+    stylus-converter
+  </font>
+</div>
 
 ![](http://img.shields.io/travis/TaoXuSheng/stylus-converter.svg)
 ![](https://img.shields.io/npm/dt/stylus-converter.svg)
 ![](https://img.shields.io/npm/v/stylus-converter.svg)
 ![](https://img.shields.io/npm/l/stylus-converter.svg)
 
+### ^_^ 既然都已经来了，就留下您宝贵的 👣 `star`吧。
 
 ## 注意
 
-> 本项目还在测试中，请不要使用该工具转换您公司的项目代码。由于 stylus 不支持浏览器端，所以依赖 stylus 的本库暂时也不支持浏览器端，后期视情况考虑提供 node 服务。等完成 stylus to sass 基本功能后会添加 cli 功能，支持 vue 语法。
+> 在使用本工具转换代码时请做好备份，防止转换错误。由于 stylus 不支持浏览器端，所以依赖 stylus 的本库暂时也不支持浏览器端，后期视情况考虑提供 node 服务，添加 vue 语法支持。
 
 
 ## 为什么要做这个工具
 
 > 因为早期有个项目用到了 stylus，stylus 开发起来很爽，但维护起来让人崩溃。加上 stylus 作者本人已经都已经放弃维护了，所以准备转换其他预编译 CSS 语言。但是本人又很懒，手动转换 stylus 浪费时间，且出错率大，所以灵机一动就有了这个项目。
 
+## stylus-converter 配置
+
+### converter 配置
+
+| 参数 | 说明 | 类型 | 可选值 | 默认值 |
+| ---- | ---- | ---- | ---- | ---- |
+| `quote` | 转换中遇到字符串时，使用的引号类型 | string | `'` / `"` | `'` |
+| `conver` | 转换类型，例如转换成 scss 语法 | string | scss | scss |
+| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes`。 | boolean | true / false | true |
+
+### cli 配置
+
+| 参数 | 简写 | 说明 | 可选值 | 默认值 |
+| ---- | ---- | ---- | ---- | ---- |
+| `--quote` | `-q` | 转换中遇到字符串时，使用的引号类型 | single / dobule | single |
+| `--input` | `-i` | 输入名称，可以是文件或者是文件夹的路径 | - | - |
+| `--output` | `-o` | 输出名称，可以是文件或者是文件夹的路径 | - | - |
+| `--conver ` | `-c` | 转换类型，例如转换成 scss 语法 | scss | scss |
+| `--directory` | `-d` | 输入和输出路径是否是个目录 | yes / no | no |
+| `--autoprefixer ` | `-p` | 是否添加前缀 | yes / no | yes |
 
 ## 使用示例
 
-### 下载并执行
+### 本地运行
+
+```javascript
+npm install -g stylus-converter
+
+// 转换文件
+stylus-conver -i test.styl -o test.scss
+```
+
+### 在项目中运行
+
 ```javascript
 // 下载 stylus-converter
-npm install stylus-converter
+npm install stylus-converter -d
 
 // 编写测试代码读取 stylus 源文件
 // src/test.js
@@ -31,7 +66,12 @@ const converter = require('stylus-converter')
 fs.readFile('src/test.styl', (err, res) => {
   if (err) return
   const result = res.toString()
-  const scss = converter(result)
+  const options = {
+    quote: '\'',
+    conver: 'scss',
+    autoprefixer: true
+  }
+  const scss = converter(result, options)
   fs.writeFile('src/test.scss', scss)
 })
 
@@ -40,6 +80,7 @@ node src/test.js
 ```
 
 ### 转换前的 stylus 源码
+
 ```stylus
 handleParams(args...)
   args
@@ -102,7 +143,8 @@ body
 ```
 
 ### 转换后的 sass 源码
-```sass
+
+```scss
 @function handleParams($args...) {
   @return $args;
 }

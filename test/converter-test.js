@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const converter = require('../bin')
+const converter = require('../lib')
 
 function getPath (address) {
   return path.resolve(__dirname, address)
