@@ -24,9 +24,7 @@ function handleOptions () {
     conver,
     directory: directory === 'yes',
     autoprefixer: autoprefixer === 'yes'
-  }, () => {
-    console.log('ok - conver')
-  })
+  }, () => {})
 }
 
 program
