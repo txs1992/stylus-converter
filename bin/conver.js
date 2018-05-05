@@ -10,12 +10,12 @@ function handleOptions () {
   const input = argv.i || argv.input
   const output = argv.o || argv.output
   const conver = argv.c || argv.conver || 'scss'
-  const directory = argv.d || argv.directory || 'yes'
+  const directory = argv.d || argv.directory || 'no'
   const autoprefixer =  argv.p || argv.autoprefixer || 'yes'
-  if (!input) throw new Error('Not input.')
-  if (!output) throw new Error('Not output.')
+  if (!input) throw new Error('The input parameter cannot be empty.')
+  if (!output) throw new Error('The output parameter cannot be empty.')
   if (quote !== 'single' && quote !== 'dobule') throw new Error('The quote parameter has a problem, it can only be single or double.')
-  if (conver !== 'scss') throw new Error('No other conversions are currently supported.')
+  if (conver.toLowerCase() !== 'scss') throw new Error('The conver parameter can only be scss.')
 
   converFile({
     quote: quote === 'single' ? '\'' : '\"',
@@ -24,6 +24,8 @@ function handleOptions () {
     conver,
     directory: directory === 'yes',
     autoprefixer: autoprefixer === 'yes'
+  }, () => {
+    console.log('ok - conver')
   })
 }
 
