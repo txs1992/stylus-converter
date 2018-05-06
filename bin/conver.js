@@ -31,7 +31,7 @@ function handleOptions () {
     directory: directory === 'yes',
     autoprefixer: autoprefixer === 'yes'
   }, time => {
-    spinner.succeed('Conversion completed and time spent ' + time + ' s.')
+    spinner.succeed('Conversion completed and time spent ' + time + ' ms.')
   })
 }
 
