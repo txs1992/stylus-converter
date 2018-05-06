@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 
-const argv = require('optimist').argv;
-const program = require('commander');
-const converFile = require('./file');
+const ora = require('ora')
+const argv = require('optimist').argv
+const program = require('commander')
+const converFile = require('./file')
 const version = require('../package.json').version
+
+const spinner = ora({
+  color: 'yellow'
+})
 
 function handleOptions () {
   const quote = argv.q|| argv.quote || 'single'
@@ -17,6 +22,7 @@ function handleOptions () {
   if (quote !== 'single' && quote !== 'dobule') throw new Error('The quote parameter has a problem, it can only be single or double.')
   if (conver.toLowerCase() !== 'scss') throw new Error('The conver parameter can only be scss.')
 
+  spinner.start('Your file is being converted. Please wait...')
   converFile({
     quote: quote === 'single' ? '\'' : '\"',
     input,
@@ -25,7 +31,7 @@ function handleOptions () {
     directory: directory === 'yes',
     autoprefixer: autoprefixer === 'yes'
   }, time => {
-    console.log(`conver time ${time}s`)
+    spinner.succeed('Conversion completed and time spent ' + time + ' s.')
   })
 }
 
