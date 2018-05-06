@@ -15,7 +15,7 @@
 
 ## 为什么要做这个工具
 
-> 因为早期有个项目用到了 stylus，stylus 开发起来很爽，但维护起来让人崩溃。加上 stylus 作者本人已经都已经放弃维护了，所以准备转换其他预编译 CSS 语言。但是本人又很懒，手动转换 stylus 浪费时间，且出错率大，所以灵机一动就有了这个项目。
+> 因为早期有个项目用到了 stylus，stylus 开发起来很爽，但 stylus 基于缩进的代码在修改的时候不是很方便。另外 stylus 这个库已经有两年没有更新了，所以准备转换其他预编译 CSS 语言。但是本人又很懒，手动转换 stylus 浪费时间，且出错率大，所以灵机一动就有了这个项目。
 
 ## stylus-converter 配置
 
@@ -25,7 +25,8 @@
 | ---- | ---- | ---- | ---- | ---- |
 | `quote` | 转换中遇到字符串时，使用的引号类型 | string | `'` / `"` | `'` |
 | `conver` | 转换类型，例如转换成 scss 语法 | string | scss | scss |
-| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes`。 | boolean | true / false | true |
+| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，
+有些语法会自动添加前缀例如 `@keyframes`。 | boolean | true / false | true |
 
 ### cli 配置
 
