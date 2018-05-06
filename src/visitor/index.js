@@ -549,5 +549,5 @@ export default function visitor (ast, options) {
   PROPERTY_KEY_LIST = []
   PROPERTY_VAL_LIST = []
   VARIABLE_NAME_LIST = []
-  return result
+  return result + '\n'
 }
