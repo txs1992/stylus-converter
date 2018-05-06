@@ -24,7 +24,9 @@ function handleOptions () {
     conver,
     directory: directory === 'yes',
     autoprefixer: autoprefixer === 'yes'
-  }, () => {})
+  }, time => {
+    console.log(`conver time ${time}s`)
+  })
 }
 
 program
