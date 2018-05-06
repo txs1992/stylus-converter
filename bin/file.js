@@ -1,9 +1,8 @@
 const fs = require('fs')
 const converter = require('../lib')
 
-let baseInput = ''
-let baseOutput = ''
-let converOptions = {}
+let callLen = 0
+let startTime = 0
 
 function visitFile (options, callback) {
   fs.readFile(options.input, (err, res) => {
@@ -11,7 +10,7 @@ function visitFile (options, callback) {
     const result = converter(res.toString(), options)
     fs.writeFile(options.output, result, err => {
       if (err) throw err
-      callback()
+      callback(Date.now() - startTime)
     })
   })
 }
@@ -50,7 +49,8 @@ function readAndMkDir (input, output, callback) {
   })
 }
 
-function handleFile (input, output, options) {
+function handleFile (input, output, options, callback) {
+  callLen++
   fs.readFile(input, (err, res) => {
     if (err) throw err
     let result = res.toString()
@@ -61,23 +61,25 @@ function handleFile (input, output, options) {
     }
     fs.writeFile(outputPath, result, err => {
       if (err) throw err
+      callLen--
+      if (callLen === 0) callback(Date.now() - startTime)
     })
   })
 }
 
-function visitDirectory (input, output, inputParent, outputParent, options) {
+function visitDirectory (input, output, inputParent, outputParent, options, callback) {
   const inputPath = inputParent ? inputParent + input : input
   const outputPath = outputParent ? outputParent + output : output
   getStat(inputPath, stats => {
     if (stats.isFile()) {
-      handleFile(inputPath, outputPath, options)
+      handleFile(inputPath, outputPath, options, callback)
     } else if (stats.isDirectory()) {
       readAndMkDir(inputPath, outputPath, files => {
         files.forEach(file => {
           if (inputParent) {
-            visitDirectory(file, file, inputPath + '/', outputPath + '/', options)
+            visitDirectory(file, file, inputPath + '/', outputPath + '/', options, callback)
           } else {
-            visitDirectory(file, file, input + '/', output + '/', options)
+            visitDirectory(file, file, input + '/', output + '/', options, callback)
           }
         })
       })
@@ -86,6 +88,7 @@ function visitDirectory (input, output, inputParent, outputParent, options) {
 }
 
 function converFile (options, callback) {
+  startTime = Date.now()
   if (options.directory) {
     const input = options.input
     const output = options.output
@@ -95,7 +98,7 @@ function converFile (options, callback) {
     const baseOutput = /\/$/.test(options.output)
       ? output.substring(0, output.length -1)
       : output
-    visitDirectory(baseInput, baseOutput, '', '', options)
+    visitDirectory(baseInput, baseOutput, '', '', options, callback)
   } else {
     visitFile(options, callback)
   }
