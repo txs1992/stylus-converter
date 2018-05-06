@@ -25,8 +25,7 @@
 | ---- | ---- | ---- | ---- | ---- |
 | `quote` | 转换中遇到字符串时，使用的引号类型 | string | `'` / `"` | `'` |
 | `conver` | 转换类型，例如转换成 scss 语法 | string | scss | scss |
-| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，
-有些语法会自动添加前缀例如 `@keyframes`。 | boolean | true / false | true |
+| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes`。 | boolean | true / false | true |
 
 ### cli 配置
 
