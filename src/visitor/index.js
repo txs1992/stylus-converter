@@ -70,6 +70,7 @@ const TYPE_VISITOR_MAP = {
   Atrule: visitAtrule,
   Extend: visitExtend,
   Member: visitMember,
+  Return: visitReturn,
   'Object': visitObject,
   'String': visitString,
   Feature: visitFeature,
@@ -536,6 +537,10 @@ function visitSupports ({ block, lineno, condition }) {
 
 function visitString ({ val, quote }) {
   return quote + val + quote
+}
+
+function visitReturn (node) {
+  return visitExpression(node.expr).replace(/\n\s*/g, '')
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
