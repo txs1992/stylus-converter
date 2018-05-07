@@ -321,3 +321,19 @@ describe('测试 @Supports', () => {
     })
   })
 })
+
+describe('测试 @return', () => {
+  it('test return', done => {
+    fs.readFile(getPath('./stylus/return.styl'), (err, res) => {
+      if (err) return
+      const result = res.toString()
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/return.scss'), (err, sres) => {
+        if (err) return
+        const toText = sres.toString()
+        expect(scss).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
