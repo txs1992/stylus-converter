@@ -337,3 +337,19 @@ describe('测试 @return', () => {
     })
   })
 })
+
+describe('测试 @Import', () => {
+  it('test @import', done => {
+    fs.readFile(getPath('./stylus/import.styl'), (err, res) => {
+      if (err) return
+      const result = res.toString()
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/import.scss'), (err, sres) => {
+        if (err) return
+        const toText = sres.toString()
+        expect(scss).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
