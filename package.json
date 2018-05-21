@@ -1,6 +1,6 @@
 {
   "name": "stylus-converter",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "A tool that converts a stylus into sass, or less, or other precompiled CSS.",
   "main": "lib/index.js",
   "bin": {
