@@ -269,10 +269,11 @@ function visitExpression (node) {
   const nodes = nodesToJSON(node.nodes)
   nodes.forEach((node, idx) => {
     const nodeText = visitNode(node)
-    const symbol = isProperty && node.nodes && findNodesType(node.nodes, 'String') ? ',' : ''
+    const symbol = isProperty && node.nodes ? ',' : ''
     result += idx ? symbol + ' ' + nodeText : nodeText
   })
   isExpression = false
+  if (isProperty && /\);/g.test(result)) result = result.replace(/\);/g, ')') + ';'
   if (isCall && callName === 'url') return result.replace(/\s/g, '')
   if (!returnSymbol || isIfExpression) return result
   return before + returnSymbol + result
@@ -284,7 +285,7 @@ function visitCall ({ name, args, lineno, column }) {
   let before = handleLineno(lineno)
   oldLineno = lineno
   const argsText = visitArguments(args)
-  if (!isProperty && !isObject && !isNamespace) {
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
@@ -412,6 +413,10 @@ function visitKeyframes (node) {
   let resultText = ''
   const name = visitNodes(node.segments)
   const isMixin = !!findNodesType(node.segments, 'Expression')
+  const blockJson = node.block.toJSON()
+  if (blockJson.nodes.length && blockJson.nodes[0].toJSON().__type !== 'Group') {
+    throw new Error(`Syntax Error Please check if your @keyframes ${name} are correct.`)
+  }
   const block = visitBlock(node.block)
   const text = isMixin ? `#{${name}}${block}` :  name + block
   if (autoprefixer) {
