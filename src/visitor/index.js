@@ -414,7 +414,7 @@ function visitKeyframes (node) {
   const name = visitNodes(node.segments)
   const isMixin = !!findNodesType(node.segments, 'Expression')
   const blockJson = node.block.toJSON()
-  if (blockJson.nodes.length && blockJson.nodes[0].toJSON().__type !== 'Group') {
+  if (blockJson.nodes.length && blockJson.nodes[0].toJSON().__type === 'Expression') {
     throw new Error(`Syntax Error Please check if your @keyframes ${name} are correct.`)
   }
   const block = visitBlock(node.block)
