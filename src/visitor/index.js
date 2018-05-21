@@ -140,7 +140,8 @@ function visitImport (node) {
     text += node.val
     if (!quote && node.quote) quote = node.quote
   })
-  return `${before}${quote}${text}${quote};`
+  const result = text.replace(/\.styl$/g, '.scss')
+  return `${before}${quote}${result}${quote};`
 }
 
 function visitSelector (node) {
