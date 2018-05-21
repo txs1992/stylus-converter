@@ -4,17 +4,6 @@ const converter = require('../lib')
 let callLen = 0
 let startTime = 0
 
-function visitFile (options, callback) {
-  fs.readFile(options.input, (err, res) => {
-    if (err) throw err
-    const result = converter(res.toString(), options)
-    fs.writeFile(options.output, result, err => {
-      if (err) throw err
-      callback(Date.now() - startTime)
-    })
-  })
-}
-
 function getStat (path, callback) {
   fs.stat(path, (err, stats) => {
     if (err) throw err
@@ -58,6 +47,15 @@ function handleFile (input, output, options, callback) {
     if (/\.styl$/.test(input)) {
       result = converter(result, options)
       outputPath = output.replace(/\.styl$/, '.' + options.conver)
+    } else if (/\.vue$/.test(input)) {
+      //处理 vue 文件
+      const styleReg = /<style.*>((\n|.)*)<\/style>/
+      const matchs = result.match(styleReg)
+      if (Array.isArray(matchs) && matchs.length >= 2) {
+        const text = converter(matchs[1], options)
+        const styleText = `<style lang="scss">${text}</style>`
+        result = result.replace(styleReg, styleText)
+      }
     }
     fs.writeFile(outputPath, result, err => {
       if (err) throw err
@@ -89,9 +87,9 @@ function visitDirectory (input, output, inputParent, outputParent, options, call
 
 function converFile (options, callback) {
   startTime = Date.now()
+  const input = options.input
+  const output = options.output
   if (options.directory) {
-    const input = options.input
-    const output = options.output
     const baseInput = /\/$/.test(options.input)
       ? input.substring(0, input.length -1)
       : input
@@ -100,7 +98,7 @@ function converFile (options, callback) {
       : output
     visitDirectory(baseInput, baseOutput, '', '', options, callback)
   } else {
-    visitFile(options, callback)
+    handleFile(input, output, options, callback)
   }
 }
 
