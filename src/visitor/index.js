@@ -145,9 +145,15 @@ function visitImport (node) {
 }
 
 function visitSelector (node) {
-  let text = handleLinenoAndIndentation(node)
-  oldLineno = node.lineno
-  return text + visitNodes(node.segments)
+  const nodes = nodesToJSON(node.segments)
+  const endNode = nodes[nodes.length - 1]
+  let before = ''
+  if (endNode.lineno) {
+    before = handleLineno(endNode.lineno)
+    oldLineno = endNode.lineno
+  }
+  before += getIndentation()
+  return before + visitNodes(node.segments)
 }
 
 function visitGroup (node) {
@@ -156,9 +162,9 @@ function visitGroup (node) {
   const nodes = nodesToJSON(node.nodes)
   let selector = ''
   nodes.forEach((node, idx) => {
-    selector += idx
-      ? `, ${visitNode(node).replace(/\n./, '').replace(/^\s*/, '')}`
-      : visitNode(node)
+    const temp = visitNode(node)
+    const result = /^\n/.test(temp) ? temp : temp.replace(/^\s*/, '')
+    selector += idx ? ', ' + result : result
   })
   const block = visitBlock(node.block)
   if (isKeyframes && /-|\*|\+|\/|\$/.test(selector)) {
