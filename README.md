@@ -87,7 +87,7 @@ handleParams(args...)
 ```html
 <template>
   <div class="page-home">
-  	<el-button>click me</el-button>
+    <el-button>click me</el-button>
   </div>
 </template>
 
@@ -102,7 +102,7 @@ handleParams(args...)
 ```html
 <template>
   <div class="page-home">
-  	<el-button>click me</el-button>
+    <el-button>click me</el-button>
   </div>
 </template>
 
