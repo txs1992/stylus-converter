@@ -40,29 +40,37 @@ function readAndMkDir (input, output, callback) {
 
 function handleFile (input, output, options, callback) {
   callLen++
-  fs.readFile(input, (err, res) => {
-    if (err) throw err
-    let result = res.toString()
-    let outputPath = output
-    if (/\.styl$/.test(input)) {
-      result = converter(result, options)
-      outputPath = output.replace(/\.styl$/, '.' + options.conver)
-    } else if (/\.vue$/.test(input)) {
-      //处理 vue 文件
-      const styleReg = /<style.*>((\n|.)*)<\/style>/
-      const matchs = result.match(styleReg)
-      if (Array.isArray(matchs) && matchs.length >= 2) {
-        const text = converter(matchs[1], options)
-        const styleText = `<style lang="scss">${text}</style>`
-        result = result.replace(styleReg, styleText)
+  if (/\.styl$/.test(input) || /\.vue$/.test(input)) {
+    fs.readFile(input, (err, res) => {
+      if (err) throw err
+      let result = res.toString()
+      let outputPath = output
+      if (/\.styl$/.test(input)) {
+        result = converter(result, options)
+        outputPath = output.replace(/\.styl$/, '.' + options.conver)
+      } else {
+        //处理 vue 文件
+        const styleReg = /<style.*>((\n|.)*)<\/style>/
+        const matchs = result.match(styleReg)
+        if (Array.isArray(matchs) && matchs.length >= 2) {
+          const text = converter(matchs[1], options)
+          const styleText = `<style lang="scss">${text}</style>`
+          result = result.replace(styleReg, styleText)
+        }
       }
-    }
-    fs.writeFile(outputPath, result, err => {
+      fs.writeFile(outputPath, result, err => {
+        if (err) throw err
+        callLen--
+        if (callLen === 0) callback(Date.now() - startTime)
+      })
+    })
+  } else {
+    fs.copyFile(input, output, err => {
       if (err) throw err
       callLen--
       if (callLen === 0) callback(Date.now() - startTime)
     })
-  })
+  }
 }
 
 function visitDirectory (input, output, inputParent, outputParent, options, callback) {
