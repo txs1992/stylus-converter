@@ -95,6 +95,12 @@ function handleLineno (lineno) {
   return repeatString('\n', lineno - oldLineno)
 }
 
+function isFunctionMixin (nodes) {
+  const jsonNodes = nodesToJSON(nodes)
+  const node = jsonNodes.length && jsonNodes[0] || {}
+  return (node.__type === 'Property' || node.__type === 'Group')
+}
+
 function getIndentation () {
   return repeatString(' ', indentationLevel * 2)
 }
@@ -346,7 +352,7 @@ function visitIf (node, symbol = '@if ') {
 
 function visitFunction (node) {
   isFunction = true
-  const notMixin = !findNodesType(node.block.nodes, 'Property')
+  const notMixin = !isFunctionMixin(node.block.nodes)
   const hasIf = findNodesType(node.block.nodes, 'If')
   let before = handleLineno(node.lineno)
   oldLineno = node.lineno
