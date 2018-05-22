@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/1969290646/stylus-converter.git"
+    "url": "git+https://github.com/txs1992/stylus-converter.git"
   },
   "keywords": [
     "stylus",
@@ -37,9 +37,9 @@
   "author": "MT",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/1969290646/stylus-converter/issues"
+    "url": "https://github.com/txs1992/stylus-converter/issues"
   },
-  "homepage": "https://github.com/1969290646/stylus-converter#readme",
+  "homepage": "https://github.com/txs1992/stylus-converter#readme",
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-core": "^6.26.0",
