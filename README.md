@@ -2,8 +2,8 @@
   <img src="./banner.png"></img>
 </div>
 
-![](http://img.shields.io/travis/TaoXuSheng/stylus-converter.svg)
-![](https://img.shields.io/npm/dt/stylus-converter.svg)
+![](http://img.shields.io/travis/txs1992/stylus-converter.svg)
+![](https://img.shields.io/npm/dm/stylus-converter.svg)
 ![](https://img.shields.io/npm/v/stylus-converter.svg)
 ![](https://img.shields.io/npm/l/stylus-converter.svg)
 
