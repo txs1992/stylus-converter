@@ -282,7 +282,7 @@ function visitExpression (node) {
   })
   isExpression = false
   if (isProperty && /\);/g.test(result)) result = result.replace(/\);/g, ')') + ';'
-  if (isCall && callName === 'url') return result.replace(/\s/g, '').split(/(\+|-|\*)/g).join(' ')
+  if (isCall && callName === 'url') return result.replace(/\s/g, '')
   if (!returnSymbol || isIfExpression) return result
   return before + returnSymbol + result
 }
@@ -292,12 +292,12 @@ function visitCall ({ name, args, lineno, column }) {
   callName = name
   let before = handleLineno(lineno)
   oldLineno = lineno
-  const argsText = visitArguments(args)
   if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
   }
+  const argsText = visitArguments(args).replace(';', '')
   callName = ''
   isCall = false
   return `${before + name}(${argsText});`
