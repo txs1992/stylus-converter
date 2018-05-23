@@ -25,6 +25,7 @@ let isFunction = false
 let isProperty = false
 let isNamespace = false
 let isKeyframes = false
+let isArguments = false
 let isExpression = false
 let isIfExpression = false
 
@@ -291,7 +292,7 @@ function visitCall ({ name, args, lineno, column }) {
   let before = handleLineno(lineno)
   oldLineno = lineno
   const argsText = visitArguments(args)
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes) {
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
@@ -302,6 +303,7 @@ function visitCall ({ name, args, lineno, column }) {
 }
 
 function visitArguments (node) {
+  isArguments = true
   const nodes = nodesToJSON(node.nodes)
   let text = ''
   nodes.forEach((node, idx) => {
@@ -309,6 +311,7 @@ function visitArguments (node) {
     const result = isFunction ? replaceFirstATSymbol(visitNode(node)) : visitNode(node)
     text += prefix + result
   })
+  isArguments = false
   return text || ''
 }
 
