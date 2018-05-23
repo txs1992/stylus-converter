@@ -15,6 +15,7 @@ let oldColumn = 1
 let returnSymbol = ''
 let indentationLevel = 0
 let OBJECT_KEY_LIST = []
+let FUNCTION_PARAMS = []
 let PROPERTY_KEY_LIST = []
 let PROPERTY_VAL_LIST = []
 let VARIABLE_NAME_LIST = []
@@ -248,7 +249,7 @@ function visitIdent ({ val, name, rest, mixin, lineno, column }) {
     let nameText = VARIABLE_NAME_LIST.indexOf(name) > -1
       ? replaceFirstATSymbol(name)
       : name
-    if (isFunction && (isExpression || !isProperty)) nameText = replaceFirstATSymbol(nameText)
+    if (FUNCTION_PARAMS.indexOf(name) > -1) nameText = replaceFirstATSymbol(nameText)
     return rest ? `${nameText}...` : nameText
   }
   if (identVal.__type === 'Expression') {
@@ -281,7 +282,7 @@ function visitExpression (node) {
   })
   isExpression = false
   if (isProperty && /\);/g.test(result)) result = result.replace(/\);/g, ')') + ';'
-  if (isCall && callName === 'url') return result.replace(/\s/g, '')
+  if (isCall && callName === 'url') return result.replace(/\s/g, '').split(/(\+|-|\*)/g).join(' ')
   if (!returnSymbol || isIfExpression) return result
   return before + returnSymbol + result
 }
@@ -368,6 +369,7 @@ function visitFunction (node) {
     symbol = '@mixin'
   }
   const params = nodesToJSON(node.params.nodes || [])
+  FUNCTION_PARAMS = params.map(par => par.name)
   let paramsText = ''
   params.forEach((node, idx) => {
     const prefix = idx ? ', ' : ''
@@ -379,6 +381,7 @@ function visitFunction (node) {
   const block = visitBlock(node.block)
   returnSymbol = ''
   isFunction = false
+  FUNCTION_PARAMS = []
   return before + fnName + block
 }
 
@@ -572,6 +575,7 @@ export default function visitor (ast, options) {
   autoprefixer = options.autoprefixer
   const result = visitNodes(ast.nodes) || ''
   oldLineno = 1
+  FUNCTION_PARAMS = []
   OBJECT_KEY_LIST = []
   PROPERTY_KEY_LIST = []
   PROPERTY_VAL_LIST = []
