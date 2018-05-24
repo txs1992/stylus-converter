@@ -23,32 +23,32 @@
   </a>
 </p>
 
-## Why do this tool
+## 为什么要做这个工具
 
-> Since early projects used stylus, stylus is very cool to develop，but the stylus-based indentation code is not very convenient at the time of the modification, plus the team development and use of SCSS, in order to facilitate maintenance and unification, ready to replace the project stylus to SCSS. However, I am very lazy, manual conversion of stylus is a waste of time, and the error rate is large，So this project was born. **Please use your little fortunate hand and give me a `star`. Be grateful.^_^**
+> 因为早期有个项目用到了 stylus，stylus 开发起来很爽，但 stylus 基于缩进的代码在修改的时候不是很方便，加上所在团队开发使用的都是 SCSS ，为了便于维护和统一，准备将项目中的 stylus 替换成 SCSS。但是本人又很懒，手动转换 stylus 浪费时间，且出错率大，所以灵机一动就有了这个项目。**请各位大大动用你们发财的小手，给我点个 `star`，不胜感激。^_^**
 
-## stylus-converter config
+## stylus-converter 配置
 
-### converter options
+### converter 配置
 
-| Attribute | Description | Type | Accepted Values | Default |
+| 参数 | 说明 | 类型 | 可选值 | 默认值 |
 | ---- | ---- | ---- | ---- | ---- |
-| `quote` | The quote type to use when converting strings | string | `'` / `"` | `'` |
-| `conver` | Conversion type, such as conversion to scss syntax | string | scss | scss |
-| `autoprefixer ` | Whether or not to automatically add a prefix, stylus will automatically add prefixes when converting stylus grammars. `@keyframes` | boolean | true / false | true |
+| `quote` | 转换中遇到字符串时，使用的引号类型 | string | `'` / `"` | `'` |
+| `conver` | 转换类型，例如转换成 scss 语法 | string | scss | scss |
+| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes`。 | boolean | true / false | true |
 
-### cli options
+### cli 配置
 
-| Attribute | Shorthand | Description | Accepted Values | Default |
+| 参数 | 简写 | 说明 | 可选值 | 默认值 |
 | ---- | ---- | ---- | ---- | ---- |
-| `--quote` | `-q` | The quote type to use when converting strings | single / dobule | single |
-| `--input` | `-i` | Enter a name, which can be a path to a file or a folder | - | - |
-| `--output` | `-o` | Output name, can be a path to a file or a folder | - | - |
-| `--conver ` | `-c` | Conversion type, such as conversion to scss syntax | scss | scss |
-| `--directory` | `-d` | Whether the input and output paths are directories | yes / no | no |
-| `--autoprefixer ` | `-p` | Whether to add a prefix | yes / no | yes |
+| `--quote` | `-q` | 转换中遇到字符串时，使用的引号类型 | single / dobule | single |
+| `--input` | `-i` | 输入名称，可以是文件或者是文件夹的路径 | - | - |
+| `--output` | `-o` | 输出名称，可以是文件或者是文件夹的路径 | - | - |
+| `--conver ` | `-c` | 转换类型，例如转换成 scss 语法 | scss | scss |
+| `--directory` | `-d` | 输入和输出路径是否是个目录 | yes / no | no |
+| `--autoprefixer ` | `-p` | 是否添加前缀 | yes / no | yes |
 
-## Use examples
+## 使用示例
 
 ```javascript
 npm install -g stylus-converter
