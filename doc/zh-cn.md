@@ -35,7 +35,7 @@
 | ---- | ---- | ---- | ---- | ---- |
 | `quote` | 转换中遇到字符串时，使用的引号类型 | string | `'` / `"` | `'` |
 | `conver` | 转换类型，例如转换成 scss 语法 | string | scss | scss |
-| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes`。 | boolean | true / false | true |
+| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes` | boolean | true / false | true |
 
 ### cli 配置
 
@@ -51,6 +51,7 @@
 ## 使用示例
 
 ```javascript
+// 下载 stylus-converter
 npm install -g stylus-converter
 
 // 运行 cli 转换文件
@@ -146,6 +147,6 @@ npm install
 4. 打包编译源文件
 npm run build
 
-5. 本地运行 dev 打包并转换 stylus 测试文件
-npm run dev
+5. 本地调试 cli
+npm link
 ```

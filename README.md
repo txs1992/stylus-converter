@@ -51,15 +51,16 @@
 ## Use examples
 
 ```javascript
+// download stylus-converter
 npm install -g stylus-converter
 
-// 运行 cli 转换文件
+// Run the cli conversion file
 stylus-conver -i test.styl -o test.scss
 ```
 
-## 转换文件比较
+## Conversion file comparison
 
-### 转换前的 stylus 源码
+### Stylus source code before conversion
 
 ```stylus
 handleParams(args...)
@@ -74,7 +75,7 @@ handleParams(args...)
     @media (min-width: 2 * (i + 7) px)
 ```
 
-### 转换后的 sass 源码
+### Converted sass source code
 
 ```scss
 @function handleParams($args...) {
@@ -96,9 +97,10 @@ handleParams(args...)
 }
 ```
 
-> 如果你不想你转换的 @keyframes 添加默认前缀，请设置 `options.autoprefixer = false`
+> If you do not want to add the default prefix for your converted @keyframes, please set `options.autoprefixer = false`
 
-### 转换前的 `.vue` 文件
+### The `.vue` file before conversion
+
 ```html
 <template>
   <div class="page-home">
@@ -113,7 +115,8 @@ handleParams(args...)
 </style>
 ```
 
-### 转换后的 `.vue` 文件
+### Converted `.vue`  file
+
 ```html
 <template>
   <div class="page-home">
@@ -131,21 +134,21 @@ handleParams(args...)
 ```
 
 
-## 搭建开发环境
+## Build a development environment
 
 ```text
-1. 先 fork 项目再 clone 项目到本地
+1. First fork project and then clone project to local
 git clone git@github.com:<your github>/stylus-converter.git
 
-2. 进入项目目录
+2. Enter the project directory
 cd stylus-converter
 
-3. 安装项目依赖
+3. Installation project depends
 npm install
 
-4. 打包编译源文件
+4. Package compilation source file
 npm run build
 
-5. 本地运行 dev 打包并转换 stylus 测试文件
-npm run dev
+5. Local debugging cli
+npm link
 ```
