@@ -32,7 +32,6 @@
     <a href="https://github.com/txs1992/stylus-converter/blob/master/doc/zh-cn.md#readme">
       English
     </a>
-    <span> | </span>
   </h3>
 </div>
 
