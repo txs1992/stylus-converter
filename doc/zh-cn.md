@@ -1,5 +1,5 @@
 <div  align="center">
-  <img src="./banner.png"></img>
+  <img src="../banner.png"></img>
 </div>
 
 <p align="center">
@@ -25,11 +25,11 @@
 
 <div align="center">
   <h3>
-    <a href="https://github.com/txs1992/stylus-converter">
+    <a href="https://github.com/txs1992/stylus-converter/blob/master/doc/zh-cn.md#readme">
       中文
     </a>
     <span> | </span>
-    <a href="https://github.com/txs1992/stylus-converter/blob/master/doc/zh-cn.md#readme">
+    <a href="https://github.com/txs1992/stylus-converter">
       English
     </a>
   </h3>
