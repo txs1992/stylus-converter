@@ -30,7 +30,7 @@
     </a>
     <span> | </span>
     <a href="https://github.com/txs1992/stylus-converter/blob/master/doc/zh-cn.md#readme">
-      Polski
+      English
     </a>
     <span> | </span>
   </h3>
