@@ -23,6 +23,19 @@
   </a>
 </p>
 
+<div align="center">
+  <h3>
+    <a href="https://github.com/txs1992/stylus-converter">
+      中文
+    </a>
+    <span> | </span>
+    <a href="https://github.com/txs1992/stylus-converter/blob/master/doc/zh-cn.md#readme">
+      Polski
+    </a>
+    <span> | </span>
+  </h3>
+</div>
+
 ## Why do this tool
 
 > Since early projects used stylus, stylus is very cool to develop，but the stylus-based indentation code is not very convenient at the time of the modification, plus the team development and use of SCSS, in order to facilitate maintenance and unification, ready to replace the project stylus to SCSS. However, I am very lazy, manual conversion of stylus is a waste of time, and the error rate is large，So this project was born. **Please use your little fortunate hand and give me a `star`. Be grateful.^_^**
