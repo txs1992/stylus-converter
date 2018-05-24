@@ -3,20 +3,20 @@
 </div>
 
 <p align="center">
-  <a href="http://img.shields.io/travis/txs1992/focus-outside.svg">
-    <img src="http://img.shields.io/travis/txs1992/focus-outside.svg" />
+  <a href="http://img.shields.io/travis/txs1992/stylus-converter.svg">
+    <img src="http://img.shields.io/travis/txs1992/stylus-converter.svg" />
   </a>
-  <a href="https://img.shields.io/npm/dt/focus-outside.svg">
-    <img src="https://img.shields.io/npm/dt/focus-outside.svg" />
+  <a href="https://img.shields.io/npm/dt/stylus-converter.svg">
+    <img src="https://img.shields.io/npm/dt/stylus-converter.svg" />
   </a>
-  <a href="https://img.shields.io/npm/dm/focus-outside.svg">
-    <img src="https://img.shields.io/npm/dm/focus-outside.svg" />
+  <a href="https://img.shields.io/npm/dm/stylus-converter.svg">
+    <img src="https://img.shields.io/npm/dm/stylus-converter.svg" />
   </a>
-  <a href="https://img.shields.io/npm/v/focus-outside.svg">
-    <img src="https://img.shields.io/npm/v/focus-outside.svg" />
+  <a href="https://img.shields.io/npm/v/stylus-converter.svg">
+    <img src="https://img.shields.io/npm/v/stylus-converter.svg" />
   </a>
-  <a href="https://img.shields.io/npm/l/focus-outside.svg">
-    <img src="https://img.shields.io/npm/l/focus-outside.svg" />
+  <a href="https://img.shields.io/npm/l/stylus-converter.svg">
+    <img src="https://img.shields.io/npm/l/stylus-converter.svg" />
   </a>
   <a href="https://img.shields.io/node/v/passport.svg">
     <img src="https://img.shields.io/node/v/passport.svg" />
