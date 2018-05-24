@@ -23,43 +23,44 @@
   </a>
 </p>
 
-## 为什么要做这个工具
+## Why do this tool
 
-> 因为早期有个项目用到了 stylus，stylus 开发起来很爽，但 stylus 基于缩进的代码在修改的时候不是很方便，加上所在团队开发使用的都是 SCSS ，为了便于维护和统一，准备将项目中的 stylus 替换成 SCSS。但是本人又很懒，手动转换 stylus 浪费时间，且出错率大，所以灵机一动就有了这个项目。**请各位大大动用你们发财的小手，给我点个 `star`，不胜感激。^_^**
+> Since early projects used stylus, stylus is very cool to develop，but the stylus-based indentation code is not very convenient at the time of the modification, plus the team development and use of SCSS, in order to facilitate maintenance and unification, ready to replace the project stylus to SCSS. However, I am very lazy, manual conversion of stylus is a waste of time, and the error rate is large，So this project was born. **Please use your little fortunate hand and give me a `star`. Be grateful.^_^**
 
-## stylus-converter 配置
+## stylus-converter config
 
-### converter 配置
+### converter options
 
-| 参数 | 说明 | 类型 | 可选值 | 默认值 |
+| Attribute | Description | Type | Accepted Values | Default |
 | ---- | ---- | ---- | ---- | ---- |
-| `quote` | 转换中遇到字符串时，使用的引号类型 | string | `'` / `"` | `'` |
-| `conver` | 转换类型，例如转换成 scss 语法 | string | scss | scss |
-| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes`。 | boolean | true / false | true |
+| `quote` | The quote type to use when converting strings | string | `'` / `"` | `'` |
+| `conver` | Conversion type, such as conversion to scss syntax | string | scss | scss |
+| `autoprefixer ` | Whether or not to automatically add a prefix, stylus will automatically add prefixes when converting stylus grammars. `@keyframes` | boolean | true / false | true |
 
-### cli 配置
+### cli options
 
-| 参数 | 简写 | 说明 | 可选值 | 默认值 |
+| Attribute | Shorthand | Description | Accepted Values | Default |
 | ---- | ---- | ---- | ---- | ---- |
-| `--quote` | `-q` | 转换中遇到字符串时，使用的引号类型 | single / dobule | single |
-| `--input` | `-i` | 输入名称，可以是文件或者是文件夹的路径 | - | - |
-| `--output` | `-o` | 输出名称，可以是文件或者是文件夹的路径 | - | - |
-| `--conver ` | `-c` | 转换类型，例如转换成 scss 语法 | scss | scss |
-| `--directory` | `-d` | 输入和输出路径是否是个目录 | yes / no | no |
-| `--autoprefixer ` | `-p` | 是否添加前缀 | yes / no | yes |
+| `--quote` | `-q` | The quote type to use when converting strings | single / dobule | single |
+| `--input` | `-i` | Enter a name, which can be a path to a file or a folder | - | - |
+| `--output` | `-o` | Output name, can be a path to a file or a folder | - | - |
+| `--conver ` | `-c` | Conversion type, such as conversion to scss syntax | scss | scss |
+| `--directory` | `-d` | Whether the input and output paths are directories | yes / no | no |
+| `--autoprefixer ` | `-p` | Whether to add a prefix | yes / no | yes |
 
-## 使用示例
+## Use examples
 
 ```javascript
+// download stylus-converter
 npm install -g stylus-converter
 
-// 运行 cli 转换文件
+// Run the cli conversion file
 stylus-conver -i test.styl -o test.scss
 ```
 
-## 转换文件比较
+## Conversion file comparison
 
-### 转换前的 stylus 源码
+### Stylus source code before conversion
 
 ```stylus
 handleParams(args...)
@@ -74,7 +75,7 @@ handleParams(args...)
     @media (min-width: 2 * (i + 7) px)
 ```
 
-### 转换后的 sass 源码
+### Converted sass source code
 
 ```scss
 @function handleParams($args...) {
@@ -96,9 +97,10 @@ handleParams(args...)
 }
 ```
 
-> 如果你不想你转换的 @keyframes 添加默认前缀，请设置 `options.autoprefixer = false`
+> If you do not want to add the default prefix for your converted @keyframes, please set `options.autoprefixer = false`
 
-### 转换前的 `.vue` 文件
+### The `.vue` file before conversion
+
 ```html
 <template>
   <div class="page-home">
@@ -113,7 +115,8 @@ handleParams(args...)
 </style>
 ```
 
-### 转换后的 `.vue` 文件
+### Converted `.vue`  file
+
 ```html
 <template>
   <div class="page-home">
@@ -131,21 +134,21 @@ handleParams(args...)
 ```
 
 
-## 搭建开发环境
+## Build a development environment
 
 ```text
-1. 先 fork 项目再 clone 项目到本地
+1. First fork project and then clone project to local
 git clone git@github.com:<your github>/stylus-converter.git
 
-2. 进入项目目录
+2. Enter the project directory
 cd stylus-converter
 
-3. 安装项目依赖
+3. Installation project depends
 npm install
 
-4. 打包编译源文件
+4. Package compilation source file
 npm run build
 
-5. 本地运行 dev 打包并转换 stylus 测试文件
-npm run dev
+5. Local debugging cli
+npm link
 ```
