@@ -35,9 +35,9 @@
   </h3>
 </div>
 
-## Why do this tool
+## What is this
 
-> Since early projects used stylus, stylus is very cool to develop，but the stylus-based indentation code is not very convenient at the time of the modification, plus the team development and use of SCSS, in order to facilitate maintenance and unification, ready to replace the project stylus to SCSS. However, I am very lazy, manual conversion of stylus is a waste of time, and the error rate is large，So this project was born. **Please use your little fortunate hand and give me a `star`. Be grateful.^_^**
+> A tool that converts a stylus into scss, or less, or other precompiled CSS.
 
 ## stylus-converter config
 
@@ -87,7 +87,7 @@ handleParams(args...)
     @media (min-width: 2 * (i + 7) px)
 ```
 
-### Converted sass source code
+### Converted SCSS source code
 
 ```scss
 @function handleParams($args...) {
