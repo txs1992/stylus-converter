@@ -489,7 +489,8 @@ function visitFeature (node) {
 function visitComment (node) {
   const before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno + 2
-  return before + node.str
+  const text = node.suppress ? node.str : node.str.replace(/^\/\*/, '/*!')
+  return before + text
 }
 
 function visitMember ({ left, right }) {
