@@ -1,5 +1,5 @@
 <div  align="center">
-  <img src="../banner.png"></img>
+  <img src="./banner.png"></img>
 </div>
 
 <p align="center">
@@ -25,54 +25,54 @@
 
 <div align="center">
   <h3>
-    <a href="https://github.com/txs1992/stylus-converter#readme">
+    <a href="https://github.com/txs1992/stylus-converter/blob/master/doc/zh-cn.md#readme">
       中文
     </a>
     <span> | </span>
-    <a href="https://github.com/txs1992/stylus-converter/blob/master/doc/en-us.md#readme">
+    <a href="https://github.com/txs1992/stylus-converter#readme">
       English
     </a>
   </h3>
 </div>
 
-## What is this
+## 为什么要做这个工具
 
-> A tool that converts a stylus into scss, or less, or other precompiled CSS.
+> 因为早期有个项目用到了 stylus，stylus 开发起来很爽，但 stylus 基于缩进的代码在修改的时候不是很方便，加上所在团队开发使用的都是 SCSS ，为了便于维护和统一，准备将项目中的 stylus 替换成 SCSS。手动转换 stylus 浪费时间，且出错率大，当时在想也许别人也有这样的需求呢，所以就做了这样一个项目。**请各位大佬动动你们发财的小手，给我点个 `star`，不胜感激。^_^**
 
-## stylus-converter config
+## stylus-converter 配置
 
-### converter options
+### converter 配置
 
-| Attribute | Description | Type | Accepted Values | Default |
+| 参数 | 说明 | 类型 | 可选值 | 默认值 |
 | ---- | ---- | ---- | ---- | ---- |
-| `quote` | The quote type to use when converting strings | string | `'` / `"` | `'` |
-| `conver` | Conversion type, such as conversion to scss syntax | string | scss | scss |
-| `autoprefixer ` | Whether or not to automatically add a prefix, stylus will automatically add prefixes when converting stylus grammars. `@keyframes` | boolean | true / false | true |
+| `quote` | 转换中遇到字符串时，使用的引号类型 | string | `'` / `"` | `'` |
+| `conver` | 转换类型，例如转换成 scss 语法 | string | scss | scss |
+| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes` | boolean | true / false | true |
 
-### cli options
+### cli 配置
 
-| Attribute | Shorthand | Description | Accepted Values | Default |
+| 参数 | 简写 | 说明 | 可选值 | 默认值 |
 | ---- | ---- | ---- | ---- | ---- |
-| `--quote` | `-q` | The quote type to use when converting strings | single / dobule | single |
-| `--input` | `-i` | Enter a name, which can be a path to a file or a folder | - | - |
-| `--output` | `-o` | Output name, can be a path to a file or a folder | - | - |
-| `--conver ` | `-c` | Conversion type, such as conversion to scss syntax | scss | scss |
-| `--directory` | `-d` | Whether the input and output paths are directories | yes / no | no |
-| `--autoprefixer ` | `-p` | Whether to add a prefix | yes / no | yes |
+| `--quote` | `-q` | 转换中遇到字符串时，使用的引号类型 | single / dobule | single |
+| `--input` | `-i` | 输入名称，可以是文件或者是文件夹的路径 | - | - |
+| `--output` | `-o` | 输出名称，可以是文件或者是文件夹的路径 | - | - |
+| `--conver ` | `-c` | 转换类型，例如转换成 scss 语法 | scss | scss |
+| `--directory` | `-d` | 输入和输出路径是否是个目录 | yes / no | no |
+| `--autoprefixer ` | `-p` | 是否添加前缀 | yes / no | yes |
 
-## Use examples
+## 使用示例
 
 ```javascript
-// download stylus-converter
+// 下载 stylus-converter
 npm install -g stylus-converter
 
-// Run the cli conversion file
+// 运行 cli 转换文件
 stylus-conver -i test.styl -o test.scss
 ```
 
-## Conversion file comparison
+## 转换文件比较
 
-### Stylus source code before conversion
+### 转换前的 stylus 源码
 
 ```stylus
 handleParams(args...)
@@ -87,7 +87,7 @@ handleParams(args...)
     @media (min-width: 2 * (i + 7) px)
 ```
 
-### Converted SCSS source code
+### 转换后的 SCSS 源码
 
 ```scss
 @function handleParams($args...) {
@@ -109,10 +109,9 @@ handleParams(args...)
 }
 ```
 
-> If you do not want to add the default prefix for your converted @keyframes, please set `options.autoprefixer = false`
+> 如果你不想你转换的 @keyframes 添加默认前缀，请设置 `options.autoprefixer = false`
 
-### The `.vue` file before conversion
-
+### 转换前的 `.vue` 文件
 ```html
 <template>
   <div class="page-home">
@@ -127,8 +126,7 @@ handleParams(args...)
 </style>
 ```
 
-### Converted `.vue`  file
-
+### 转换后的 `.vue` 文件
 ```html
 <template>
   <div class="page-home">
@@ -145,21 +143,21 @@ handleParams(args...)
 </style>
 ```
 
-## Build a development environment
+## 搭建开发环境
 
 ```text
-1. First fork project and then clone project to local
+1. 先 fork 项目再 clone 项目到本地
 git clone git@github.com:<your github>/stylus-converter.git
 
-2. Enter the project directory
+2. 进入项目目录
 cd stylus-converter
 
-3. Installation project depends
+3. 安装项目依赖
 npm install
 
-4. Package compilation source file
+4. 打包编译源文件
 npm run build
 
-5. Local debugging cli
+5. 本地调试 cli
 npm link
 ```
