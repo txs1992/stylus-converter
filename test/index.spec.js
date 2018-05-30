@@ -121,7 +121,7 @@ describe('测试 Comments', () => {
     fs.readFile(getPath('./stylus/comment.styl'), (err, res) => {
       if (err) return
       const result = res.toString()
-      const scss = converter(result)
+      const scss = converter(result, { isSignComment: true })
       fs.readFile(getPath('./scss/comment.scss'), (err, sres) => {
         if (err) return
         const toText = sres.toString()
@@ -134,11 +134,11 @@ describe('测试 Comments', () => {
 
 describe('测试 Mixins', () => {
   it('test mixin', done => {
-    fs.readFile(getPath('./stylus/comment.styl'), (err, res) => {
+    fs.readFile(getPath('./stylus/mixins.styl'), (err, res) => {
       if (err) return
       const result = res.toString()
       const scss = converter(result)
-      fs.readFile(getPath('./scss/comment.scss'), (err, sres) => {
+      fs.readFile(getPath('./scss/mixins.scss'), (err, sres) => {
         if (err) return
         const toText = sres.toString()
         expect(scss).to.be.equal(toText)
