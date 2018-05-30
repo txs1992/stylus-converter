@@ -47,7 +47,8 @@
 | ---- | ---- | ---- | ---- | ---- |
 | `quote` | The quote type to use when converting strings | string | `'` / `"` | `'` |
 | `conver` | Conversion type, such as conversion to scss syntax | string | scss | scss |
-| `autoprefixer ` | Whether or not to automatically add a prefix, stylus will automatically add prefixes when converting stylus grammars. `@keyframes` | boolean | true / false | true |
+| `autoprefixer` | Whether or not to automatically add a prefix, stylus will automatically add prefixes when converting stylus grammars. `@keyframes` | boolean | true / false | true |
+| `isSignComment` | Whether to change a single-line comment to a multiple-line comment, because stylus does not get a single-line comment when converting ast, if you want to keep a comment it can only be converted to a multi-line comment. | boolean | true / false | false |
 
 ### cli options
 
@@ -58,7 +59,8 @@
 | `--output` | `-o` | Output name, can be a path to a file or a folder | - | - |
 | `--conver ` | `-c` | Conversion type, such as conversion to scss syntax | scss | scss |
 | `--directory` | `-d` | Whether the input and output paths are directories | yes / no | no |
-| `--autoprefixer ` | `-p` | Whether to add a prefix | yes / no | yes |
+| `--autoprefixer` | `-p` | Whether to add a prefix | yes / no | yes |
+| `--singlecomments` | `-s` | Whether to change a single-line comment to a multiple-line comment, because stylus does not get a single-line comment when converting ast, if you want to keep a comment it can only be converted to a multi-line comment. | yes / no | no |
 
 ## Use examples
 
