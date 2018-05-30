@@ -17,6 +17,7 @@ function handleOptions () {
   const conver = argv.c || argv.conver || 'scss'
   const directory = argv.d || argv.directory || 'no'
   const autoprefixer =  argv.p || argv.autoprefixer || 'yes'
+  const isSignComment = argv.s || argv.singlecomments || 'no'
   if (!input) throw new Error('The input parameter cannot be empty.')
   if (!output) throw new Error('The output parameter cannot be empty.')
   if (quote !== 'single' && quote !== 'dobule') throw new Error('The quote parameter has a problem, it can only be single or double.')
@@ -29,7 +30,8 @@ function handleOptions () {
     output,
     conver,
     directory: directory === 'yes',
-    autoprefixer: autoprefixer === 'yes'
+    autoprefixer: autoprefixer === 'yes',
+    isSignComment: isSignComment === 'yes'
   }, time => {
     spinner.succeed('Conversion completed and time spent ' + time + ' ms.')
   })
@@ -43,5 +45,6 @@ program
     .option('-c, --conver', 'Add conver type')
     .option('-d, --directory', 'Is directory type')
     .option('-p, --autoprefixer', 'Whether to add a prefix')
+    .option('-s, --singlecomments ', 'Change single-line comments to multi-line comments')
     .action(handleOptions)
     .parse(process.argv);

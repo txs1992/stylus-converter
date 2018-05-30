@@ -8,6 +8,7 @@ export default function converter (result, options = {
   conver: 'sass',
   autoprefixer: true
 }) {
+  if (options.isSignComment) result = result.replace(/\/\/(.*)/mg, '/*$1 */')
   if (typeof result !== 'string') return result
   const ast = new Parser(result).parse()
   // 开发时查看 ast 对象。

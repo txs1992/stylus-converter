@@ -47,7 +47,8 @@
 | ---- | ---- | ---- | ---- | ---- |
 | `quote` | 转换中遇到字符串时，使用的引号类型 | string | `'` / `"` | `'` |
 | `conver` | 转换类型，例如转换成 scss 语法 | string | scss | scss |
-| `autoprefixer ` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes` | boolean | true / false | true |
+| `autoprefixer` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes` | boolean | true / false | true |
+| `isSignComment` | 是否将单行注释更改为多行注释，因为手写笔在转换ast时未获得单行注释，如果您想保留注释，则只能将其转换为多行注释。 | boolean | true / false | false |
 
 ### cli 配置
 
@@ -58,7 +59,8 @@
 | `--output` | `-o` | 输出名称，可以是文件或者是文件夹的路径 | - | - |
 | `--conver ` | `-c` | 转换类型，例如转换成 scss 语法 | scss | scss |
 | `--directory` | `-d` | 输入和输出路径是否是个目录 | yes / no | no |
-| `--autoprefixer ` | `-p` | 是否添加前缀 | yes / no | yes |
+| `--autoprefixer` | `-p` | 是否添加前缀 | yes / no | yes |
+| `--singlecomments` | `-s` | 是否将单行注释更改为多行注释，因为手写笔在转换ast时未获得单行注释，如果您想保留注释，则只能将其转换为多行注释。 | yes / no | no |
 
 ## 使用示例
 
