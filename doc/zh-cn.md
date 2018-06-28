@@ -70,6 +70,11 @@ npm install -g stylus-converter
 
 // 运行 cli 转换文件
 stylus-conver -i test.styl -o test.scss
+
+// 运行 cli 转换目录
+// 先进入项目目录
+mv src src-temp
+stylus-conver -d yes -i src-temp -o src
 ```
 
 ## 转换文件比较

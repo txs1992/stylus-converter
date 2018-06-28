@@ -70,6 +70,11 @@ npm install -g stylus-converter
 
 // Run the cli conversion file
 stylus-conver -i test.styl -o test.scss
+
+// Run the cli conversion directory
+// cd your project 
+mv src src-temp
+stylus-conver -d yes -i src-temp -o src
 ```
 
 ## Conversion file comparison
