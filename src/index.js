@@ -8,11 +8,12 @@ export default function converter (result, options = {
   conver: 'sass',
   autoprefixer: true
 }) {
-  if (options.isSignComment) result = result.replace(/\/\/\s(.*)/g, '/* #$1 */')
+  if (options.isSignComment) result = result.replace(/\/\/\s(.*)/g, '/* !#sign#! $1 */')
   if (typeof result !== 'string') return result
   const ast = new Parser(result).parse()
   // 开发时查看 ast 对象。
   // console.log(JSON.stringify(ast))
   const text = visitor(ast, options)
-  return text.replace(/\/\*\s#(.*)\s\*\//g, '// $1')
+  // Convert special multiline comments to single-line comments
+  return text.replace(/\/\*\s!#sign#!\s(.*)\s\*\//g, '// $1')
 }
