@@ -486,9 +486,11 @@ function visitFeature (node) {
   return `(${segmentsText}: ${expText})`
 }
 
-function visitComment (node) {
+function visitComment (node) {c
   const before = handleLinenoAndIndentation(node)
-  oldLineno = node.lineno + 2
+  const matchs = node.str.match(/\n/g)
+  oldLineno = node.lineno
+  if (Array.isArray(matchs)) oldLineno += matchs.length
   const text = node.suppress ? node.str : node.str.replace(/^\/\*/, '/*!')
   return before + text
 }

@@ -1,11 +1,22 @@
+/* http://stylus-lang.com/docs/comments.html */
+
+// Single-line comments look like JavaScript comments, and do not output in the resulting CSS:
+
+// Same goes for multiple single-line comments
+// adjacent to each other
+// on separate lines
+// http://stylus-lang.com/docs/comments.html
+
 /*
- * body 多行注释
+ * Multi-line comments look identical to regular CSS comments.
+ * However, they only output when the compress option is not enabled.
  */
 body
   padding 5px
 
 /*!
- * 给定数值合体
+ * Multi-line comments which are not suppressed start with /*!.
+ * This tells Stylus to output the comment regardless of compression.
  */
 add(a, b)
   a + b
