@@ -3,7 +3,15 @@ export function repeatString (str, num) {
 }
 
 export function nodesToJSON (nodes) {
-  return nodes.map(node => node.toJSON())
+  return nodes.map(node =>
+    Object.assign(
+      {
+        // default in case not in node
+        nodes: []
+      },
+      node.toJSON()
+    )
+  )
 }
 
 export function trimEdeg (str) {
