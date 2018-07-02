@@ -1,24 +1,18 @@
-/* http://stylus-lang.com/docs/comments.html */
+default-border-radius(prop, args)
+  -webkit-{prop}-radius args
+  -moz-{prop}-radius args
+  {prop}-radius args
 
-// Single-line comments look like JavaScript comments, and do not output in the resulting CSS:
+block_mixin(myColor)
+  color: myColor
+  .prop
+    font-size: 14px;
+    
+    .child
+     { block }
 
-// Same goes for multiple single-line comments
-// adjacent to each other
-// on separate lines
-// http://stylus-lang.com/docs/comments.html
-
-/*
- * Multi-line comments look identical to regular CSS comments.
- * However, they only output when the compress option is not enabled.
- */
 body
-  padding 5px
-
-/*!
- * Multi-line comments which are not suppressed start with /*!.
- * This tells Stylus to output the comment regardless of compression.
- */
-add(a, b)
-  a + b
-
-// sign comment
+  default-border-radius(border, 4px)
+  +block_mixin(blue)
+    margin: 10px
+    padding: 10px

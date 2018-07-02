@@ -11,7 +11,6 @@ let quote = `'`
 let conver = ''
 let callName = ''
 let oldLineno = 1
-let oldColumn = 1
 let returnSymbol = ''
 let indentationLevel = 0
 let OBJECT_KEY_LIST = []
@@ -237,7 +236,7 @@ function visitProperty ({ expr, lineno, segments }) {
   return `${before + segmentsText}: ${expText + suffix}`
 }
 
-function visitIdent ({ val, name, rest, mixin, lineno, column }) {
+function visitIdent ({ val, name, rest, mixin, lineno }) {
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
@@ -245,7 +244,7 @@ function visitIdent ({ val, name, rest, mixin, lineno, column }) {
       const len = PROPERTY_KEY_LIST.indexOf(name)
       if (len > -1) return PROPERTY_VAL_LIST[len]
     }
-    if (mixin) return `#{$${name}}`
+    if (mixin) return name === 'block' ? '@content' : `#{$${name}}`
     let nameText = VARIABLE_NAME_LIST.indexOf(name) > -1
       ? replaceFirstATSymbol(name)
       : name
@@ -287,9 +286,10 @@ function visitExpression (node) {
   return before + returnSymbol + result
 }
 
-function visitCall ({ name, args, lineno, column }) {
+function visitCall ({ name, args, lineno, block }) {
   isCall = true
   callName = name
+  let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
   if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments) {
@@ -298,9 +298,10 @@ function visitCall ({ name, args, lineno, column }) {
     before += '@include '
   }
   const argsText = visitArguments(args).replace(';', '')
+  if (block) blockText = visitBlock(block)
   callName = ''
   isCall = false
-  return `${before + name}(${argsText});`
+  return `${before + name}(${argsText})${blockText};`
 }
 
 function visitArguments (node) {
@@ -335,7 +336,7 @@ function visitIf (node, symbol = '@if ') {
     before += handleLinenoAndIndentation(node)
     oldLineno = node.lineno
   }
-  const condNode = node.cond && node.cond.toJSON() || { column: 0 }
+  const condNode = node.cond && node.cond.toJSON() || {}
   const condText = visitNode(condNode)
   isIfExpression = false
   const block = visitBlock(node.block)
