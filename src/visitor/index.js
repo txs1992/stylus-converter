@@ -11,7 +11,6 @@ let quote = `'`
 let conver = ''
 let callName = ''
 let oldLineno = 1
-let oldColumn = 1
 let returnSymbol = ''
 let indentationLevel = 0
 let OBJECT_KEY_LIST = []
@@ -237,7 +236,7 @@ function visitProperty ({ expr, lineno, segments }) {
   return `${before + segmentsText}: ${expText + suffix}`
 }
 
-function visitIdent ({ val, name, rest, mixin, lineno, column }) {
+function visitIdent ({ val, name, rest, mixin, lineno }) {
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
@@ -287,7 +286,7 @@ function visitExpression (node) {
   return before + returnSymbol + result
 }
 
-function visitCall ({ name, args, lineno, column }) {
+function visitCall ({ name, args, lineno }) {
   isCall = true
   callName = name
   let before = handleLineno(lineno)
@@ -335,7 +334,7 @@ function visitIf (node, symbol = '@if ') {
     before += handleLinenoAndIndentation(node)
     oldLineno = node.lineno
   }
-  const condNode = node.cond && node.cond.toJSON() || { column: 0 }
+  const condNode = node.cond && node.cond.toJSON() || {}
   const condText = visitNode(condNode)
   isIfExpression = false
   const block = visitBlock(node.block)
