@@ -4,6 +4,21 @@
   #{$prop}-radius: $args;
 }
 
+@mixin block_mixin($myColor) {
+  color: $myColor;
+  .prop {
+    font-size: 14px;
+
+    .child {
+      @content;
+    };
+  };
+}
+
 body {
   @include default-border-radius(border, 4px);
+  @include block_mixin(blue) {
+    margin: 10px;
+    padding: 10px;
+  };
 }

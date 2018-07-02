@@ -1,2 +1,4 @@
 /node_modules
 /lib
+/test/test.styl
+/test/test.scss
