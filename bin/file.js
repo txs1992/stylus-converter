@@ -46,7 +46,12 @@ function handleFile (input, output, options, callback) {
       let result = res.toString()
       let outputPath = output
       if (/\.styl$/.test(input)) {
-        result = converter(result, options)
+        try {
+          result = converter(result, options)
+        } catch (e) {
+          console.error('Failed to convert', input);
+          return;
+        }
         outputPath = output.replace(/\.styl$/, '.' + options.conver)
       } else {
         //处理 vue 文件

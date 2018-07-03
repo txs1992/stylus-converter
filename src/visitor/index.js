@@ -1,3 +1,4 @@
+import invariant from 'invariant'
 import {
   _get,
   trimFirst,
@@ -97,6 +98,7 @@ function handleLineno (lineno) {
 }
 
 function isFunctionMixin (nodes) {
+  invariant(nodes, 'Missing nodes param');
   const jsonNodes = nodesToJSON(nodes)
   const node = jsonNodes.length && jsonNodes[0] || {}
   return (node.__type === 'Property' || node.__type === 'Group')
@@ -117,6 +119,10 @@ function findNodesType (list, type) {
 
 function visitNode (node) {
   if (!node) return ''
+  if (!node.nodes) {
+    // guarantee to be an array
+    node.nodes = []
+  }
   const json = node.__type ? node : node.toJSON && node.toJSON()
   const handler = TYPE_VISITOR_MAP[json.__type]
   return handler ? handler(node) : ''
@@ -138,6 +144,7 @@ function visitNodes (list = []) {
 
 // 处理 import；handler import
 function visitImport (node) {
+  invariant(node, 'Missing node param');
   const before = handleLineno(node.lineno) + '@import '
   oldLineno = node.lineno
   let quote = ''
@@ -152,6 +159,7 @@ function visitImport (node) {
 }
 
 function visitSelector (node) {
+  invariant(node, 'Missing node param');
   const nodes = nodesToJSON(node.segments)
   const endNode = nodes[nodes.length - 1]
   let before = ''
@@ -164,6 +172,7 @@ function visitSelector (node) {
 }
 
 function visitGroup (node) {
+  invariant(node, 'Missing node param');
   const before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno
   const nodes = nodesToJSON(node.nodes)
@@ -182,6 +191,7 @@ function visitGroup (node) {
 }
 
 function visitBlock (node) {
+  invariant(node, 'Missing node param');
   indentationLevel++
   const before = ' {'
   const after = `\n${repeatString(' ', (indentationLevel - 1) * 2)}}`
@@ -204,6 +214,7 @@ function visitBlock (node) {
 }
 
 function visitLiteral (node) {
+  invariant(node, 'Missing node param');
   return node.val || ''
 }
 
@@ -269,6 +280,7 @@ function visitIdent ({ val, name, rest, mixin, lineno }) {
 }
 
 function visitExpression (node) {
+  invariant(node, 'Missing node param');
   isExpression = true
   let before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno
@@ -276,7 +288,7 @@ function visitExpression (node) {
   const nodes = nodesToJSON(node.nodes)
   nodes.forEach((node, idx) => {
     const nodeText = visitNode(node)
-    const symbol = isProperty && node.nodes ? ',' : ''
+    const symbol = isProperty && node.nodes.length ? ',' : ''
     result += idx ? symbol + ' ' + nodeText : nodeText
   })
   isExpression = false
@@ -305,6 +317,7 @@ function visitCall ({ name, args, lineno, block }) {
 }
 
 function visitArguments (node) {
+  invariant(node, 'Missing node param');
   isArguments = true
   const nodes = nodesToJSON(node.nodes)
   let text = ''
@@ -330,6 +343,7 @@ function visitBoolean (node) {
 }
 
 function visitIf (node, symbol = '@if ') {
+  invariant(node, 'Missing node param');
   let before = ''
   isIfExpression = true
   if (symbol === '@if ') {
@@ -356,6 +370,7 @@ function visitIf (node, symbol = '@if ') {
 }
 
 function visitFunction (node) {
+  invariant(node, 'Missing node param');
   isFunction = true
   const notMixin = !isFunctionMixin(node.block.nodes)
   const hasIf = findNodesType(node.block.nodes, 'If')
@@ -399,6 +414,7 @@ function visitUnaryOp ({ op, expr }) {
 }
 
 function visitEach (node) {
+  invariant(node, 'Missing node param');
   let before = handleLineno(node.lineno)
   oldLineno = node.lineno
   const expr = node.expr && node.expr.toJSON()
