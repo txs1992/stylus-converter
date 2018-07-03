@@ -49,7 +49,7 @@
 | `conver` | 转换类型，例如转换成 scss 语法 | string | scss | scss |
 | `autoprefixer` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes` | boolean | true / false | true |
 | `isSignComment` | 是否将单行注释更改为多行注释，因为手写笔在转换ast时未获得单行注释，如果您想保留注释，则只能将其转换为多行注释。 | boolean | true / false | false |
-| `indentVueStyleBlock` |  | number | number | 0 |
+| `indentVueStyleBlock` | 在 `.vue` 文件中转换 stylus 时，可以添加一定数量的缩进，默认不添加缩进。 | number | number | 0 |
 
 ### cli 配置
 
@@ -62,7 +62,7 @@
 | `--directory` | `-d` | 输入和输出路径是否是个目录 | yes / no | no |
 | `--autoprefixer` | `-p` | 是否添加前缀 | yes / no | yes |
 | `--singlecomments` | `-s` | 是否将单行注释更改为多行注释，因为手写笔在转换ast时未获得单行注释，如果您想保留注释，则只能将其转换为多行注释。 | yes / no | no |
-| `--indentVueStyleBlock` | `-v` |  | number | 0 |
+| `--indentVueStyleBlock` | 在 `.vue` 文件中转换 stylus 时，可以添加一定数量的缩进，默认不添加缩进。 | number | number | 0 |
 
 ## 使用示例
 
