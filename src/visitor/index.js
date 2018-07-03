@@ -577,7 +577,9 @@ export default function visitor (ast, options) {
   quote = options.quote
   conver = options.conver
   autoprefixer = options.autoprefixer
-  const result = visitNodes(ast.nodes) || ''
+  let result = visitNodes(ast.nodes) || ''
+  const indentation = ' '.repeat(options.indentVueStyleBlock)
+  result = result.replace(/(.*\S.*)/g, `${indentation}$1`);
   oldLineno = 1
   FUNCTION_PARAMS = []
   OBJECT_KEY_LIST = []

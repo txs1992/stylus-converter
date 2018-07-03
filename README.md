@@ -49,6 +49,7 @@
 | `conver` | Conversion type, such as conversion to scss syntax | string | scss | scss |
 | `autoprefixer` | Whether or not to automatically add a prefix, stylus will automatically add prefixes when converting stylus grammars. `@keyframes` | boolean | true / false | true |
 | `isSignComment` | Whether to change a single-line comment to a multiple-line comment, because stylus does not get a single-line comment when converting ast, if you want to keep a comment it can only be converted to a multi-line comment. | boolean | true / false | false |
+| `indentVueStyleBlock` | Indent the entire style block of a vue file with a certain amount of spaces. | number | number | 0 |
 
 ### cli options
 
@@ -61,6 +62,7 @@
 | `--directory` | `-d` | Whether the input and output paths are directories | yes / no | no |
 | `--autoprefixer` | `-p` | Whether to add a prefix | yes / no | yes |
 | `--singlecomments` | `-s` | Whether to change a single-line comment to a multiple-line comment, because stylus does not get a single-line comment when converting ast, if you want to keep a comment it can only be converted to a multi-line comment. | yes / no | no |
+| `--indentVueStyleBlock` | `-v` | Indent the entire style block of a vue file with a certain amount of spaces. | number | 0 |
 
 ## Use examples
 
@@ -72,7 +74,7 @@ npm install -g stylus-converter
 stylus-conver -i test.styl -o test.scss
 
 // Run the cli conversion directory
-// cd your project 
+// cd your project
 mv src src-temp
 stylus-conver -d yes -i src-temp -o src
 ```

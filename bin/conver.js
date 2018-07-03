@@ -18,6 +18,7 @@ function handleOptions () {
   const directory = argv.d || argv.directory || 'no'
   const autoprefixer =  argv.p || argv.autoprefixer || 'yes'
   const isSignComment = argv.s || argv.singlecomments || 'no'
+  const indentVueStyleBlock =  argv.v || argv.indentVueStyleBlock || 0
   if (!input) throw new Error('The input parameter cannot be empty.')
   if (!output) throw new Error('The output parameter cannot be empty.')
   if (quote !== 'single' && quote !== 'dobule') throw new Error('The quote parameter has a problem, it can only be single or double.')
@@ -31,7 +32,8 @@ function handleOptions () {
     conver,
     directory: directory === 'yes',
     autoprefixer: autoprefixer === 'yes',
-    isSignComment: isSignComment === 'yes'
+    isSignComment: isSignComment === 'yes',
+    indentVueStyleBlock: Number(indentVueStyleBlock),
   }, time => {
     spinner.succeed('Conversion completed and time spent ' + time + ' ms.')
   })
@@ -46,5 +48,6 @@ program
     .option('-d, --directory', 'Is directory type')
     .option('-p, --autoprefixer', 'Whether to add a prefix')
     .option('-s, --singlecomments ', 'Change single-line comments to multi-line comments')
+    .option('-v, --indentVueStyleBlock ', 'Indent the entire style block of a vue file with a certain amount of spaces.')
     .action(handleOptions)
     .parse(process.argv);
