@@ -62,7 +62,7 @@
 | `--directory` | `-d` | 输入和输出路径是否是个目录 | yes / no | no |
 | `--autoprefixer` | `-p` | 是否添加前缀 | yes / no | yes |
 | `--singlecomments` | `-s` | 是否将单行注释更改为多行注释，因为手写笔在转换ast时未获得单行注释，如果您想保留注释，则只能将其转换为多行注释。 | yes / no | no |
-| `--indentVueStyleBlock` | 在 `.vue` 文件中转换 stylus 时，可以添加一定数量的缩进，默认不添加缩进。 | number | number | 0 |
+| `--indentVueStyleBlock` | `-v` | 在 `.vue` 文件中转换 stylus 时，可以添加一定数量的缩进，默认不添加缩进。 | number | 0 |
 
 ## 使用示例
 
