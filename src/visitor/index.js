@@ -288,7 +288,7 @@ function visitExpression (node) {
   const nodes = nodesToJSON(node.nodes)
   nodes.forEach((node, idx) => {
     const nodeText = visitNode(node)
-    const symbol = isProperty && node.nodes ? ',' : ''
+    const symbol = isProperty && node.nodes.length ? ',' : ''
     result += idx ? symbol + ' ' + nodeText : nodeText
   })
   isExpression = false
