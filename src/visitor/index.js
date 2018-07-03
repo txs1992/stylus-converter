@@ -29,6 +29,7 @@ let isKeyframes = false
 let isArguments = false
 let isExpression = false
 let isIfExpression = false
+let callInIdent = false
 
 let autoprefixer = true
 
@@ -268,9 +269,11 @@ function visitIdent ({ val, name, rest, mixin, lineno }) {
     oldLineno = identVal.lineno
     const nodes = nodesToJSON(identVal.nodes || [])
     let expText = ''
+    callInIdent = true;
     nodes.forEach((node, idx) => {
       expText += idx ? ` ${visitNode(node)}`: visitNode(node)
     })
+    callInIdent = false;
     VARIABLE_NAME_LIST.push(name)
     return `${before}${replaceFirstATSymbol(name)}: ${expText};`
   }
@@ -304,7 +307,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments) {
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !callInIdent) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
@@ -313,7 +316,7 @@ function visitCall ({ name, args, lineno, block }) {
   if (block) blockText = visitBlock(block)
   callName = ''
   isCall = false
-  return `${before + name}(${argsText})${blockText};`
+  return `${before + name}(${argsText})${blockText}${callInIdent ? '' : ';'}`
 }
 
 function visitArguments (node) {

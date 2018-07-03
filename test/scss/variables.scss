@@ -1,6 +1,8 @@
 $keyframe-name: pulse;
 $default-width: 200px;
 $val: 20;
+$width: calc(100px - 32px);
+$height: round($width / 2);
 
 div {
   $borde: 1px solid #ccc;
