@@ -1,5 +1,6 @@
 const fs = require('fs')
 const converter = require('../lib')
+const convertVueFile = require('./convertVueFile')
 
 let callLen = 0
 let startTime = 0
@@ -55,13 +56,7 @@ function handleFile (input, output, options, callback) {
         outputPath = output.replace(/\.styl$/, '.' + options.conver)
       } else {
         //处理 vue 文件
-        const styleReg = /<style.*>((\n|.)*)<\/style>/
-        const matchs = result.match(styleReg)
-        if (Array.isArray(matchs) && matchs.length >= 2) {
-          const text = converter(matchs[1], options)
-          const styleText = `<style lang="scss">${text}</style>`
-          result = result.replace(styleReg, styleText)
-        }
+        result = convertVueFile(result, options);
       }
       fs.writeFile(outputPath, result, err => {
         if (err) throw err

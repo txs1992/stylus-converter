@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const converter = require('../lib')
 const expect = require('chai').expect
+const convertVueFile = require('../bin/convertVueFile')
 
 function getPath (address) {
   return path.resolve(__dirname, address)
@@ -345,6 +346,64 @@ describe('测试 @Import', () => {
       const result = res.toString()
       const scss = converter(result)
       fs.readFile(getPath('./scss/import.scss'), (err, sres) => {
+        if (err) return
+        const toText = sres.toString()
+        expect(scss).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
+
+describe('A vue file', () => {
+  it('should be converted correctly', done => {
+    fs.readFile(getPath('./vue/stylus/basic.vue'), (err, res) => {
+      if (err) return
+      const result = res.toString()
+      const scss = convertVueFile(result)
+      fs.readFile(getPath('./vue/scss/basic.vue'), (err, sres) => {
+        if (err) return
+        const toText = sres.toString()
+        expect(scss).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+
+  it('should retain it\'s style scoped attribute', done => {
+    fs.readFile(getPath('./vue/stylus/scoped.vue'), (err, res) => {
+      if (err) return
+      const result = res.toString()
+      const scss = convertVueFile(result)
+      fs.readFile(getPath('./vue/scss/scoped.vue'), (err, sres) => {
+        if (err) return
+        const toText = sres.toString()
+        expect(scss).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+
+  it('should handle indentation of the style block ', done => {
+    fs.readFile(getPath('./vue/stylus/indented.vue'), (err, res) => {
+      if (err) return
+      const result = res.toString()
+      const scss = convertVueFile(result, { indentVueStyleBlock: 2 });
+      fs.readFile(getPath('./vue/scss/indented.vue'), (err, sres) => {
+        if (err) return
+        const toText = sres.toString()
+        expect(scss).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+
+  it('should handle handle empty style blocks', done => {
+    fs.readFile(getPath('./vue/stylus/empty.vue'), (err, res) => {
+      if (err) return
+      const result = res.toString()
+      const scss = convertVueFile(result, { indentVueStyleBlock: 2 });
+      fs.readFile(getPath('./vue/scss/empty.vue'), (err, sres) => {
         if (err) return
         const toText = sres.toString()
         expect(scss).to.be.equal(toText)
