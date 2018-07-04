@@ -138,8 +138,15 @@ function recursiveSearchName(data, property, name) {
 function visitNodes (list = []) {
   let text = ''
   const nodes = nodesToJSON(list)
-  nodes.forEach(node => { text += visitNode(node) })
-  return text
+  nodes.forEach((node, i) => {
+    if (node.__type === 'Comment') {
+      const isInlineComment = nodes[i - 1] && (nodes[i - 1].lineno === node.lineno);
+      text += visitComment(node, isInlineComment);
+    } else {
+      text += visitNode(node);
+    }
+  });
+  return text;
 }
 
 // 处理 import；handler import
@@ -503,8 +510,8 @@ function visitFeature (node) {
   return `(${segmentsText}: ${expText})`
 }
 
-function visitComment (node) {c
-  const before = handleLinenoAndIndentation(node)
+function visitComment (node, isInlineComment) {
+  const before = isInlineComment ? ' ' : handleLinenoAndIndentation(node);
   const matchs = node.str.match(/\n/g)
   oldLineno = node.lineno
   if (Array.isArray(matchs)) oldLineno += matchs.length
