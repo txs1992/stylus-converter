@@ -240,7 +240,8 @@ function visitProperty ({ expr, lineno, segments }) {
   const segmentsText = visitNodes(segments)
   PROPERTY_KEY_LIST.unshift(segmentsText)
   lastPropertyLineno = lineno
-  lastPropertyLength = segmentsText.length
+  // segmentsText length plus semicolon and space
+  lastPropertyLength = segmentsText.length + 2
   if (_get(expr, ['nodes', 'length']) === 1) {
     const expNode = expr.nodes[0]
     const ident = expNode.toJSON && expNode.toJSON() || {}
@@ -342,7 +343,7 @@ function visitExpression (node) {
   if (isProperty && /\);/g.test(result)) result = trimSemicolon(result) + ';'
   if (isCall && callName === 'url') return result.replace(/\s/g, '')
   if (!returnSymbol || isIfExpression) {
-    return (before && space) ? before + space + result : result
+    return (before && space) ? before + getIndentation() + space + result : result
   }
   return before + getIndentation() + returnSymbol + result
 }
