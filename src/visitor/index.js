@@ -19,8 +19,11 @@ let FUNCTION_PARAMS = []
 let PROPERTY_KEY_LIST = []
 let PROPERTY_VAL_LIST = []
 let VARIABLE_NAME_LIST = []
+let lastPropertyLineno = 0
+let lastPropertyLength = 0
 
 let isCall = false
+let isIdent = false
 let isObject = false
 let isFunction = false
 let isProperty = false
@@ -95,6 +98,10 @@ const TYPE_VISITOR_MAP = {
 
 function handleLineno (lineno) {
   return repeatString('\n', lineno - oldLineno)
+}
+
+function trimSemicolon (res) {
+  return res.replace(/\);/g,')')
 }
 
 function isFunctionMixin (nodes) {
@@ -226,13 +233,15 @@ function visitLiteral (node) {
 }
 
 function visitProperty ({ expr, lineno, segments }) {
-  const hasCall = findNodesType(expr && expr.nodes || [], 'Call')
-  const suffix = hasCall ? '' : ';'
+  const suffix = ';'
   const before = handleLinenoAndIndentation({ lineno })
   oldLineno = lineno
   isProperty = true
   const segmentsText = visitNodes(segments)
   PROPERTY_KEY_LIST.unshift(segmentsText)
+  lastPropertyLineno = lineno
+  // segmentsText length plus semicolon and space
+  lastPropertyLength = segmentsText.length + 2
   if (_get(expr, ['nodes', 'length']) === 1) {
     const expNode = expr.nodes[0]
     const ident = expNode.toJSON && expNode.toJSON() || {}
@@ -248,25 +257,36 @@ function visitProperty ({ expr, lineno, segments }) {
       }
     }
   }
-  const expText = visitExpression(expr)
+  const expText = trimSemicolon(visitExpression(expr))
   PROPERTY_VAL_LIST.unshift(expText)
   isProperty = false
   return `${before + segmentsText}: ${expText + suffix}`
 }
 
 function visitIdent ({ val, name, rest, mixin, lineno }) {
+  isIdent = true
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
-      if (isCall) return name
+      if (isCall) {
+        isIdent = false
+        return name
+      }
       const len = PROPERTY_KEY_LIST.indexOf(name)
-      if (len > -1) return PROPERTY_VAL_LIST[len]
+      if (len > -1) {
+        isIdent = false
+        return PROPERTY_VAL_LIST[len]
+      }
     }
-    if (mixin) return name === 'block' ? '@content' : `#{$${name}}`
+    if (mixin) {
+      isIdent = false
+      return name === 'block' ? '@content' : `#{$${name}}`
+    }
     let nameText = VARIABLE_NAME_LIST.indexOf(name) > -1
       ? replaceFirstATSymbol(name)
       : name
     if (FUNCTION_PARAMS.indexOf(name) > -1) nameText = replaceFirstATSymbol(nameText)
+    isIdent = false
     return rest ? `${nameText}...` : nameText
   }
   if (identVal.__type === 'Expression') {
@@ -279,30 +299,53 @@ function visitIdent ({ val, name, rest, mixin, lineno }) {
       expText += idx ? ` ${visitNode(node)}`: visitNode(node)
     })
     VARIABLE_NAME_LIST.push(name)
-    return `${before}${replaceFirstATSymbol(name)}: ${expText};`
+    return `${before}${replaceFirstATSymbol(name)}: ${trimSemicolon(expText)};`
   }
-  if (identVal.__type === 'Function') return visitFunction(identVal)
+  if (identVal.__type === 'Function') {
+    isIdent = false
+    return visitFunction(identVal)
+  }
   let identText = visitNode(identVal)
+  isIdent = false
   return `${replaceFirstATSymbol(name)}: ${identText};`
 }
 
 function visitExpression (node) {
   invariant(node, 'Missing node param');
   isExpression = true
-  let before = handleLinenoAndIndentation(node)
-  oldLineno = node.lineno
-  let result = ''
   const nodes = nodesToJSON(node.nodes)
+  let subLineno = 0
+  let result = ''
+  let before = ''
+
+  if (nodes.every(node => node.__type !== 'Expression')) {
+    subLineno = nodes.map(node => node.lineno).sort((curr, next) => next - curr)[0]
+  }
+  
+  let space = ''
+  if (subLineno > node.lineno) {
+    before = handleLineno(subLineno)
+    oldLineno = subLineno
+    if (subLineno > lastPropertyLineno) space = repeatString(' ', lastPropertyLength)
+  } else {
+    before = handleLineno(node.lineno)
+    oldLineno = node.lineno
+  }
+
   nodes.forEach((node, idx) => {
     const nodeText = visitNode(node)
     const symbol = isProperty && node.nodes.length ? ',' : ''
     result += idx ? symbol + ' ' + nodeText : nodeText
   })
+
   isExpression = false
-  if (isProperty && /\);/g.test(result)) result = result.replace(/\);/g, ')') + ';'
+
+  if (isProperty && /\);/g.test(result)) result = trimSemicolon(result) + ';'
   if (isCall && callName === 'url') return result.replace(/\s/g, '')
-  if (!returnSymbol || isIfExpression) return result
-  return before + returnSymbol + result
+  if (!returnSymbol || isIfExpression) {
+    return (before && space) ? before + getIndentation() + space + result : result
+  }
+  return before + getIndentation() + returnSymbol + result
 }
 
 function visitCall ({ name, args, lineno, block }) {
@@ -311,7 +354,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments) {
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '

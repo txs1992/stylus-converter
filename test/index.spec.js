@@ -412,3 +412,19 @@ describe('A vue file', () => {
     })
   })
 })
+
+describe('测试 @Functions', () => {
+  it('test @functions', done => {
+    fs.readFile(getPath('./stylus/functions.styl'), (err, res) => {
+      if (err) return
+      const result = res.toString()
+      const scss = converter(result)
+      fs.readFile(getPath('./scss/functions.scss'), (err, sres) => {
+        if (err) return
+        const toText = sres.toString()
+        expect(scss).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+})
