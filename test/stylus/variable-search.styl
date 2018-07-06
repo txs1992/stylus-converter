@@ -4,5 +4,15 @@
   margin-left: -(w / 2)
   margin-top: -(h / 2)
 
+  /* property lookup */
   div
     width: @width
+
+body
+  color: red
+  ul
+    li
+      color: blue
+      a
+        /* property up bubble lookup */
+        background-color: @color

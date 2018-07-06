@@ -1,18 +1,18 @@
-default-border-radius(prop, args)
-  -webkit-{prop}-radius args
-  -moz-{prop}-radius args
-  {prop}-radius args
+#logo
+  width: w = 150px
+  height: h = 80px
+  margin-left: -(w / 2)
+  margin-top: -(h / 2)
 
-block_mixin(myColor)
-  color: myColor
-  .prop
-    font-size: 14px;
-    
-    .child
-     { block }
+  /* property lookup */
+  div
+    width: @width
 
 body
-  default-border-radius(border, 4px)
-  +block_mixin(blue)
-    margin: 10px
-    padding: 10px
+  color: red
+  ul
+    li
+      color: blue
+      a
+        /* property up bubble lookup */
+        background-color: @color
