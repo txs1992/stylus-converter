@@ -16,8 +16,7 @@ let returnSymbol = ''
 let indentationLevel = 0
 let OBJECT_KEY_LIST = []
 let FUNCTION_PARAMS = []
-let PROPERTY_KEY_LIST = []
-let PROPERTY_VAL_LIST = []
+let PROPERTY_LIST = []
 let VARIABLE_NAME_LIST = []
 let lastPropertyLineno = 0
 let lastPropertyLength = 0
@@ -238,7 +237,7 @@ function visitProperty ({ expr, lineno, segments }) {
   oldLineno = lineno
   isProperty = true
   const segmentsText = visitNodes(segments)
-  PROPERTY_KEY_LIST.unshift(segmentsText)
+  
   lastPropertyLineno = lineno
   // segmentsText length plus semicolon and space
   lastPropertyLength = segmentsText.length + 2
@@ -248,19 +247,18 @@ function visitProperty ({ expr, lineno, segments }) {
     if (ident.__type === 'Ident') {
       const identVal = _get(ident, ['val', 'toJSON']) && ident.val.toJSON() || {}
       if (identVal.__type === 'Expression') {
-        VARIABLE_NAME_LIST.push(ident.name)
         const beforeExpText = before + trimFirst(visitExpression(expr))
         const expText = `${before}${segmentsText}: $${ident.name};`
-        PROPERTY_VAL_LIST.unshift('$' + ident.name)
         isProperty = false
+        PROPERTY_LIST.unshift({ prop: segmentsText, value: '$' + ident.name })
         return beforeExpText + expText
       }
     }
   }
   const expText = trimSemicolon(visitExpression(expr))
-  PROPERTY_VAL_LIST.unshift(expText)
+  PROPERTY_LIST.unshift({ prop: segmentsText, value: expText })
   isProperty = false
-  return `${before + segmentsText}: ${expText + suffix}`
+  return `${before + segmentsText.replace(/^$/, '')}: ${expText + suffix}`
 }
 
 function visitIdent ({ val, name, rest, mixin, lineno }) {
@@ -272,10 +270,10 @@ function visitIdent ({ val, name, rest, mixin, lineno }) {
         isIdent = false
         return name
       }
-      const len = PROPERTY_KEY_LIST.indexOf(name)
-      if (len > -1) {
+      const property = PROPERTY_LIST.find(item => item.prop === name)
+      if (property) {
         isIdent = false
-        return PROPERTY_VAL_LIST[len]
+        return property.value
       }
     }
     if (mixin) {
@@ -649,8 +647,7 @@ export default function visitor (ast, options) {
   oldLineno = 1
   FUNCTION_PARAMS = []
   OBJECT_KEY_LIST = []
-  PROPERTY_KEY_LIST = []
-  PROPERTY_VAL_LIST = []
+  PROPERTY_LIST = []
   VARIABLE_NAME_LIST = []
   return result + '\n'
 }
