@@ -11,7 +11,7 @@ export default function converter (result, options = {
   if (options.isSignComment) result = result.replace(/\/\/\s(.*)/g, '/* !#sign#! $1 */')
 
   // Add semicolons to properties with inline comments to ensure that they are parsed correctly
-  result = result.replace(/^( +)(\w(.+?))( *)(\/\*.*\*\/)$/gm, '$1$2;$4$5');
+  result = result.replace(/^( *)(\S(.+?))( *)(\/\*.*\*\/)$/gm, '$1$2;$4$5');
 
   if (typeof result !== 'string') return result
   const ast = new Parser(result).parse()
