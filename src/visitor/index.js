@@ -100,11 +100,11 @@ function handleLineno (lineno) {
 }
 
 function trimFnSemicolon (res) {
-  return res.replace(/\);/g,')')
+  return res.replace(/\);/g, ')')
 }
 
 function trimSemicolon (res, symbol = '') {
-  return res.replace(/;/g,'') + symbol
+  return res.replace(/;/g, '') + symbol
 }
 
 function isFunctionMixin (nodes) {
@@ -255,11 +255,11 @@ function visitProperty ({ expr, lineno, segments }) {
         const expText = `${before}${segmentsText}: $${ident.name};`
         isProperty = false
         PROPERTY_LIST.unshift({ prop: segmentsText, value: '$' + ident.name })
-        return trimSemicolon(beforeExpText + expText, ';')
+        return beforeExpText + expText
       }
     }
   }
-  const expText = trimFnSemicolon(visitExpression(expr))
+  const expText = visitExpression(expr)
   PROPERTY_LIST.unshift({ prop: segmentsText, value: expText })
   isProperty = false
   return trimSemicolon(`${before + segmentsText.replace(/^$/, '')}: ${expText + suffix}`, ';')
@@ -345,7 +345,7 @@ function visitExpression (node) {
   if (isProperty && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
   if (isCall && callName === 'url') return result.replace(/\s/g, '')
   if (!returnSymbol || isIfExpression) {
-    return trimSemicolon((before && space) ? before + getIndentation() + space + result : result)
+    return (before && space) ? trimSemicolon(before + getIndentation() + space + result, ';') : result
   }
   return before + getIndentation() + returnSymbol + result
 }
