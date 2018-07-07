@@ -4,3 +4,11 @@ div {
               0 1px 1px 0 rgba(0, 0, 0, 0.14), 
               0 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
+
+div {
+  animation: name_of_animation 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  background: linear-gradient(white 30%, hsla(0, 0%, 100%, 0)), 
+              linear-gradient(hsla(0, 0%, 100%, 0) 10px, white 70%) bottom, 
+              radial-gradient(at top, rgba(0, 0, 0, 0.2), transparent 70%), 
+              radial-gradient(at bottom, rgba(0, 0, 0, 0.2), transparent 70%) bottom;
+}
