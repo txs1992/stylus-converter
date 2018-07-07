@@ -398,6 +398,20 @@ describe('A vue file', () => {
     })
   })
 
+  it('should handle multiple style blocks', done => {
+    fs.readFile(getPath('./vue/stylus/multiple-style-blocks.vue'), (err, res) => {
+      if (err) return
+      const result = res.toString()
+      const scss = convertVueFile(result);
+      fs.readFile(getPath('./vue/scss/multiple-style-blocks.vue'), (err, sres) => {
+        if (err) return
+        const toText = sres.toString()
+        expect(scss).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+
   it('should handle handle empty style blocks', done => {
     fs.readFile(getPath('./vue/stylus/empty.vue'), (err, res) => {
       if (err) return

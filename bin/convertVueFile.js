@@ -1,20 +1,21 @@
 const converter = require('../lib')
 
 function convertVueFile(vueTemplate, options) {
-  const styleRegEx = /<style(.*)>((\n|.)*)<\/style>/
-  const matches = vueTemplate.match(styleRegEx)
-  if (Array.isArray(matches) && matches.length >= 2) {
-    if (matches[1].includes('stylus')) {
-      let style = matches[2] || ''
+  let newVueTemplate = vueTemplate;
+  const styleRegEx = /<style(.*)>((\n|.)*?)<\/style>/g;
+  let match;
+  while ((match = styleRegEx.exec(newVueTemplate)) !== null) {
+    if (match[1].includes('stylus')) {
+      let style = match[2] || '';
       if (style.trim()) {
-        style = converter(style, options)
+        style = converter(style, options);
       }
-      const isScoped = matches[1].includes('scoped')
-      const styleText = `<style lang="scss"${isScoped ? ' scoped' : ''}>${style}</style>`
-      return vueTemplate.replace(styleRegEx, styleText)
+      const isScoped = match[1].includes('scoped');
+      const styleText = `<style lang="scss"${isScoped ? ' scoped' : ''}>${style}</style>`;
+      newVueTemplate = newVueTemplate.replace(match[0], styleText);
     }
   }
-  return vueTemplate;
+  return newVueTemplate;
 }
 
 module.exports = convertVueFile;
