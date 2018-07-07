@@ -99,8 +99,12 @@ function handleLineno (lineno) {
   return repeatString('\n', lineno - oldLineno)
 }
 
-function trimSemicolon (res) {
+function trimFnSemicolon (res) {
   return res.replace(/\);/g,')')
+}
+
+function trimSemicolon (res, symbol = '') {
+  return res.replace(/;/g,'') + symbol
 }
 
 function isFunctionMixin (nodes) {
@@ -251,14 +255,14 @@ function visitProperty ({ expr, lineno, segments }) {
         const expText = `${before}${segmentsText}: $${ident.name};`
         isProperty = false
         PROPERTY_LIST.unshift({ prop: segmentsText, value: '$' + ident.name })
-        return beforeExpText + expText
+        return trimSemicolon(beforeExpText + expText, ';')
       }
     }
   }
-  const expText = trimSemicolon(visitExpression(expr))
+  const expText = trimFnSemicolon(visitExpression(expr))
   PROPERTY_LIST.unshift({ prop: segmentsText, value: expText })
   isProperty = false
-  return `${before + segmentsText.replace(/^$/, '')}: ${expText + suffix}`
+  return trimSemicolon(`${before + segmentsText.replace(/^$/, '')}: ${expText + suffix}`, ';')
 }
 
 function visitIdent ({ val, name, rest, mixin, lineno }) {
@@ -297,7 +301,7 @@ function visitIdent ({ val, name, rest, mixin, lineno }) {
       expText += idx ? ` ${visitNode(node)}`: visitNode(node)
     })
     VARIABLE_NAME_LIST.push(name)
-    return `${before}${replaceFirstATSymbol(name)}: ${trimSemicolon(expText)};`
+    return `${before}${replaceFirstATSymbol(name)}: ${trimFnSemicolon(expText)};`
   }
   if (identVal.__type === 'Function') {
     isIdent = false
@@ -338,10 +342,10 @@ function visitExpression (node) {
 
   isExpression = false
 
-  if (isProperty && /\);/g.test(result)) result = trimSemicolon(result) + ';'
+  if (isProperty && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
   if (isCall && callName === 'url') return result.replace(/\s/g, '')
   if (!returnSymbol || isIfExpression) {
-    return (before && space) ? before + getIndentation() + space + result : result
+    return trimSemicolon((before && space) ? before + getIndentation() + space + result : result)
   }
   return before + getIndentation() + returnSymbol + result
 }
