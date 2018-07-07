@@ -107,6 +107,10 @@ function trimSemicolon (res, symbol = '') {
   return res.replace(/;/g, '') + symbol
 }
 
+function isCallMixin () {
+  return !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent
+}
+
 function isFunctionMixin (nodes) {
   invariant(nodes, 'Missing nodes param');
   const jsonNodes = nodesToJSON(nodes)
@@ -331,6 +335,8 @@ function visitExpression (node) {
     if (subLineno > lastPropertyLineno) space = repeatString(' ', lastPropertyLength)
   } else {
     before = handleLineno(node.lineno)
+    const callNode = nodes.find(node => node.__type === 'Call')
+    if (callNode && !isObject && !isCallMixin()) space = repeatString(' ', lastPropertyLength)
     oldLineno = node.lineno
   }
 
