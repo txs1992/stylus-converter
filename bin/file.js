@@ -50,7 +50,9 @@ function handleFile (input, output, options, callback) {
         try {
           result = converter(result, options)
         } catch (e) {
-          console.error('Failed to convert', input);
+          result = ''
+          callLen--
+          console.error('Failed to convert', input)
           return;
         }
         outputPath = output.replace(/\.styl$/, '.' + options.conver)
@@ -59,15 +61,16 @@ function handleFile (input, output, options, callback) {
         result = convertVueFile(result, options);
       }
       fs.writeFile(outputPath, result, err => {
-        if (err) throw err
         callLen--
+        if (err) throw err
+        if (!result) return
         if (callLen === 0) callback(Date.now() - startTime)
       })
     })
   } else {
-    fs.copyFile(input, output, err => {
-      if (err) throw err
+    fs.copyFile(input, output, err => {  
       callLen--
+      if (err) throw err
       if (callLen === 0) callback(Date.now() - startTime)
     })
   }
