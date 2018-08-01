@@ -15,6 +15,7 @@ function handleOptions () {
   const input = argv.i || argv.input
   const output = argv.o || argv.output
   const conver = argv.c || argv.conver || 'scss'
+  const exclude = argv.e || argv.exclude || ''
   const directory = argv.d || argv.directory || 'no'
   const autoprefixer =  argv.p || argv.autoprefixer || 'yes'
   const isSignComment = argv.s || argv.singlecomments || 'no'
@@ -30,6 +31,7 @@ function handleOptions () {
     input,
     output,
     conver,
+    exclude,
     directory: directory === 'yes',
     autoprefixer: autoprefixer === 'yes',
     isSignComment: isSignComment === 'yes',
@@ -45,6 +47,7 @@ program
     .option('-i, --input', 'Add input')
     .option('-o, --output', 'Add output')
     .option('-c, --conver', 'Add conver type')
+    .option('-e, --exclude', 'Exclude certain files')
     .option('-d, --directory', 'Is directory type')
     .option('-p, --autoprefixer', 'Whether to add a prefix')
     .option('-s, --singlecomments ', 'Change single-line comments to multi-line comments')

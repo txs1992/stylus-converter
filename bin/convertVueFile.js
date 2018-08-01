@@ -1,4 +1,4 @@
-const converter = require('../lib')
+const { converter } = require('../lib')
 
 function convertVueFile(vueTemplate, options) {
   let newVueTemplate = vueTemplate;
