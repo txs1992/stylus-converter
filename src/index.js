@@ -3,6 +3,10 @@ import Parser from 'stylus/lib/parser.js'
 import visitor from './visitor/index.js'
 import { nodesToJSON } from './util.js'
 
+export function parse (result) {
+  return new Parser(result).parse()
+}
+
 export default function converter (result, options = {
   quote: `'`,
   conver: 'sass',
