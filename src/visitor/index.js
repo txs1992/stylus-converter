@@ -18,6 +18,7 @@ let OBJECT_KEY_LIST = []
 let FUNCTION_PARAMS = []
 let PROPERTY_LIST = []
 let VARIABLE_NAME_LIST = []
+let GLOBAL_VARIABLE_NAME_LIST = []
 let lastPropertyLineno = 0
 let lastPropertyLength = 0
 
@@ -288,7 +289,7 @@ function visitIdent ({ val, name, rest, mixin, lineno }) {
       isIdent = false
       return name === 'block' ? '@content' : `#{$${name}}`
     }
-    let nameText = VARIABLE_NAME_LIST.indexOf(name) > -1
+    let nameText = (VARIABLE_NAME_LIST.indexOf(name) > -1 || GLOBAL_VARIABLE_NAME_LIST.indexOf(name) > -1)
       ? replaceFirstATSymbol(name)
       : name
     if (FUNCTION_PARAMS.indexOf(name) > -1) nameText = replaceFirstATSymbol(nameText)
@@ -647,10 +648,11 @@ function visitReturn (node) {
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
-export default function visitor (ast, options) {
+export default function visitor (ast, options, globalVariableList) {
   quote = options.quote
   conver = options.conver
   autoprefixer = options.autoprefixer
+  GLOBAL_VARIABLE_NAME_LIST = globalVariableList
   let result = visitNodes(ast.nodes) || ''
   const indentation = ' '.repeat(options.indentVueStyleBlock)
   result = result.replace(/(.*\S.*)/g, `${indentation}$1`);
@@ -659,5 +661,6 @@ export default function visitor (ast, options) {
   OBJECT_KEY_LIST = []
   PROPERTY_LIST = []
   VARIABLE_NAME_LIST = []
+  GLOBAL_VARIABLE_NAME_LIST = []
   return result + '\n'
 }
