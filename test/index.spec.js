@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const converter = require('../lib')
+const { converter } = require('../lib')
 const expect = require('chai').expect
 const convertVueFile = require('../bin/convertVueFile')
 

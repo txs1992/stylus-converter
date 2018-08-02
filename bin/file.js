@@ -78,9 +78,7 @@ function converFile (options, callback) {
   options.status = 'ready'
   handleStylus(options, () => {
     options.status = 'complete'
-    console.log('two')
     handleStylus(options, now => {
-      console.log(now - startTime)
       callback(now - startTime)
     })
   })

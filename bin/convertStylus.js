@@ -1,6 +1,5 @@
 const fs = require('fs')
 const { parse, converter, nodeToJSON } = require('../lib')
-// const { nodesToJSON } = require('../src/util')
 const convertVueFile = require('./convertVueFile')
 
 let callLen = 0
