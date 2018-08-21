@@ -270,7 +270,7 @@ function visitProperty ({ expr, lineno, segments }) {
   return trimSemicolon(`${before + segmentsText.replace(/^$/, '')}: ${expText + suffix}`, ';')
 }
 
-function visitIdent ({ val, name, rest, mixin, lineno }) {
+function visitIdent ({ val, name, rest, mixin, property }) {
   isIdent = true
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
@@ -279,11 +279,12 @@ function visitIdent ({ val, name, rest, mixin, lineno }) {
         isIdent = false
         return name
       }
-      const property = PROPERTY_LIST.find(item => item.prop === name)
-      if (property) {
+      const propertyVal = PROPERTY_LIST.find(item => item.prop === name)
+      if (propertyVal) {
         isIdent = false
-        return property.value
-      }
+        if (property) return propertyVal.value
+        return propertyVal.prop
+      } 
     }
     if (mixin) {
       isIdent = false
