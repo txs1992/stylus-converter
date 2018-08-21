@@ -279,12 +279,13 @@ function visitIdent ({ val, name, rest, mixin, property }) {
         isIdent = false
         return name
       }
-      const propertyVal = PROPERTY_LIST.find(item => item.prop === name)
-      if (propertyVal) {
-        isIdent = false
-        if (property) return propertyVal.value
-        return propertyVal.prop
-      } 
+      if (property) {
+        const propertyVal = PROPERTY_LIST.find(item => item.prop === name)
+        if (propertyVal) {
+          isIdent = false
+          return propertyVal.value
+        }
+      }
     }
     if (mixin) {
       isIdent = false
