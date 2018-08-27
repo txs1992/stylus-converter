@@ -16,7 +16,7 @@ export function converter (result, options = {
   autoprefixer: true
 }, globalVariableList = []) {
   if (options.isSignComment) result = result.replace(/\/\/\s(.*)/g, '/* !#sign#! $1 */')
-
+  
   // Add semicolons to properties with inline comments to ensure that they are parsed correctly
   result = result.replace(/^( *)(\S(.+?))( *)(\/\*.*\*\/)$/gm, '$1$2;$4$5');
 

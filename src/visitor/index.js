@@ -323,6 +323,7 @@ function visitExpression (node) {
   invariant(node, 'Missing node param');
   isExpression = true
   const nodes = nodesToJSON(node.nodes)
+  const comments = []
   let subLineno = 0
   let result = ''
   let before = ''
@@ -344,14 +345,22 @@ function visitExpression (node) {
   }
 
   nodes.forEach((node, idx) => {
-    const nodeText = visitNode(node)
-    const symbol = isProperty && node.nodes.length ? ',' : ''
-    result += idx ? symbol + ' ' + nodeText : nodeText
+    // handle inline comment
+    if (node.__type === 'Comment') {
+      comments.push(node)
+    } else {
+      const nodeText = visitNode(node)
+      const symbol = isProperty && node.nodes.length ? ',' : ''
+      result += idx ? symbol + ' ' + nodeText : nodeText
+    }
   })
+
+  const commentText = comments.map(node => visitNode(node)).join(' ')
 
   isExpression = false
 
   if (isProperty && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
+  result += commentText
   if (isCall && callName === 'url') return result.replace(/\s/g, '')
   if (!returnSymbol || isIfExpression) {
     return (before && space) ? trimSemicolon(before + getIndentation() + space + result, ';') : result
