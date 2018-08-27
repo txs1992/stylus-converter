@@ -306,6 +306,7 @@ function visitIdent ({ val, name, rest, mixin, property }) {
       expText += idx ? ` ${visitNode(node)}`: visitNode(node)
     })
     VARIABLE_NAME_LIST.push(name)
+    isIdent = false
     return `${before}${replaceFirstATSymbol(name)}: ${trimFnSemicolon(expText)};`
   }
   if (identVal.__type === 'Function') {
@@ -372,7 +373,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments) {
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
