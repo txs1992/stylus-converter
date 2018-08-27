@@ -395,8 +395,10 @@ function visitArguments (node) {
   let text = ''
   nodes.forEach((node, idx) => {
     const prefix = idx ? ', ' : ''
-    const result = isFunction ? replaceFirstATSymbol(visitNode(node)) : visitNode(node)
-    text += prefix + result
+    let nodeText = visitNode(node)
+    if (GLOBAL_VARIABLE_NAME_LIST.indexOf(nodeText) > -1) nodeText = replaceFirstATSymbol(nodeText)
+    if (isFunction) nodeText = replaceFirstATSymbol(nodeText)
+    text += prefix + nodeText
   })
   isArguments = false
   return text || ''
