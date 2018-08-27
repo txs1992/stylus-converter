@@ -277,11 +277,7 @@ function visitIdent ({ val, name, rest, mixin, property }) {
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
-      if (isCall) {
-        isIdent = false
-        return name
-      }
-      if (property) {
+      if (property || isCall) {
         const propertyVal = PROPERTY_LIST.find(item => item.prop === name)
         if (propertyVal) {
           isIdent = false
@@ -376,7 +372,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent) {
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
