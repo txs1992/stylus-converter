@@ -549,14 +549,14 @@ function visitQueryList (node) {
 }
 
 function visitQuery (node) {
-  const type = visitNode(node.type)
+  const type = visitNode(node.type) || ''
   const nodes = nodesToJSON(node.nodes)
   let text = ''
   nodes.forEach((node, idx) => {
     const nodeText = visitNode(node)
     text += idx ? ` and ${nodeText}` : nodeText
   })
-  return type ? `${type} and ${text}` : text
+  return type === 'screen' ? `${type} and ${text}` : `${type}${text}`
 }
 
 function visitMedia (node) {
