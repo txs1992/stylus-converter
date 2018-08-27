@@ -1,3 +1,7 @@
+@media print {
+  display: none;
+}
+
 @media screen and (max-width: 500px) and (min-width: 100px), (max-width: 500px) and (min-height: 200px) {
   .foo {
     color: #100;
