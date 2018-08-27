@@ -267,7 +267,9 @@ function visitProperty ({ expr, lineno, segments }) {
   const expText = visitExpression(expr)
   PROPERTY_LIST.unshift({ prop: segmentsText, value: expText })
   isProperty = false
-  return trimSemicolon(`${before + segmentsText.replace(/^$/, '')}: ${expText + suffix}`, ';')
+  return /\/\//.test(expText)
+    ? `${before + segmentsText.replace(/^$/, '')}: ${expText}`
+    : trimSemicolon(`${before + segmentsText.replace(/^$/, '')}: ${expText + suffix}`, ';')
 }
 
 function visitIdent ({ val, name, rest, mixin, property }) {
@@ -279,12 +281,13 @@ function visitIdent ({ val, name, rest, mixin, property }) {
         isIdent = false
         return name
       }
-      const propertyVal = PROPERTY_LIST.find(item => item.prop === name)
-      if (propertyVal) {
-        isIdent = false
-        if (property) return propertyVal.value
-        return propertyVal.prop
-      } 
+      if (property) {
+        const propertyVal = PROPERTY_LIST.find(item => item.prop === name)
+        if (propertyVal) {
+          isIdent = false
+          return propertyVal.value
+        }
+      }
     }
     if (mixin) {
       isIdent = false
@@ -322,6 +325,7 @@ function visitExpression (node) {
   invariant(node, 'Missing node param');
   isExpression = true
   const nodes = nodesToJSON(node.nodes)
+  const comments = []
   let subLineno = 0
   let result = ''
   let before = ''
@@ -343,14 +347,22 @@ function visitExpression (node) {
   }
 
   nodes.forEach((node, idx) => {
-    const nodeText = visitNode(node)
-    const symbol = isProperty && node.nodes.length ? ',' : ''
-    result += idx ? symbol + ' ' + nodeText : nodeText
+    // handle inline comment
+    if (node.__type === 'Comment') {
+      comments.push(node)
+    } else {
+      const nodeText = visitNode(node)
+      const symbol = isProperty && node.nodes.length ? ',' : ''
+      result += idx ? symbol + ' ' + nodeText : nodeText
+    }
   })
+
+  const commentText = comments.map(node => visitNode(node)).join(' ')
 
   isExpression = false
 
   if (isProperty && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
+  if (commentText) result = result + ';' + commentText
   if (isCall && callName === 'url') return result.replace(/\s/g, '')
   if (!returnSymbol || isIfExpression) {
     return (before && space) ? trimSemicolon(before + getIndentation() + space + result, ';') : result

@@ -48,7 +48,6 @@
 | `quote` | The quote type to use when converting strings | string | `'` / `"` | `'` |
 | `conver` | Conversion type, such as conversion to scss syntax | string | scss | scss |
 | `autoprefixer` | Whether or not to automatically add a prefix, stylus will automatically add prefixes when converting stylus grammars. `@keyframes` | boolean | true / false | true |
-| `isSignComment` | Whether to change a single-line comment to a multiple-line comment, because stylus does not get a single-line comment when converting ast, if you want to keep a comment it can only be converted to a multi-line comment. | boolean | true / false | false |
 | `indentVueStyleBlock` | Indent the entire style block of a vue file with a certain amount of spaces. | number | number | 0 |
 
 ### cli options
@@ -61,8 +60,39 @@
 | `--conver ` | `-c` | Conversion type, such as conversion to scss syntax | scss | scss |
 | `--directory` | `-d` | Whether the input and output paths are directories | yes / no | no |
 | `--autoprefixer` | `-p` | Whether to add a prefix | yes / no | yes |
-| `--singlecomments` | `-s` | Whether to change a single-line comment to a multiple-line comment, because stylus does not get a single-line comment when converting ast, if you want to keep a comment it can only be converted to a multi-line comment. | yes / no | no |
 | `--indentVueStyleBlock` | `-v` | Indent the entire style block of a vue file with a certain amount of spaces. | number | 0 |
+
+### How to handle single line comments
+```js
+1. First fork project and then clone project to local
+git clone git@github.com:<your github>/stylus-converter.git
+
+2. Enter the project directory
+cd stylus-converter
+
+3. Installation project depends
+npm install
+
+4. Go to line 581 of the `node_modules/stylus/lib/lexer.js` file.
+
+5. Modify the code below.
+// before modification
+if ('/' == this.str[0] && '/' == this.str[1]) {
+  var end = this.str.indexOf('\n');
+  if (-1 == end) end = this.str.length;
+  this.skip(end);
+  return this.advance();
+}
+
+// After modification
+if ('/' == this.str[0] && '/' == this.str[1]) {
+  var end = this.str.indexOf('\n');
+  const str = this.str.substring(0, end)
+  if (-1 == end) end = this.str.length;
+  this.skip(end);
+  return new Token('comment', new nodes.Comment(str, suppress, true))
+}
+```
 
 ## Use examples
 

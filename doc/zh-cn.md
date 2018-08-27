@@ -48,7 +48,6 @@
 | `quote` | 转换中遇到字符串时，使用的引号类型 | string | `'` / `"` | `'` |
 | `conver` | 转换类型，例如转换成 scss 语法 | string | scss | scss |
 | `autoprefixer` | 是否自动添加前缀，stylus 在转换 css 语法的时候，有些语法会自动添加前缀例如 `@keyframes` | boolean | true / false | true |
-| `isSignComment` | 是否将单行注释更改为多行注释，因为手写笔在转换ast时未获得单行注释，如果您想保留注释，则只能将其转换为多行注释。 | boolean | true / false | false |
 | `indentVueStyleBlock` | 在 `.vue` 文件中转换 stylus 时，可以添加一定数量的缩进，默认不添加缩进。 | number | number | 0 |
 
 ### cli 配置
@@ -61,8 +60,39 @@
 | `--conver ` | `-c` | 转换类型，例如转换成 scss 语法 | scss | scss |
 | `--directory` | `-d` | 输入和输出路径是否是个目录 | yes / no | no |
 | `--autoprefixer` | `-p` | 是否添加前缀 | yes / no | yes |
-| `--singlecomments` | `-s` | 是否将单行注释更改为多行注释，因为手写笔在转换ast时未获得单行注释，如果您想保留注释，则只能将其转换为多行注释。 | yes / no | no |
 | `--indentVueStyleBlock` | `-v` | 在 `.vue` 文件中转换 stylus 时，可以添加一定数量的缩进，默认不添加缩进。 | number | 0 |
+
+### 如何处理单行注释。
+```js
+1. 先 fork 项目再 clone 项目到本地
+git clone git@github.com:<your github>/stylus-converter.git
+
+2. 进入项目目录
+cd stylus-converter
+
+3. 安装项目依赖
+npm install
+
+4. 进入 `node_modules/stylus/lib/lexer.js` 文件第 581 行。
+
+5. 修改下列代码。
+// 修改前
+if ('/' == this.str[0] && '/' == this.str[1]) {
+  var end = this.str.indexOf('\n');
+  if (-1 == end) end = this.str.length;
+  this.skip(end);
+  return this.advance();
+}
+
+// 修改后
+if ('/' == this.str[0] && '/' == this.str[1]) {
+  var end = this.str.indexOf('\n');
+  const str = this.str.substring(0, end)
+  if (-1 == end) end = this.str.length;
+  this.skip(end);
+  return new Token('comment', new nodes.Comment(str, suppress, true))
+}
+```
 
 ## 使用示例
 
