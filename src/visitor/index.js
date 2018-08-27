@@ -267,7 +267,9 @@ function visitProperty ({ expr, lineno, segments }) {
   const expText = visitExpression(expr)
   PROPERTY_LIST.unshift({ prop: segmentsText, value: expText })
   isProperty = false
-  return trimSemicolon(`${before + segmentsText.replace(/^$/, '')}: ${expText + suffix}`, ';')
+  return /\/\//.test(expText)
+    ? `${before + segmentsText.replace(/^$/, '')}: ${expText}`
+    : trimSemicolon(`${before + segmentsText.replace(/^$/, '')}: ${expText + suffix}`, ';')
 }
 
 function visitIdent ({ val, name, rest, mixin, property }) {
@@ -360,7 +362,7 @@ function visitExpression (node) {
   isExpression = false
 
   if (isProperty && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
-  result += commentText
+  if (commentText) result = result + ';' + commentText
   if (isCall && callName === 'url') return result.replace(/\s/g, '')
   if (!returnSymbol || isIfExpression) {
     return (before && space) ? trimSemicolon(before + getIndentation() + space + result, ';') : result
