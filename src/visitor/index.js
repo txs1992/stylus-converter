@@ -277,11 +277,7 @@ function visitIdent ({ val, name, rest, mixin, property }) {
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
-      if (isCall) {
-        isIdent = false
-        return name
-      }
-      if (property) {
+      if (property || isCall) {
         const propertyVal = PROPERTY_LIST.find(item => item.prop === name)
         if (propertyVal) {
           isIdent = false
@@ -310,6 +306,7 @@ function visitIdent ({ val, name, rest, mixin, property }) {
       expText += idx ? ` ${visitNode(node)}`: visitNode(node)
     })
     VARIABLE_NAME_LIST.push(name)
+    isIdent = false
     return `${before}${replaceFirstATSymbol(name)}: ${trimFnSemicolon(expText)};`
   }
   if (identVal.__type === 'Function') {
@@ -395,8 +392,10 @@ function visitArguments (node) {
   let text = ''
   nodes.forEach((node, idx) => {
     const prefix = idx ? ', ' : ''
-    const result = isFunction ? replaceFirstATSymbol(visitNode(node)) : visitNode(node)
-    text += prefix + result
+    let nodeText = visitNode(node)
+    if (GLOBAL_VARIABLE_NAME_LIST.indexOf(nodeText) > -1) nodeText = replaceFirstATSymbol(nodeText)
+    if (isFunction) nodeText = replaceFirstATSymbol(nodeText)
+    text += prefix + nodeText
   })
   isArguments = false
   return text || ''
