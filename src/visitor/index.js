@@ -23,6 +23,8 @@ let lastPropertyLineno = 0
 let lastPropertyLength = 0
 
 let isCall = false
+let isCond = false
+let isNegate = false
 let isIdent = false
 let isObject = false
 let isFunction = false
@@ -373,7 +375,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent) {
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
@@ -421,8 +423,13 @@ function visitIf (node, symbol = '@if ') {
     before += handleLinenoAndIndentation(node)
     oldLineno = node.lineno
   }
+  
   const condNode = node.cond && node.cond.toJSON() || {}
-  const condText = visitNode(condNode)
+  isCond = true
+  isNegate = node.negate
+  const condText =  trimSemicolon(visitNode(condNode))
+  isCond = false
+  isNegate = false
   isIfExpression = false
   const block = visitBlock(node.block)
   let elseText = ''
@@ -473,11 +480,17 @@ function visitFunction (node) {
 }
 
 function visitBinOp ({ op, left, right }) {
+  function visitNegate (op) {
+    if (!isNegate || (op !== '==' && op !== '!=')) return op
+    return op === '==' ? '!=' : '=='
+  }
+
   const leftExp = left && left.toJSON()
   const rightExp = right && right.toJSON()
   const isExp = rightExp.__type === 'Expression'
   const expText = isExp ? `(${visitNode(rightExp)})`: visitNode(rightExp)
-  return `${visitNode(leftExp)} ${OPEARTION_MAP[op] || op} ${expText}`
+  const symbol = OPEARTION_MAP[op] || visitNegate(op)
+  return `${visitNode(leftExp)} ${symbol} ${expText}`
 }
 
 function visitUnaryOp ({ op, expr }) {
