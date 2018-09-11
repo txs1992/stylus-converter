@@ -1,11 +1,26 @@
 $a: 10;
 $b: 5;
 
+@function colorTheme() {
+  @return 'red';
+}
+
 div {
   @if $a > $b {
     color: red;
   } @else if $a < $b {
     color: yellow;
+  } @else {
+    color: blue;
+  }
+}
+
+.test-conditionals {
+  @if colorTheme() != 'red' {
+    color: red;
+  }
+  @if colorTheme() == 'blue' {
+    color: red;
   } @else {
     color: blue;
   }
