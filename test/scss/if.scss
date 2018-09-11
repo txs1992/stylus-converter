@@ -17,7 +17,7 @@ div {
 
 .test-conditionals {
   @if colorTheme() != 'red' {
-    color: red;    // if colorTheme is  red
+    color: red; // if colorTheme is  red
   }
   @if colorTheme() == 'blue' {
     color: red;

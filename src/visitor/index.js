@@ -356,7 +356,8 @@ function visitExpression (node) {
     }
   })
 
-  const commentText = comments.map(node => visitNode(node)).join(' ')
+  let commentText = comments.map(node => visitNode(node)).join(' ')
+  commentText = commentText.replace(/^ +/, ' ')
 
   isExpression = false
 
