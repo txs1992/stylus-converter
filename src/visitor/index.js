@@ -370,32 +370,32 @@ function visitExpression (node) {
   return before + getIndentation() + returnSymbol + result
 }
 
-function visitCall ({ name, args, lineno, block }) {
+function visitCall ({ name, args, lineno, block }, isCallParams) {
   isCall = true
   callName = name
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond) {
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond && !isCallParams) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
   }
-  const argsText = visitArguments(args).replace(';', '')
+  const argsText = visitArguments(args, true).replace(/;/g, '')
   if (block) blockText = visitBlock(block)
   callName = ''
   isCall = false
   return `${before + name}(${argsText})${blockText};`
 }
 
-function visitArguments (node) {
+function visitArguments (node, isCallParams) {
   invariant(node, 'Missing node param');
   isArguments = true
   const nodes = nodesToJSON(node.nodes)
   let text = ''
   nodes.forEach((node, idx) => {
     const prefix = idx ? ', ' : ''
-    let nodeText = visitNode(node)
+    let nodeText = visitNode(node, isCallParams)
     if (GLOBAL_VARIABLE_NAME_LIST.indexOf(nodeText) > -1) nodeText = replaceFirstATSymbol(nodeText)
     if (isFunction) nodeText = replaceFirstATSymbol(nodeText)
     text += prefix + nodeText
