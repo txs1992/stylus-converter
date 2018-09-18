@@ -678,7 +678,6 @@ function visitReturn (node) {
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
 export default function visitor (ast, options, globalVariableList) {
-  console.log('\n')
   quote = options.quote
   conver = options.conver
   autoprefixer = options.autoprefixer
