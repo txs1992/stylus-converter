@@ -12,6 +12,7 @@ let quote = `'`
 let conver = ''
 let callName = ''
 let oldLineno = 1
+let callLength = 0
 let returnSymbol = ''
 let indentationLevel = 0
 let OBJECT_KEY_LIST = []
@@ -370,32 +371,34 @@ function visitExpression (node) {
   return before + getIndentation() + returnSymbol + result
 }
 
-function visitCall ({ name, args, lineno, block }, isCallParams) {
+function visitCall ({ name, args, lineno, block }) {
   isCall = true
+  callLength++
   callName = name
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond && !isCallParams) {
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond && callLength <= 1) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
   }
-  const argsText = visitArguments(args, true).replace(/;/g, '')
+  const argsText = visitArguments(args).replace(/;/g, '')
   if (block) blockText = visitBlock(block)
   callName = ''
   isCall = false
+  callLength--
   return `${before + name}(${argsText})${blockText};`
 }
 
-function visitArguments (node, isCallParams) {
+function visitArguments (node) {
   invariant(node, 'Missing node param');
   isArguments = true
   const nodes = nodesToJSON(node.nodes)
   let text = ''
   nodes.forEach((node, idx) => {
     const prefix = idx ? ', ' : ''
-    let nodeText = visitNode(node, isCallParams)
+    let nodeText = visitNode(node)
     if (GLOBAL_VARIABLE_NAME_LIST.indexOf(nodeText) > -1) nodeText = replaceFirstATSymbol(nodeText)
     if (isFunction) nodeText = replaceFirstATSymbol(nodeText)
     text += prefix + nodeText
@@ -675,6 +678,7 @@ function visitReturn (node) {
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
 export default function visitor (ast, options, globalVariableList) {
+  console.log('\n')
   quote = options.quote
   conver = options.conver
   autoprefixer = options.autoprefixer
