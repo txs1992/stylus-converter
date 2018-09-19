@@ -12,6 +12,7 @@ let quote = `'`
 let conver = ''
 let callName = ''
 let oldLineno = 1
+let callLength = 0
 let returnSymbol = ''
 let indentationLevel = 0
 let OBJECT_KEY_LIST = []
@@ -372,19 +373,21 @@ function visitExpression (node) {
 
 function visitCall ({ name, args, lineno, block }) {
   isCall = true
+  callLength++
   callName = name
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond) {
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond && callLength <= 1) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
   }
-  const argsText = visitArguments(args).replace(';', '')
+  const argsText = visitArguments(args).replace(/;/g, '')
   if (block) blockText = visitBlock(block)
   callName = ''
   isCall = false
+  callLength--
   return `${before + name}(${argsText})${blockText};`
 }
 
