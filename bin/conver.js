@@ -24,7 +24,7 @@ function handleOptions () {
   if (quote !== 'single' && quote !== 'dobule') throw new Error('The quote parameter has a problem, it can only be single or double.')
   if (conver.toLowerCase() !== 'scss') throw new Error('The conver parameter can only be scss.')
 
-  spinner.start('Your file is being converted. Please wait...')
+  spinner.start('Your file is being converted. Please wait...\n')
   converFile({
     quote: quote === 'single' ? '\'' : '\"',
     input,
@@ -35,6 +35,7 @@ function handleOptions () {
     isSignComment: isSignComment === 'yes',
     indentVueStyleBlock: Number(indentVueStyleBlock),
   }, time => {
+    console.log('')
     spinner.succeed('Conversion completed and time spent ' + time + ' ms.')
   })
 }
