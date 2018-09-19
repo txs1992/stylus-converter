@@ -12,7 +12,8 @@ let quote = `'`
 let conver = ''
 let callName = ''
 let oldLineno = 1
-let callLength = 0
+// let callLength = 0
+let paramsLength = 0
 let returnSymbol = ''
 let indentationLevel = 0
 let OBJECT_KEY_LIST = []
@@ -34,6 +35,7 @@ let isNamespace = false
 let isKeyframes = false
 let isArguments = false
 let isExpression = false
+let isCallParams = false
 let isIfExpression = false
 
 let autoprefixer = true
@@ -373,21 +375,20 @@ function visitExpression (node) {
 
 function visitCall ({ name, args, lineno, block }) {
   isCall = true
-  callLength++
   callName = name
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond && callLength <= 1) {
+  const argsText = visitArguments(args).replace(/;/g, '')
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond && !isCallParams) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
   }
-  const argsText = visitArguments(args).replace(/;/g, '')
+  isCallParams = false
   if (block) blockText = visitBlock(block)
   callName = ''
   isCall = false
-  callLength--
   return `${before + name}(${argsText})${blockText};`
 }
 
@@ -395,15 +396,18 @@ function visitArguments (node) {
   invariant(node, 'Missing node param');
   isArguments = true
   const nodes = nodesToJSON(node.nodes)
+  paramsLength += nodes.length
   let text = ''
   nodes.forEach((node, idx) => {
     const prefix = idx ? ', ' : ''
     let nodeText = visitNode(node)
+    if (node.__type === 'Call') isCallParams = true
     if (GLOBAL_VARIABLE_NAME_LIST.indexOf(nodeText) > -1) nodeText = replaceFirstATSymbol(nodeText)
     if (isFunction) nodeText = replaceFirstATSymbol(nodeText)
     text += prefix + nodeText
+    paramsLength--
   })
-  isArguments = false
+  if (paramsLength === 0) isArguments = false
   return text || ''
 }
 
