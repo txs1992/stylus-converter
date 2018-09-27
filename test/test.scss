@@ -1,7 +1,24 @@
-@mixin browserHeaderButton() {
-  border-radius: 50%;
-  @include ui_breakpoint('m') {
-    margin-top: info_teachers_carousel_browser_header_button_padding_medium;
-    @include square($info_teachers_carousel_browser_header_button_size_medium);
+@mixin default-border-radius($prop, $args) {
+  -webkit-#{$prop}-radius: $args;
+  -moz-#{$prop}-radius: $args;
+  #{$prop}-radius: $args;
+}
+
+@mixin block_mixin($myColor) {
+  color: $myColor;
+  .prop {
+    font-size: 14px;
+
+    .child {
+      @content;
+    };
+  };
+}
+
+body {
+  @include default-border-radius(border, 4px);
+  @include block_mixin(blue) {
+    margin: 10px;
+    padding: 10px;
   };
 }

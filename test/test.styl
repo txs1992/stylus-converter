@@ -1,5 +1,18 @@
-browserHeaderButton()
-	border-radius 50%
-	+ui_breakpoint('m')
-		margin-top info_teachers_carousel_browser_header_button_padding_medium
-		square(info_teachers_carousel_browser_header_button_size_medium)
+default-border-radius(prop, args)
+  -webkit-{prop}-radius args
+  -moz-{prop}-radius args
+  {prop}-radius args
+
+block_mixin(myColor)
+  color: myColor
+  .prop
+    font-size: 14px;
+    
+    .child
+     { block }
+
+body
+  default-border-radius(border, 4px)
+  +block_mixin(blue)
+    margin: 10px
+    padding: 10px
