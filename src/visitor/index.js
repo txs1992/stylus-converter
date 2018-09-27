@@ -9,10 +9,8 @@ import {
 } from '../util.js'
 
 let quote = `'`
-let conver = ''
 let callName = ''
 let oldLineno = 1
-// let callLength = 0
 let paramsLength = 0
 let returnSymbol = ''
 let indentationLevel = 0
@@ -363,7 +361,6 @@ function visitExpression (node) {
   commentText = commentText.replace(/^ +/, ' ')
 
   isExpression = false
-
   if (isProperty && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
   if (commentText) result = result + ';' + commentText
   if (isCall && callName === 'url') return result.replace(/\s/g, '')
@@ -403,7 +400,7 @@ function visitArguments (node) {
     let nodeText = visitNode(node)
     if (node.__type === 'Call') isCallParams = true
     if (GLOBAL_VARIABLE_NAME_LIST.indexOf(nodeText) > -1) nodeText = replaceFirstATSymbol(nodeText)
-    if (isFunction) nodeText = replaceFirstATSymbol(nodeText)
+    if (isFunction && !/^'|"/.test(nodeText)) nodeText = replaceFirstATSymbol(nodeText)
     text += prefix + nodeText
     paramsLength--
   })
@@ -683,7 +680,6 @@ function visitReturn (node) {
 // 处理 stylus 语法树；handle stylus Syntax Tree
 export default function visitor (ast, options, globalVariableList) {
   quote = options.quote
-  conver = options.conver
   autoprefixer = options.autoprefixer
   GLOBAL_VARIABLE_NAME_LIST = globalVariableList
   let result = visitNodes(ast.nodes) || ''
