@@ -82,6 +82,7 @@ const TYPE_VISITOR_MAP = {
   'Object': visitObject,
   'String': visitString,
   Feature: visitFeature,
+  Ternary: visitTernary,
   UnaryOp: visitUnaryOp,
   Literal: visitLiteral,
   Charset: visitCharset,
@@ -484,18 +485,27 @@ function visitFunction (node) {
   return before + fnName + block
 }
 
+function visitTernary ({ cond }) {
+  return visitBinOp(cond) + '\n'
+}
+
 function visitBinOp ({ op, left, right }) {
   function visitNegate (op) {
-    if (!isNegate || (op !== '==' && op !== '!=')) return op
+    if (!isNegate || (op !== '==' && op !== '!=')) {
+      return op !== 'is defined' ? op : ''
+    }
     return op === '==' ? '!=' : '=='
   }
 
-  const leftExp = left && left.toJSON()
-  const rightExp = right && right.toJSON()
+  const leftExp = left ? left.toJSON() : ''
+  const rightExp = right ? right.toJSON() : ''
   const isExp = rightExp.__type === 'Expression'
   const expText = isExp ? `(${visitNode(rightExp)})`: visitNode(rightExp)
   const symbol = OPEARTION_MAP[op] || visitNegate(op)
-  return `${visitNode(leftExp)} ${symbol} ${expText}`
+  const endSymbol = op === 'is defined' ? '!default;' : ''
+  return endSymbol 
+    ? `${trimSemicolon(visitNode(leftExp)).trim()} ${endSymbol}`
+    : `${visitNode(leftExp)} ${symbol} ${expText}`
 }
 
 function visitUnaryOp ({ op, expr }) {
