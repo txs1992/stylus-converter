@@ -54,6 +54,7 @@
   "dependencies": {
     "commander": "^2.15.1",
     "invariant": "^2.2.4",
+    "ms": "^2.1.1",
     "optimist": "^0.6.1",
     "ora": "^2.1.0",
     "stylus": "^0.54.5"
