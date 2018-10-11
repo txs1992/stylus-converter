@@ -23,7 +23,7 @@ export function converter (result, options = {
   if (typeof result !== 'string') return result
   const ast = new Parser(result).parse()
   // 开发时查看 ast 对象。
-  // console.log(JSON.stringify(ast))
+  console.log(JSON.stringify(ast))
   const text = visitor(ast, options, globalVariableList)
   // Convert special multiline comments to single-line comments
   return text.replace(/\/\*\s!#sign#!\s(.*)\s\*\//g, '// $1')

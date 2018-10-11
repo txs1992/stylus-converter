@@ -477,7 +477,7 @@ function visitFunction (node) {
     VARIABLE_NAME_LIST.push(nodeText)
     paramsText += prefix + replaceFirstATSymbol(nodeText)
   })
-  const fnName = `${symbol} ${node.name}(${paramsText})`
+  const fnName = `${symbol} ${node.name}(${trimSemicolon(paramsText)})`
   const block = visitBlock(node.block)
   returnSymbol = ''
   isFunction = false
