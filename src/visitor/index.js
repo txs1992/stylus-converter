@@ -401,7 +401,7 @@ function visitArguments (node) {
     let nodeText = visitNode(node)
     if (node.__type === 'Call') isCallParams = true
     if (GLOBAL_VARIABLE_NAME_LIST.indexOf(nodeText) > -1) nodeText = replaceFirstATSymbol(nodeText)
-    if (isFunction && !/^'|"/.test(nodeText)) nodeText = replaceFirstATSymbol(nodeText)
+    if (isFunction && !/(^'|")|\d/.test(nodeText)) nodeText = replaceFirstATSymbol(nodeText)
     text += prefix + nodeText
     paramsLength--
   })
