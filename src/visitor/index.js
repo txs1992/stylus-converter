@@ -408,8 +408,8 @@ function visitArguments (node) {
   return text || ''
 }
 
-function visitRGBA (node, prop) {
-  return node.raw
+function visitRGBA (node) {
+  return node.raw.replace(/ /g, '')
 }
 
 function visitUnit ({ val, type }) {
