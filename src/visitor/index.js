@@ -119,8 +119,7 @@ function isCallMixin () {
 function isFunctionMixin (nodes) {
   invariant(nodes, 'Missing nodes param');
   const jsonNodes = nodesToJSON(nodes)
-  const node = jsonNodes.length && jsonNodes[0] || {}
-  return (node.__type === 'Property' || node.__type === 'Group')
+  return jsonNodes.some(node => node.__type === 'Property' || node.__type === 'Group')
 }
 
 function getIndentation () {
@@ -401,7 +400,7 @@ function visitArguments (node) {
     let nodeText = visitNode(node)
     if (node.__type === 'Call') isCallParams = true
     if (GLOBAL_VARIABLE_NAME_LIST.indexOf(nodeText) > -1) nodeText = replaceFirstATSymbol(nodeText)
-    if (isFunction && !/^'|"/.test(nodeText)) nodeText = replaceFirstATSymbol(nodeText)
+    if (isFunction && !/(^'|")|\d/.test(nodeText) && nodeText) nodeText = replaceFirstATSymbol(nodeText)
     text += prefix + nodeText
     paramsLength--
   })
@@ -409,8 +408,8 @@ function visitArguments (node) {
   return text || ''
 }
 
-function visitRGBA (node, prop) {
-  return node.raw
+function visitRGBA (node) {
+  return node.raw.replace(/ /g, '')
 }
 
 function visitUnit ({ val, type }) {
@@ -457,7 +456,6 @@ function visitFunction (node) {
   invariant(node, 'Missing node param');
   isFunction = true
   const notMixin = !isFunctionMixin(node.block.nodes)
-  const hasIf = findNodesType(node.block.nodes, 'If')
   let before = handleLineno(node.lineno)
   oldLineno = node.lineno
   let symbol = ''
@@ -477,7 +475,7 @@ function visitFunction (node) {
     VARIABLE_NAME_LIST.push(nodeText)
     paramsText += prefix + replaceFirstATSymbol(nodeText)
   })
-  const fnName = `${symbol} ${node.name}(${paramsText})`
+  const fnName = `${symbol} ${node.name}(${trimSemicolon(paramsText)})`
   const block = visitBlock(node.block)
   returnSymbol = ''
   isFunction = false
