@@ -116,10 +116,14 @@ function isCallMixin () {
   return !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent
 }
 
+function isFunctinCallMixin(node) {
+  return node.__type === 'Call' &&  node.block.scope
+}
+
 function isFunctionMixin (nodes) {
   invariant(nodes, 'Missing nodes param');
   const jsonNodes = nodesToJSON(nodes)
-  return jsonNodes.some(node => node.__type === 'Property' || node.__type === 'Group')
+  return jsonNodes.some(node => node.__type === 'Property' || node.__type === 'Group' || isFunctinCallMixin(node))
 }
 
 function getIndentation () {
