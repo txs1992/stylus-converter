@@ -376,12 +376,12 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  const argsText = visitArguments(args).replace(/;/g, '')
   if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond && !isCallParams) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
   }
+  const argsText = visitArguments(args).replace(/;/g, '')
   isCallParams = false
   if (block) blockText = visitBlock(block)
   callName = ''
