@@ -35,6 +35,7 @@ let isExpression = false
 let isCallParams = false
 let isIfExpression = false
 
+let isBlock = false
 let ifLength = 0
 let binOpLength = 0
 let identLength = 0
@@ -232,6 +233,7 @@ function visitGroup (node) {
 }
 
 function visitBlock (node) {
+  isBlock = true
   invariant(node, 'Missing node param');
   indentationLevel++
   const before = ' {'
@@ -250,6 +252,7 @@ function visitBlock (node) {
   }
   if (!/^\n\s*/.test(result)) result = '\n' + repeatString(' ', indentationLevel * 2) + result
   indentationLevel--
+  isBlock = false
   return `${before}${result}${after}`
 }
 
@@ -348,7 +351,7 @@ function visitExpression (node) {
   let subLineno = 0
   let result = ''
   let before = ''
-
+  
   if (nodes.every(node => node.__type !== 'Expression')) {
     subLineno = nodes.map(node => node.lineno).sort((curr, next) => next - curr)[0]
   }
@@ -383,15 +386,14 @@ function visitExpression (node) {
 
   if (isProperty && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
   if (commentText) result = result + ';' + commentText
-  if (isCall) {
+  if (isCall || binOpLength) {
     if (callName === 'url') return result.replace(/\s/g, '')
     return result
   }
-   
+
   if (!returnSymbol || isIfExpression) {
     return (before && space) ? trimSemicolon(before + getIndentation() + space + result, ';') : result
   }
-  
   return before + getIndentation() + returnSymbol + result
 }
 
@@ -518,11 +520,17 @@ function visitBinOp ({ op, left, right }) {
   binOpLength++
   function visitNegate (op) {
     if (!isNegate || (op !== '==' && op !== '!=')) {
-      binOpLength--
       return op !== 'is defined' ? op : ''
     }
-    binOpLength--
     return op === '==' ? '!=' : '=='
+  }
+
+  if (op === '[]') {
+    const leftText = visitNode(left)
+    const rightText = visitNode(right)
+    binOpLength--
+    if (isBlock) 
+    return `map-get(${leftText}, ${rightText});`
   }
 
   const leftExp = left ? left.toJSON() : ''
@@ -531,6 +539,8 @@ function visitBinOp ({ op, left, right }) {
   const expText = isExp ? `(${visitNode(rightExp)})`: visitNode(rightExp)
   const symbol = OPEARTION_MAP[op] || visitNegate(op)
   const endSymbol = op === 'is defined' ? '!default;' : ''
+
+  binOpLength--
   return endSymbol 
     ? `${trimSemicolon(visitNode(leftExp)).trim()} ${endSymbol}`
     : `${visitNode(leftExp)} ${symbol} ${expText}`
