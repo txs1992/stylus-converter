@@ -20,7 +20,7 @@ body {
  * This tells Stylus to output the comment regardless of compression.
  */
 @function add($a, $b) {
-  @return $a + $b;
+  @return $a + $b
 }
 
 // sign comment

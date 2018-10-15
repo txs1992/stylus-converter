@@ -25,7 +25,6 @@ let lastPropertyLength = 0
 let isCall = false
 let isCond = false
 let isNegate = false
-let isIdent = false
 let isObject = false
 let isFunction = false
 let isProperty = false
@@ -35,6 +34,13 @@ let isArguments = false
 let isExpression = false
 let isCallParams = false
 let isIfExpression = false
+
+let isBlock = false
+let ifLength = 0
+let mixinLength = 0
+let binOpLength = 0
+let identLength = 0
+let selectorLength = 0
 
 let autoprefixer = true
 
@@ -113,13 +119,31 @@ function trimSemicolon (res, symbol = '') {
 }
 
 function isCallMixin () {
-  return !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent
+  return !ifLength && !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength && !isCond && !isCallParams
+}
+
+function isFunctinCallMixin(node) {
+  const nodes = nodesToJSON(node.nodes)
+  if (node.__type === 'Call') {
+    return node.block.scope || isCallMixin()
+  } else {
+    const call = nodes.find(it => it.__type === 'Call')
+    if (call) {
+      return _get(call, ['block', 'scope']) || isCallMixin()
+    } else {
+      return node.__type === 'If' && isFunctionMixin(node.block.nodes)
+    }
+  }
+}
+
+function hasPropertyOrGroup (node) {
+  return node.__type === 'Property' || node.__type === 'Group'
 }
 
 function isFunctionMixin (nodes) {
   invariant(nodes, 'Missing nodes param');
   const jsonNodes = nodesToJSON(nodes)
-  return jsonNodes.some(node => node.__type === 'Property' || node.__type === 'Group')
+  return jsonNodes.some(node =>  hasPropertyOrGroup(node) || isFunctinCallMixin(node))
 }
 
 function getIndentation () {
@@ -184,6 +208,7 @@ function visitImport (node) {
 }
 
 function visitSelector (node) {
+  selectorLength++
   invariant(node, 'Missing node param');
   const nodes = nodesToJSON(node.segments)
   const endNode = nodes[nodes.length - 1]
@@ -193,7 +218,9 @@ function visitSelector (node) {
     oldLineno = endNode.lineno
   }
   before += getIndentation()
-  return before + visitNodes(node.segments)
+  const segmentText = visitNodes(node.segments)
+  selectorLength--
+  return before + segmentText
 }
 
 function visitGroup (node) {
@@ -216,6 +243,7 @@ function visitGroup (node) {
 }
 
 function visitBlock (node) {
+  isBlock = true
   invariant(node, 'Missing node param');
   indentationLevel++
   const before = ' {'
@@ -232,9 +260,9 @@ function visitBlock (node) {
     if (!/\s/.test(text)) result += symbol
     result += returnSymbol + text
   }
-  if (isFunction) result = /;$/.test(result) ? result : result + ';'
   if (!/^\n\s*/.test(result)) result = '\n' + repeatString(' ', indentationLevel * 2) + result
   indentationLevel--
+  isBlock = false
   return `${before}${result}${after}`
 }
 
@@ -276,27 +304,31 @@ function visitProperty ({ expr, lineno, segments }) {
 }
 
 function visitIdent ({ val, name, rest, mixin, property }) {
-  isIdent = true
+  identLength++
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
       if (property || isCall) {
         const propertyVal = PROPERTY_LIST.find(item => item.prop === name)
         if (propertyVal) {
-          isIdent = false
+          identLength--
           return propertyVal.value
         }
       }
     }
+    if (selectorLength && isExpression && !binOpLength) {
+      identLength--
+      return `#{${name}}`
+    }
     if (mixin) {
-      isIdent = false
-      return name === 'block' ? '@content' : `#{$${name}}`
+      identLength--
+      return name === 'block' ? '@content;' : `#{$${name}}`
     }
     let nameText = (VARIABLE_NAME_LIST.indexOf(name) > -1 || GLOBAL_VARIABLE_NAME_LIST.indexOf(name) > -1)
       ? replaceFirstATSymbol(name)
       : name
     if (FUNCTION_PARAMS.indexOf(name) > -1) nameText = replaceFirstATSymbol(nameText)
-    isIdent = false
+    identLength--
     return rest ? `${nameText}...` : nameText
   }
   if (identVal.__type === 'Expression') {
@@ -309,15 +341,15 @@ function visitIdent ({ val, name, rest, mixin, property }) {
       expText += idx ? ` ${visitNode(node)}`: visitNode(node)
     })
     VARIABLE_NAME_LIST.push(name)
-    isIdent = false
+    identLength--
     return `${before}${replaceFirstATSymbol(name)}: ${trimFnSemicolon(expText)};`
   }
   if (identVal.__type === 'Function') {
-    isIdent = false
+    identLength--
     return visitFunction(identVal)
   }
   let identText = visitNode(identVal)
-  isIdent = false
+  identLength--
   return `${replaceFirstATSymbol(name)}: ${identText};`
 }
 
@@ -329,7 +361,7 @@ function visitExpression (node) {
   let subLineno = 0
   let result = ''
   let before = ''
-
+  
   if (nodes.every(node => node.__type !== 'Expression')) {
     subLineno = nodes.map(node => node.lineno).sort((curr, next) => next - curr)[0]
   }
@@ -361,9 +393,14 @@ function visitExpression (node) {
   commentText = commentText.replace(/^ +/, ' ')
 
   isExpression = false
+
   if (isProperty && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
   if (commentText) result = result + ';' + commentText
-  if (isCall && callName === 'url') return result.replace(/\s/g, '')
+  if (isCall || binOpLength) {
+    if (callName === 'url') return result.replace(/\s/g, '')
+    return result
+  }
+
   if (!returnSymbol || isIfExpression) {
     return (before && space) ? trimSemicolon(before + getIndentation() + space + result, ';') : result
   }
@@ -376,12 +413,12 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  const argsText = visitArguments(args).replace(/;/g, '')
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond && !isCallParams) {
+  if (isCallMixin() || (ifLength && mixinLength && isBlock && !isCond && !identLength)) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
   }
+  const argsText = visitArguments(args).replace(/;/g, '')
   isCallParams = false
   if (block) blockText = visitBlock(block)
   callName = ''
@@ -421,6 +458,7 @@ function visitBoolean (node) {
 }
 
 function visitIf (node, symbol = '@if ') {
+  ifLength++
   invariant(node, 'Missing node param');
   let before = ''
   isIfExpression = true
@@ -449,6 +487,7 @@ function visitIf (node, symbol = '@if ') {
       }
     })
   }
+  ifLength--
   return before + symbol + condText + block + elseText
 }
 
@@ -465,6 +504,7 @@ function visitFunction (node) {
   } else {
     returnSymbol = ''
     symbol = '@mixin'
+    mixinLength++
   }
   const params = nodesToJSON(node.params.nodes || [])
   FUNCTION_PARAMS = params.map(par => par.name)
@@ -480,6 +520,7 @@ function visitFunction (node) {
   returnSymbol = ''
   isFunction = false
   FUNCTION_PARAMS = []
+  if (!notMixin) mixinLength--
   return before + fnName + block
 }
 
@@ -488,11 +529,20 @@ function visitTernary ({ cond }) {
 }
 
 function visitBinOp ({ op, left, right }) {
+  binOpLength++
   function visitNegate (op) {
     if (!isNegate || (op !== '==' && op !== '!=')) {
       return op !== 'is defined' ? op : ''
     }
     return op === '==' ? '!=' : '=='
+  }
+
+  if (op === '[]') {
+    const leftText = visitNode(left)
+    const rightText = visitNode(right)
+    binOpLength--
+    if (isBlock) 
+    return `map-get(${leftText}, ${rightText});`
   }
 
   const leftExp = left ? left.toJSON() : ''
@@ -501,6 +551,8 @@ function visitBinOp ({ op, left, right }) {
   const expText = isExp ? `(${visitNode(rightExp)})`: visitNode(rightExp)
   const symbol = OPEARTION_MAP[op] || visitNegate(op)
   const endSymbol = op === 'is defined' ? '!default;' : ''
+
+  binOpLength--
   return endSymbol 
     ? `${trimSemicolon(visitNode(leftExp)).trim()} ${endSymbol}`
     : `${visitNode(leftExp)} ${symbol} ${expText}`
