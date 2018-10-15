@@ -25,7 +25,7 @@ let lastPropertyLength = 0
 let isCall = false
 let isCond = false
 let isNegate = false
-let isIdent = false
+let identLength = 0
 let isObject = false
 let isFunction = false
 let isProperty = false
@@ -113,7 +113,7 @@ function trimSemicolon (res, symbol = '') {
 }
 
 function isCallMixin () {
-  return !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent
+  return !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength
 }
 
 function isFunctinCallMixin(node) {
@@ -280,27 +280,27 @@ function visitProperty ({ expr, lineno, segments }) {
 }
 
 function visitIdent ({ val, name, rest, mixin, property }) {
-  isIdent = true
+  identLength++
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
     if (isExpression) {
       if (property || isCall) {
         const propertyVal = PROPERTY_LIST.find(item => item.prop === name)
         if (propertyVal) {
-          isIdent = false
+          identLength--
           return propertyVal.value
         }
       }
     }
     if (mixin) {
-      isIdent = false
+      identLength--
       return name === 'block' ? '@content' : `#{$${name}}`
     }
     let nameText = (VARIABLE_NAME_LIST.indexOf(name) > -1 || GLOBAL_VARIABLE_NAME_LIST.indexOf(name) > -1)
       ? replaceFirstATSymbol(name)
       : name
     if (FUNCTION_PARAMS.indexOf(name) > -1) nameText = replaceFirstATSymbol(nameText)
-    isIdent = false
+    identLength--
     return rest ? `${nameText}...` : nameText
   }
   if (identVal.__type === 'Expression') {
@@ -313,15 +313,15 @@ function visitIdent ({ val, name, rest, mixin, property }) {
       expText += idx ? ` ${visitNode(node)}`: visitNode(node)
     })
     VARIABLE_NAME_LIST.push(name)
-    isIdent = false
+    identLength--
     return `${before}${replaceFirstATSymbol(name)}: ${trimFnSemicolon(expText)};`
   }
   if (identVal.__type === 'Function') {
-    isIdent = false
+    identLength--
     return visitFunction(identVal)
   }
   let identText = visitNode(identVal)
-  isIdent = false
+  identLength--
   return `${replaceFirstATSymbol(name)}: ${identText};`
 }
 
@@ -380,7 +380,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !isIdent && !isCond && !isCallParams) {
+  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength && !isCond && !isCallParams) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
