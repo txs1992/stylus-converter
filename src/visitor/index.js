@@ -35,6 +35,7 @@ let isExpression = false
 let isCallParams = false
 let isIfExpression = false
 
+let ifLength = 0
 let binOpLength = 0
 let identLength = 0
 let selectorLength = 0
@@ -382,10 +383,15 @@ function visitExpression (node) {
 
   if (isProperty && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
   if (commentText) result = result + ';' + commentText
-  if (isCall && callName === 'url') return result.replace(/\s/g, '')
+  if (isCall) {
+    if (callName === 'url') return result.replace(/\s/g, '')
+    return result
+  }
+   
   if (!returnSymbol || isIfExpression) {
     return (before && space) ? trimSemicolon(before + getIndentation() + space + result, ';') : result
   }
+  
   return before + getIndentation() + returnSymbol + result
 }
 
@@ -395,7 +401,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength && !isCond && !isCallParams) {
+  if (!ifLength && !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength && !isCond && !isCallParams) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
@@ -440,6 +446,7 @@ function visitBoolean (node) {
 }
 
 function visitIf (node, symbol = '@if ') {
+  ifLength++
   invariant(node, 'Missing node param');
   let before = ''
   isIfExpression = true
@@ -468,6 +475,7 @@ function visitIf (node, symbol = '@if ') {
       }
     })
   }
+  ifLength--
   return before + symbol + condText + block + elseText
 }
 
