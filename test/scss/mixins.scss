@@ -11,8 +11,8 @@
 
     .child {
       @content;
-    };
-  };
+    }
+  }
 }
 
 body {
