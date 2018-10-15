@@ -25,7 +25,6 @@ let lastPropertyLength = 0
 let isCall = false
 let isCond = false
 let isNegate = false
-let identLength = 0
 let isObject = false
 let isFunction = false
 let isProperty = false
@@ -35,6 +34,10 @@ let isArguments = false
 let isExpression = false
 let isCallParams = false
 let isIfExpression = false
+
+let binOpLength = 0
+let identLength = 0
+let selectorLength = 0
 
 let autoprefixer = true
 
@@ -193,6 +196,7 @@ function visitImport (node) {
 }
 
 function visitSelector (node) {
+  selectorLength++
   invariant(node, 'Missing node param');
   const nodes = nodesToJSON(node.segments)
   const endNode = nodes[nodes.length - 1]
@@ -202,7 +206,9 @@ function visitSelector (node) {
     oldLineno = endNode.lineno
   }
   before += getIndentation()
-  return before + visitNodes(node.segments)
+  const segmentText = visitNodes(node.segments)
+  selectorLength--
+  return before + segmentText
 }
 
 function visitGroup (node) {
@@ -295,6 +301,10 @@ function visitIdent ({ val, name, rest, mixin, property }) {
           return propertyVal.value
         }
       }
+    }
+    if (selectorLength && isExpression && !binOpLength) {
+      identLength--
+      return `#{${name}}`
     }
     if (mixin) {
       identLength--
@@ -497,10 +507,13 @@ function visitTernary ({ cond }) {
 }
 
 function visitBinOp ({ op, left, right }) {
+  binOpLength++
   function visitNegate (op) {
     if (!isNegate || (op !== '==' && op !== '!=')) {
+      binOpLength--
       return op !== 'is defined' ? op : ''
     }
+    binOpLength--
     return op === '==' ? '!=' : '=='
   }
 
