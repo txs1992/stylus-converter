@@ -117,13 +117,18 @@ function isCallMixin () {
 }
 
 function isFunctinCallMixin(node) {
-  return node.__type === 'Call' &&  node.block.scope
+  return (node.__type === 'Call' &&  node.block.scope) ||
+    (node.__type === 'If' && isFunctionMixin(node.block.nodes))
+}
+
+function hasPropertyOrGroup (node) {
+  return node.__type === 'Property' || node.__type === 'Group'
 }
 
 function isFunctionMixin (nodes) {
   invariant(nodes, 'Missing nodes param');
   const jsonNodes = nodesToJSON(nodes)
-  return jsonNodes.some(node => node.__type === 'Property' || node.__type === 'Group' || isFunctinCallMixin(node))
+  return jsonNodes.some(node =>  hasPropertyOrGroup(node) || isFunctinCallMixin(node))
 }
 
 function getIndentation () {
@@ -459,6 +464,7 @@ function visitIf (node, symbol = '@if ') {
 function visitFunction (node) {
   invariant(node, 'Missing node param');
   isFunction = true
+  console.log(isFunctionMixin(node.block.nodes))
   const notMixin = !isFunctionMixin(node.block.nodes)
   let before = handleLineno(node.lineno)
   oldLineno = node.lineno
