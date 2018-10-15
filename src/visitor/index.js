@@ -241,7 +241,6 @@ function visitBlock (node) {
     if (!/\s/.test(text)) result += symbol
     result += returnSymbol + text
   }
-  if (isFunction) result = /;$/.test(result) ? result : result + ';'
   if (!/^\n\s*/.test(result)) result = '\n' + repeatString(' ', indentationLevel * 2) + result
   indentationLevel--
   return `${before}${result}${after}`
@@ -299,7 +298,7 @@ function visitIdent ({ val, name, rest, mixin, property }) {
     }
     if (mixin) {
       identLength--
-      return name === 'block' ? '@content' : `#{$${name}}`
+      return name === 'block' ? '@content;' : `#{$${name}}`
     }
     let nameText = (VARIABLE_NAME_LIST.indexOf(name) > -1 || GLOBAL_VARIABLE_NAME_LIST.indexOf(name) > -1)
       ? replaceFirstATSymbol(name)
@@ -370,6 +369,7 @@ function visitExpression (node) {
   commentText = commentText.replace(/^ +/, ' ')
 
   isExpression = false
+
   if (isProperty && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
   if (commentText) result = result + ';' + commentText
   if (isCall && callName === 'url') return result.replace(/\s/g, '')
@@ -464,7 +464,6 @@ function visitIf (node, symbol = '@if ') {
 function visitFunction (node) {
   invariant(node, 'Missing node param');
   isFunction = true
-  console.log(isFunctionMixin(node.block.nodes))
   const notMixin = !isFunctionMixin(node.block.nodes)
   let before = handleLineno(node.lineno)
   oldLineno = node.lineno
