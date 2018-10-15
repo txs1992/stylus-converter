@@ -37,6 +37,7 @@ let isIfExpression = false
 
 let isBlock = false
 let ifLength = 0
+let mixinLength = 0
 let binOpLength = 0
 let identLength = 0
 let selectorLength = 0
@@ -118,12 +119,21 @@ function trimSemicolon (res, symbol = '') {
 }
 
 function isCallMixin () {
-  return !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength
+  return !ifLength && !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength && !isCond && !isCallParams
 }
 
 function isFunctinCallMixin(node) {
-  return (node.__type === 'Call' &&  node.block.scope) ||
-    (node.__type === 'If' && isFunctionMixin(node.block.nodes))
+  const nodes = nodesToJSON(node.nodes)
+  if (node.__type === 'Call') {
+    return node.block.scope || isCallMixin()
+  } else {
+    const call = nodes.find(it => it.__type === 'Call')
+    if (call) {
+      return _get(call, ['block', 'scope']) || isCallMixin()
+    } else {
+      return node.__type === 'If' && isFunctionMixin(node.block.nodes)
+    }
+  }
 }
 
 function hasPropertyOrGroup (node) {
@@ -403,7 +413,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (!ifLength && !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength && !isCond && !isCallParams) {
+  if (isCallMixin() || (ifLength && mixinLength && isBlock && !isCond && !identLength)) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
@@ -494,6 +504,7 @@ function visitFunction (node) {
   } else {
     returnSymbol = ''
     symbol = '@mixin'
+    mixinLength++
   }
   const params = nodesToJSON(node.params.nodes || [])
   FUNCTION_PARAMS = params.map(par => par.name)
@@ -509,6 +520,7 @@ function visitFunction (node) {
   returnSymbol = ''
   isFunction = false
   FUNCTION_PARAMS = []
+  if (!notMixin) mixinLength--
   return before + fnName + block
 }
 
