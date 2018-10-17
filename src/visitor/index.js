@@ -37,10 +37,11 @@ let isIfExpression = false
 
 let isBlock = false
 let ifLength = 0
-let mixinLength = 0
 let binOpLength = 0
 let identLength = 0
 let selectorLength = 0
+let nodesIndex = 0
+let nodesLength = 0
 
 let autoprefixer = true
 
@@ -69,6 +70,7 @@ const KEYFRAMES_LIST = [
 
 const TYPE_VISITOR_MAP = {
   If: visitIf,
+  Null: visitNull,
   Each: visitEach,
   RGBA: visitRGBA,
   Unit: visitUnit,
@@ -79,7 +81,6 @@ const TYPE_VISITOR_MAP = {
   Group: visitGroup,
   Query: visitQuery,
   Media: visitMedia,
-  Atrule: visitAtrule,
   Import: visitImport,
   Atrule: visitAtrule,
   Extend: visitExtend,
@@ -119,25 +120,19 @@ function trimSemicolon (res, symbol = '') {
 }
 
 function isCallMixin () {
-  return !ifLength && !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength && !isCond && !isCallParams
+  return !ifLength && !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength && !isCond && !isCallParams && !returnSymbol
 }
 
 function isFunctinCallMixin(node) {
-  const nodes = nodesToJSON(node.nodes)
   if (node.__type === 'Call') {
-    return node.block.scope || isCallMixin()
+    return node.block.scope
   } else {
-    const call = nodes.find(it => it.__type === 'Call')
-    if (call) {
-      return _get(call, ['block', 'scope']) || isCallMixin()
-    } else {
-      return node.__type === 'If' && isFunctionMixin(node.block.nodes)
-    }
+    return node.__type === 'If' && isFunctionMixin(node.block.nodes)
   }
 }
 
 function hasPropertyOrGroup (node) {
-  return node.__type === 'Property' || node.__type === 'Group'
+  return node.__type === 'Property' || node.__type === 'Group' || node.__type === 'Atrule' || node.__type === 'Media'
 }
 
 function isFunctionMixin (nodes) {
@@ -180,7 +175,9 @@ function recursiveSearchName(data, property, name) {
 function visitNodes (list = []) {
   let text = ''
   const nodes = nodesToJSON(list)
+  nodesLength = nodes.length
   nodes.forEach((node, i) => {
+    nodesIndex = i
     if (node.__type === 'Comment') {
       const isInlineComment = nodes[i - 1] && (nodes[i - 1].lineno === node.lineno);
       text += visitComment(node, isInlineComment);
@@ -188,7 +185,13 @@ function visitNodes (list = []) {
       text += visitNode(node);
     }
   });
+  nodesIndex = 0
+  nodesLength = 0
   return text;
+}
+
+function visitNull() {
+  return null
 }
 
 // 处理 import；handler import
@@ -404,7 +407,9 @@ function visitExpression (node) {
   if (!returnSymbol || isIfExpression) {
     return (before && space) ? trimSemicolon(before + getIndentation() + space + result, ';') : result
   }
-  return before + getIndentation() + returnSymbol + result
+  let symbol = ''
+  if (nodesIndex + 1 === nodesLength) symbol = returnSymbol
+  return before + getIndentation() + symbol + result
 }
 
 function visitCall ({ name, args, lineno, block }) {
@@ -413,7 +418,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (isCallMixin() || (ifLength && mixinLength && isBlock && !isCond && !identLength)) {
+  if (isCallMixin() || _get(block, 'scope') || selectorLength) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
@@ -504,7 +509,6 @@ function visitFunction (node) {
   } else {
     returnSymbol = ''
     symbol = '@mixin'
-    mixinLength++
   }
   const params = nodesToJSON(node.params.nodes || [])
   FUNCTION_PARAMS = params.map(par => par.name)
@@ -515,17 +519,19 @@ function visitFunction (node) {
     VARIABLE_NAME_LIST.push(nodeText)
     paramsText += prefix + replaceFirstATSymbol(nodeText)
   })
+  paramsText = paramsText.replace(/\$ +\$/g, '$')
   const fnName = `${symbol} ${node.name}(${trimSemicolon(paramsText)})`
   const block = visitBlock(node.block)
   returnSymbol = ''
   isFunction = false
   FUNCTION_PARAMS = []
-  if (!notMixin) mixinLength--
   return before + fnName + block
 }
 
-function visitTernary ({ cond }) {
-  return visitBinOp(cond) + '\n'
+function visitTernary ({ cond, lineno }) {
+  let before = handleLineno(lineno)
+  oldLineno = lineno
+  return before + visitBinOp(cond)
 }
 
 function visitBinOp ({ op, left, right }) {
