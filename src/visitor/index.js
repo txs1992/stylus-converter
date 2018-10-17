@@ -418,7 +418,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (isCallMixin() || selectorLength || block.scope) {
+  if (isCallMixin() || _get(block, 'scope') || selectorLength) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
