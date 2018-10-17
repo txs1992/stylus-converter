@@ -69,6 +69,7 @@ const KEYFRAMES_LIST = [
 
 const TYPE_VISITOR_MAP = {
   If: visitIf,
+  Null: visitNull,
   Each: visitEach,
   RGBA: visitRGBA,
   Unit: visitUnit,
@@ -79,7 +80,6 @@ const TYPE_VISITOR_MAP = {
   Group: visitGroup,
   Query: visitQuery,
   Media: visitMedia,
-  Atrule: visitAtrule,
   Import: visitImport,
   Atrule: visitAtrule,
   Extend: visitExtend,
@@ -125,19 +125,14 @@ function isCallMixin () {
 function isFunctinCallMixin(node) {
   const nodes = nodesToJSON(node.nodes)
   if (node.__type === 'Call') {
-    return node.block.scope || isCallMixin()
+    return node.block.scope
   } else {
-    const call = nodes.find(it => it.__type === 'Call')
-    if (call) {
-      return _get(call, ['block', 'scope']) || isCallMixin()
-    } else {
-      return node.__type === 'If' && isFunctionMixin(node.block.nodes)
-    }
+    return node.__type === 'If' && isFunctionMixin(node.block.nodes)
   }
 }
 
 function hasPropertyOrGroup (node) {
-  return node.__type === 'Property' || node.__type === 'Group'
+  return node.__type === 'Property' || node.__type === 'Group' || node.__type === 'Atrule' || node.__type === 'Media'
 }
 
 function isFunctionMixin (nodes) {
@@ -189,6 +184,10 @@ function visitNodes (list = []) {
     }
   });
   return text;
+}
+
+function visitNull() {
+  return null
 }
 
 // 处理 import；handler import
@@ -515,6 +514,7 @@ function visitFunction (node) {
     VARIABLE_NAME_LIST.push(nodeText)
     paramsText += prefix + replaceFirstATSymbol(nodeText)
   })
+  paramsText = paramsText.replace(/\$ +\$/g, '$')
   const fnName = `${symbol} ${node.name}(${trimSemicolon(paramsText)})`
   const block = visitBlock(node.block)
   returnSymbol = ''
@@ -524,8 +524,10 @@ function visitFunction (node) {
   return before + fnName + block
 }
 
-function visitTernary ({ cond }) {
-  return visitBinOp(cond) + '\n'
+function visitTernary ({ cond, lineno }) {
+  let before = handleLineno(lineno)
+  oldLineno = lineno
+  return before + visitBinOp(cond)
 }
 
 function visitBinOp ({ op, left, right }) {
