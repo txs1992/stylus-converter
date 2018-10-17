@@ -124,7 +124,6 @@ function isCallMixin () {
 }
 
 function isFunctinCallMixin(node) {
-  const nodes = nodesToJSON(node.nodes)
   if (node.__type === 'Call') {
     return node.block.scope
   } else {
@@ -419,7 +418,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (isCallMixin() || selectorLength) {
+  if (isCallMixin() || selectorLength || block.scope) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
