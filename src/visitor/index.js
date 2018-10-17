@@ -37,7 +37,6 @@ let isIfExpression = false
 
 let isBlock = false
 let ifLength = 0
-let mixinLength = 0
 let binOpLength = 0
 let identLength = 0
 let selectorLength = 0
@@ -420,7 +419,7 @@ function visitCall ({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (isCallMixin() || (ifLength && mixinLength && isBlock && !isCond && !identLength)) {
+  if (isCallMixin() || selectorLength) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
@@ -511,7 +510,6 @@ function visitFunction (node) {
   } else {
     returnSymbol = ''
     symbol = '@mixin'
-    mixinLength++
   }
   const params = nodesToJSON(node.params.nodes || [])
   FUNCTION_PARAMS = params.map(par => par.name)
@@ -528,7 +526,6 @@ function visitFunction (node) {
   returnSymbol = ''
   isFunction = false
   FUNCTION_PARAMS = []
-  if (!notMixin) mixinLength--
   return before + fnName + block
 }
 
