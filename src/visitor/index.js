@@ -27,7 +27,6 @@ let isCond = false
 let isNegate = false
 let isObject = false
 let isFunction = false
-let isProperty = false
 let isNamespace = false
 let isKeyframes = false
 let isArguments = false
@@ -40,6 +39,9 @@ let ifLength = 0
 let mixinLength = 0
 let binOpLength = 0
 let identLength = 0
+let nodesIndex = 0
+let nodesLength = 0
+let propertyLength = 0
 let selectorLength = 0
 
 let autoprefixer = true
@@ -119,7 +121,7 @@ function trimSemicolon (res, symbol = '') {
 }
 
 function isCallMixin () {
-  return !ifLength && !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength && !isCond && !isCallParams
+  return !ifLength && !propertyLength && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength && !isCond && !isCallParams && !returnSymbol
 }
 
 function isFunctinCallMixin(node) {
@@ -175,7 +177,9 @@ function recursiveSearchName(data, property, name) {
 function visitNodes (list = []) {
   let text = ''
   const nodes = nodesToJSON(list)
+  nodesLength = nodes.length
   nodes.forEach((node, i) => {
+    nodesIndex = i
     if (node.__type === 'Comment') {
       const isInlineComment = nodes[i - 1] && (nodes[i - 1].lineno === node.lineno);
       text += visitComment(node, isInlineComment);
@@ -183,6 +187,8 @@ function visitNodes (list = []) {
       text += visitNode(node);
     }
   });
+  nodesIndex = 0
+  nodesLength = 0
   return text;
 }
 
@@ -271,10 +277,10 @@ function visitLiteral (node) {
 }
 
 function visitProperty ({ expr, lineno, segments }) {
+  propertyLength++
   const suffix = ';'
   const before = handleLinenoAndIndentation({ lineno })
   oldLineno = lineno
-  isProperty = true
   const segmentsText = visitNodes(segments)
   
   lastPropertyLineno = lineno
@@ -288,7 +294,7 @@ function visitProperty ({ expr, lineno, segments }) {
       if (identVal.__type === 'Expression') {
         const beforeExpText = before + trimFirst(visitExpression(expr))
         const expText = `${before}${segmentsText}: $${ident.name};`
-        isProperty = false
+        propertyLength--
         PROPERTY_LIST.unshift({ prop: segmentsText, value: '$' + ident.name })
         return beforeExpText + expText
       }
@@ -296,7 +302,7 @@ function visitProperty ({ expr, lineno, segments }) {
   }
   const expText = visitExpression(expr)
   PROPERTY_LIST.unshift({ prop: segmentsText, value: expText })
-  isProperty = false
+  propertyLength--
   return /\/\//.test(expText)
     ? `${before + segmentsText.replace(/^$/, '')}: ${expText}`
     : trimSemicolon(`${before + segmentsText.replace(/^$/, '')}: ${expText + suffix}`, ';')
@@ -383,7 +389,7 @@ function visitExpression (node) {
       comments.push(node)
     } else {
       const nodeText = visitNode(node)
-      const symbol = isProperty && node.nodes.length ? ',' : ''
+      const symbol = propertyLength && node.nodes.length ? ',' : ''
       result += idx ? symbol + ' ' + nodeText : nodeText
     }
   })
@@ -393,7 +399,7 @@ function visitExpression (node) {
 
   isExpression = false
 
-  if (isProperty && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
+  if (propertyLength && /\);/g.test(result)) result = trimFnSemicolon(result) + ';'
   if (commentText) result = result + ';' + commentText
   if (isCall || binOpLength) {
     if (callName === 'url') return result.replace(/\s/g, '')
@@ -403,7 +409,9 @@ function visitExpression (node) {
   if (!returnSymbol || isIfExpression) {
     return (before && space) ? trimSemicolon(before + getIndentation() + space + result, ';') : result
   }
-  return before + getIndentation() + returnSymbol + result
+  let symbol = ''
+  if (nodesIndex + 1 === nodesLength) symbol = returnSymbol
+  return before + getIndentation() + symbol + result
 }
 
 function visitCall ({ name, args, lineno, block }) {
