@@ -1,4 +1,5 @@
 const fs = require('fs')
+const debounce = require('lodash.debounce')
 const convertStylus = require('./convertStylus')
 
 let startTime = 0
@@ -79,7 +80,10 @@ function converFile (options, callback) {
   handleStylus(options, () => {
     options.status = 'complete'
     handleStylus(options, now => {
-      callback(now - startTime)
+      handleCall = debounce(function () {
+        callback(now - startTime)
+      }, 500)
+      handleCall()
     })
   })
 }
