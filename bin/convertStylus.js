@@ -7,7 +7,7 @@ let callLen = 0
 const GLOBAL_MIXIN_NAME_LIST = []
 const GLOBAL_VARIABLE_NAME_LIST = []
 
-function convertStylus (input, output, options, callback) {
+function convertStylus(input, output, options, callback) {
   callLen++
   if (/\.styl$/.test(input) || /\.vue$/.test(input)) {
     fs.readFile(input, (err, res) => {
@@ -55,7 +55,7 @@ function convertStylus (input, output, options, callback) {
       })
     })
   } else {
-    fs.copyFile(input, output, err => {  
+    fs.copyFile(input, output, err => {
       callLen--
       if (err) throw err
       if (options.status !== 'complete') return
