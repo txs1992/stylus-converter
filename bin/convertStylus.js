@@ -46,7 +46,6 @@ function convertStylus(input, output, options, callback) {
         if (!result) return
         if (callLen === 0) {
           if (options.status === 'complete') {
-            console.log(GLOBAL_MIXIN_NAME_LIST.toString())
             callback(Date.now())
           } else {
             callback()
@@ -61,7 +60,6 @@ function convertStylus(input, output, options, callback) {
       if (options.status !== 'complete') return
       if (callLen === 0) {
         if (options.status === 'complete') {
-          console.log(GLOBAL_MIXIN_NAME_LIST.toString())
           callback(Date.now())
         } else {
           callback()
