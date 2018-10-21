@@ -4,7 +4,7 @@ const { converter } = require('../lib')
 const expect = require('chai').expect
 const convertVueFile = require('../bin/convertVueFile')
 
-function getPath (address) {
+function getPath(address) {
   return path.resolve(__dirname, address)
 }
 

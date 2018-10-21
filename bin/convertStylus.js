@@ -1,11 +1,12 @@
 const fs = require('fs')
 const { parse, converter, nodeToJSON } = require('../lib')
+const findMixin = require('./findMixin')
 const convertVueFile = require('./convertVueFile')
-
 let callLen = 0
+const GLOBAL_MIXIN_NAME_LIST = []
 const GLOBAL_VARIABLE_NAME_LIST = []
 
-function convertStylus (input, output, options, callback) {
+function convertStylus(input, output, options, callback) {
   callLen++
   if (/\.styl$/.test(input) || /\.vue$/.test(input)) {
     fs.readFile(input, (err, res) => {
@@ -15,11 +16,12 @@ function convertStylus (input, output, options, callback) {
       if (/\.styl$/.test(input)) {
         try {
           if (options.status === 'complete') {
-            result = converter(result, options, GLOBAL_VARIABLE_NAME_LIST)
+            result = converter(result, options, GLOBAL_VARIABLE_NAME_LIST, GLOBAL_MIXIN_NAME_LIST)
           } else {
             const ast = parse(result)
             const nodes = nodeToJSON(ast.nodes)
             nodes.forEach(node => {
+              findMixin(node, GLOBAL_MIXIN_NAME_LIST)
               if (node.__type === 'Ident' && node.val.toJSON().__type === 'Expression') {
                 if (GLOBAL_VARIABLE_NAME_LIST.indexOf(node.name) === -1) {
                   GLOBAL_VARIABLE_NAME_LIST.push(node.name)
@@ -52,7 +54,7 @@ function convertStylus (input, output, options, callback) {
       })
     })
   } else {
-    fs.copyFile(input, output, err => {  
+    fs.copyFile(input, output, err => {
       callLen--
       if (err) throw err
       if (options.status !== 'complete') return
