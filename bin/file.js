@@ -74,16 +74,18 @@ function handleStylus (options, callback) {
   }
 }
 
+const handleCall = debounce(function (now, startTime, callback) {
+  callback(now - startTime)
+}, 500)
+
 function converFile (options, callback) {
   startTime = Date.now()
   options.status = 'ready'
   handleStylus(options, () => {
     options.status = 'complete'
     handleStylus(options, now => {
-      handleCall = debounce(function () {
-        callback(now - startTime)
-      }, 500)
-      handleCall()
+      // handleCall(now, startTime, callback)
+      callback(now - startTime)
     })
   })
 }

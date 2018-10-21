@@ -107,19 +107,19 @@ const TYPE_VISITOR_MAP = {
   Expression: visitExpression
 }
 
-function handleLineno (lineno) {
+function handleLineno(lineno) {
   return repeatString('\n', lineno - oldLineno)
 }
 
-function trimFnSemicolon (res) {
+function trimFnSemicolon(res) {
   return res.replace(/\);/g, ')')
 }
 
-function trimSemicolon (res, symbol = '') {
+function trimSemicolon(res, symbol = '') {
   return res.replace(/;/g, '') + symbol
 }
 
-function isCallMixin () {
+function isCallMixin() {
   return !ifLength && !isProperty && !isObject && !isNamespace && !isKeyframes && !isArguments && !identLength && !isCond && !isCallParams && !returnSymbol
 }
 
@@ -131,30 +131,30 @@ function isFunctinCallMixin(node) {
   }
 }
 
-function hasPropertyOrGroup (node) {
+function hasPropertyOrGroup(node) {
   return node.__type === 'Property' || node.__type === 'Group' || node.__type === 'Atrule' || node.__type === 'Media'
 }
 
-function isFunctionMixin (nodes) {
+function isFunctionMixin(nodes) {
   invariant(nodes, 'Missing nodes param');
   const jsonNodes = nodesToJSON(nodes)
-  return jsonNodes.some(node =>  hasPropertyOrGroup(node) || isFunctinCallMixin(node))
+  return jsonNodes.some(node => hasPropertyOrGroup(node) || isFunctinCallMixin(node))
 }
 
-function getIndentation () {
+function getIndentation() {
   return repeatString(' ', indentationLevel * 2)
 }
 
-function handleLinenoAndIndentation ({ lineno }) {
+function handleLinenoAndIndentation({ lineno }) {
   return handleLineno(lineno) + getIndentation()
 }
 
-function findNodesType (list, type) {
+function findNodesType(list, type) {
   const nodes = nodesToJSON(list)
   return nodes.find(node => node.__type === type)
 }
 
-function visitNode (node) {
+function visitNode(node) {
   if (!node) return ''
   if (!node.nodes) {
     // guarantee to be an array
@@ -172,7 +172,7 @@ function recursiveSearchName(data, property, name) {
 }
 
 // 处理 nodes
-function visitNodes (list = []) {
+function visitNodes(list = []) {
   let text = ''
   const nodes = nodesToJSON(list)
   nodesLength = nodes.length
@@ -195,7 +195,7 @@ function visitNull() {
 }
 
 // 处理 import；handler import
-function visitImport (node) {
+function visitImport(node) {
   invariant(node, 'Missing node param');
   const before = handleLineno(node.lineno) + '@import '
   oldLineno = node.lineno
@@ -210,7 +210,7 @@ function visitImport (node) {
   return `${before}${quote}${result}${quote};`
 }
 
-function visitSelector (node) {
+function visitSelector(node) {
   selectorLength++
   invariant(node, 'Missing node param');
   const nodes = nodesToJSON(node.segments)
@@ -226,7 +226,7 @@ function visitSelector (node) {
   return before + segmentText
 }
 
-function visitGroup (node) {
+function visitGroup(node) {
   invariant(node, 'Missing node param');
   const before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno
@@ -245,7 +245,7 @@ function visitGroup (node) {
   return selector + block
 }
 
-function visitBlock (node) {
+function visitBlock(node) {
   isBlock = true
   invariant(node, 'Missing node param');
   indentationLevel++
@@ -269,18 +269,18 @@ function visitBlock (node) {
   return `${before}${result}${after}`
 }
 
-function visitLiteral (node) {
+function visitLiteral(node) {
   invariant(node, 'Missing node param');
   return node.val || ''
 }
 
-function visitProperty ({ expr, lineno, segments }) {
+function visitProperty({ expr, lineno, segments }) {
   const suffix = ';'
   const before = handleLinenoAndIndentation({ lineno })
   oldLineno = lineno
   isProperty = true
   const segmentsText = visitNodes(segments)
-  
+
   lastPropertyLineno = lineno
   // segmentsText length plus semicolon and space
   lastPropertyLength = segmentsText.length + 2
@@ -306,7 +306,7 @@ function visitProperty ({ expr, lineno, segments }) {
     : trimSemicolon(`${before + segmentsText.replace(/^$/, '')}: ${expText + suffix}`, ';')
 }
 
-function visitIdent ({ val, name, rest, mixin, property }) {
+function visitIdent({ val, name, rest, mixin, property }) {
   identLength++
   const identVal = val && val.toJSON() || ''
   if (identVal.__type === 'Null' || !val) {
@@ -341,7 +341,7 @@ function visitIdent ({ val, name, rest, mixin, property }) {
     const nodes = nodesToJSON(identVal.nodes || [])
     let expText = ''
     nodes.forEach((node, idx) => {
-      expText += idx ? ` ${visitNode(node)}`: visitNode(node)
+      expText += idx ? ` ${visitNode(node)}` : visitNode(node)
     })
     VARIABLE_NAME_LIST.push(name)
     identLength--
@@ -356,7 +356,7 @@ function visitIdent ({ val, name, rest, mixin, property }) {
   return `${replaceFirstATSymbol(name)}: ${identText};`
 }
 
-function visitExpression (node) {
+function visitExpression(node) {
   invariant(node, 'Missing node param');
   isExpression = true
   const nodes = nodesToJSON(node.nodes)
@@ -364,11 +364,11 @@ function visitExpression (node) {
   let subLineno = 0
   let result = ''
   let before = ''
-  
+
   if (nodes.every(node => node.__type !== 'Expression')) {
     subLineno = nodes.map(node => node.lineno).sort((curr, next) => next - curr)[0]
   }
-  
+
   let space = ''
   if (subLineno > node.lineno) {
     before = handleLineno(subLineno)
@@ -412,7 +412,7 @@ function visitExpression (node) {
   return before + getIndentation() + symbol + result
 }
 
-function visitCall ({ name, args, lineno, block }) {
+function visitCall({ name, args, lineno, block }) {
   isCall = true
   callName = name
   let blockText = ''
@@ -431,7 +431,7 @@ function visitCall ({ name, args, lineno, block }) {
   return `${before + name}(${argsText})${blockText};`
 }
 
-function visitArguments (node) {
+function visitArguments(node) {
   invariant(node, 'Missing node param');
   isArguments = true
   const nodes = nodesToJSON(node.nodes)
@@ -450,19 +450,19 @@ function visitArguments (node) {
   return text || ''
 }
 
-function visitRGBA (node) {
+function visitRGBA(node) {
   return node.raw.replace(/ /g, '')
 }
 
-function visitUnit ({ val, type }) {
+function visitUnit({ val, type }) {
   return type ? val + type : val
 }
 
-function visitBoolean (node) {
+function visitBoolean(node) {
   return node.val
 }
 
-function visitIf (node, symbol = '@if ') {
+function visitIf(node, symbol = '@if ') {
   ifLength++
   invariant(node, 'Missing node param');
   let before = ''
@@ -471,11 +471,11 @@ function visitIf (node, symbol = '@if ') {
     before += handleLinenoAndIndentation(node)
     oldLineno = node.lineno
   }
-  
+
   const condNode = node.cond && node.cond.toJSON() || {}
   isCond = true
   isNegate = node.negate
-  const condText =  trimSemicolon(visitNode(condNode))
+  const condText = trimSemicolon(visitNode(condNode))
   isCond = false
   isNegate = false
   isIfExpression = false
@@ -496,7 +496,7 @@ function visitIf (node, symbol = '@if ') {
   return before + symbol + condText + block + elseText
 }
 
-function visitFunction (node) {
+function visitFunction(node) {
   invariant(node, 'Missing node param');
   isFunction = true
   const notMixin = !isFunctionMixin(node.block.nodes)
@@ -528,15 +528,15 @@ function visitFunction (node) {
   return before + fnName + block
 }
 
-function visitTernary ({ cond, lineno }) {
+function visitTernary({ cond, lineno }) {
   let before = handleLineno(lineno)
   oldLineno = lineno
   return before + visitBinOp(cond)
 }
 
-function visitBinOp ({ op, left, right }) {
+function visitBinOp({ op, left, right }) {
   binOpLength++
-  function visitNegate (op) {
+  function visitNegate(op) {
     if (!isNegate || (op !== '==' && op !== '!=')) {
       return op !== 'is defined' ? op : ''
     }
@@ -547,28 +547,28 @@ function visitBinOp ({ op, left, right }) {
     const leftText = visitNode(left)
     const rightText = visitNode(right)
     binOpLength--
-    if (isBlock) 
-    return `map-get(${leftText}, ${rightText});`
+    if (isBlock)
+      return `map-get(${leftText}, ${rightText});`
   }
 
   const leftExp = left ? left.toJSON() : ''
   const rightExp = right ? right.toJSON() : ''
   const isExp = rightExp.__type === 'Expression'
-  const expText = isExp ? `(${visitNode(rightExp)})`: visitNode(rightExp)
+  const expText = isExp ? `(${visitNode(rightExp)})` : visitNode(rightExp)
   const symbol = OPEARTION_MAP[op] || visitNegate(op)
   const endSymbol = op === 'is defined' ? '!default;' : ''
 
   binOpLength--
-  return endSymbol 
+  return endSymbol
     ? `${trimSemicolon(visitNode(leftExp)).trim()} ${endSymbol}`
     : `${visitNode(leftExp)} ${symbol} ${expText}`
 }
 
-function visitUnaryOp ({ op, expr }) {
+function visitUnaryOp({ op, expr }) {
   return `${OPEARTION_MAP[op] || op}(${visitExpression(expr)})`
 }
 
-function visitEach (node) {
+function visitEach(node) {
   invariant(node, 'Missing node param');
   let before = handleLineno(node.lineno)
   oldLineno = node.lineno
@@ -590,7 +590,7 @@ function visitEach (node) {
   return before + exprText + block
 }
 
-function visitKeyframes (node) {
+function visitKeyframes(node) {
   isKeyframes = true
   let before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno
@@ -602,7 +602,7 @@ function visitKeyframes (node) {
     throw new Error(`Syntax Error Please check if your @keyframes ${name} are correct.`)
   }
   const block = visitBlock(node.block)
-  const text = isMixin ? `#{${name}}${block}` :  name + block
+  const text = isMixin ? `#{${name}}${block}` : name + block
   if (autoprefixer) {
     KEYFRAMES_LIST.forEach(name => {
       resultText += before + name + text
@@ -614,14 +614,14 @@ function visitKeyframes (node) {
   return resultText
 }
 
-function visitExtend (node) {
+function visitExtend(node) {
   const before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno
   const text = visitNodes(node.selectors)
   return `${before}@extend ${trimFirst(text)};`
 }
 
-function visitQueryList (node) {
+function visitQueryList(node) {
   let text = ''
   const nodes = nodesToJSON(node.nodes)
   nodes.forEach((node, idx) => {
@@ -631,7 +631,7 @@ function visitQueryList (node) {
   return text
 }
 
-function visitQuery (node) {
+function visitQuery(node) {
   const type = visitNode(node.type) || ''
   const nodes = nodesToJSON(node.nodes)
   let text = ''
@@ -642,7 +642,7 @@ function visitQuery (node) {
   return type === 'screen' ? `${type} and ${text}` : `${type}${text}`
 }
 
-function visitMedia (node) {
+function visitMedia(node) {
   const before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno
   const val = _get(node, ['val'], {})
@@ -652,13 +652,13 @@ function visitMedia (node) {
   return `${before}@media ${valText + block}`
 }
 
-function visitFeature (node) {
+function visitFeature(node) {
   const segmentsText = visitNodes(node.segments)
   const expText = visitExpression(node.expr)
   return `(${segmentsText}: ${expText})`
 }
 
-function visitComment (node, isInlineComment) {
+function visitComment(node, isInlineComment) {
   const before = isInlineComment ? ' ' : handleLinenoAndIndentation(node);
   const matchs = node.str.match(/\n/g)
   oldLineno = node.lineno
@@ -667,28 +667,28 @@ function visitComment (node, isInlineComment) {
   return before + text
 }
 
-function visitMember ({ left, right }) {
+function visitMember({ left, right }) {
   const searchName = recursiveSearchName(left, 'left', 'name')
   if (searchName && OBJECT_KEY_LIST.indexOf(searchName) > -1) {
-    return `map-get(${visitNode(left)}, ${ quote + visitNode(right) + quote})`
+    return `map-get(${visitNode(left)}, ${quote + visitNode(right) + quote})`
   }
   return `${visitNode(left)}.${visitNode(right)}`
 }
 
-function visitAtrule (node) {
+function visitAtrule(node) {
   let before = handleLinenoAndIndentation(node)
   oldLineno = node.lineno
   before += '@' + node.type
   return before + visitBlock(node.block)
 }
 
-function visitObject ({ vals, lineno }) {
+function visitObject({ vals, lineno }) {
   isObject = true
   indentationLevel++
   const before = repeatString(' ', indentationLevel * 2)
   let result = ``
   let count = 0
-  for(let key in vals) {
+  for (let key in vals) {
     const resultVal = visitNode(vals[key]).replace(/;/, '')
     const symbol = count ? ',' : ''
     result += `${symbol}\n${before + quote + key + quote}: ${resultVal}`
@@ -701,13 +701,13 @@ function visitObject ({ vals, lineno }) {
   return `(${result}\n${repeatString(' ', indentationLevel * 2)})`
 }
 
-function visitCharset ({ val: { val: value, quote }, lineno }) {
+function visitCharset({ val: { val: value, quote }, lineno }) {
   const before = handleLineno(lineno)
   oldLineno = lineno
   return `${before}@charset ${quote + value + quote};`
 }
 
-function visitNamespace ({ val, lineno }) {
+function visitNamespace({ val, lineno }) {
   isNamespace = true
   const name = '@namespace '
   const before = handleLineno(lineno)
@@ -720,31 +720,31 @@ function visitNamespace ({ val, lineno }) {
   return before + name + visitNode(val)
 }
 
-function visitAtrule ({ type, block, lineno, segments }) {
+function visitAtrule({ type, block, lineno, segments }) {
   const before = handleLineno(lineno)
   oldLineno = lineno
   const typeText = segments.length ? `@${type} ` : `@${type}`
   return `${before + typeText + visitNodes(segments) + visitBlock(block)}`
 }
 
-function visitSupports ({ block, lineno, condition }) {
+function visitSupports({ block, lineno, condition }) {
   let before = handleLineno(lineno)
   oldLineno = lineno
   before += getIndentation()
   return `${before}@Supports ${visitNode(condition) + visitBlock(block)}`
 }
 
-function visitString ({ val, quote }) {
+function visitString({ val, quote }) {
   return quote + val + quote
 }
 
-function visitReturn (node) {
+function visitReturn(node) {
   if (isFunction) return visitExpression(node.expr).replace(/\n\s*/g, '')
   return '@return $' + visitExpression(node.expr).replace(/\$|\n\s*/g, '')
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
-export default function visitor (ast, options, globalVariableList) {
+export default function visitor(ast, options, globalVariableList) {
   quote = options.quote
   autoprefixer = options.autoprefixer
   GLOBAL_VARIABLE_NAME_LIST = globalVariableList

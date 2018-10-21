@@ -1,8 +1,10 @@
 const fs = require('fs')
 const { parse, converter, nodeToJSON } = require('../lib')
+const findMixin = require('./findMixin')
 const convertVueFile = require('./convertVueFile')
 
 let callLen = 0
+const GLOBAL_MIXIN_NAME_LIST = []
 const GLOBAL_VARIABLE_NAME_LIST = []
 
 function convertStylus (input, output, options, callback) {
@@ -20,6 +22,7 @@ function convertStylus (input, output, options, callback) {
             const ast = parse(result)
             const nodes = nodeToJSON(ast.nodes)
             nodes.forEach(node => {
+              findMixin(node, GLOBAL_MIXIN_NAME_LIST)
               if (node.__type === 'Ident' && node.val.toJSON().__type === 'Expression') {
                 if (GLOBAL_VARIABLE_NAME_LIST.indexOf(node.name) === -1) {
                   GLOBAL_VARIABLE_NAME_LIST.push(node.name)
