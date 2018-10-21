@@ -2,7 +2,6 @@ const fs = require('fs')
 const { parse, converter, nodeToJSON } = require('../lib')
 const findMixin = require('./findMixin')
 const convertVueFile = require('./convertVueFile')
-
 let callLen = 0
 const GLOBAL_MIXIN_NAME_LIST = []
 const GLOBAL_VARIABLE_NAME_LIST = []
@@ -17,7 +16,7 @@ function convertStylus(input, output, options, callback) {
       if (/\.styl$/.test(input)) {
         try {
           if (options.status === 'complete') {
-            result = converter(result, options, GLOBAL_VARIABLE_NAME_LIST)
+            result = converter(result, options, GLOBAL_VARIABLE_NAME_LIST, GLOBAL_MIXIN_NAME_LIST)
           } else {
             const ast = parse(result)
             const nodes = nodeToJSON(ast.nodes)
@@ -47,6 +46,7 @@ function convertStylus(input, output, options, callback) {
         if (!result) return
         if (callLen === 0) {
           if (options.status === 'complete') {
+            console.log(GLOBAL_MIXIN_NAME_LIST.toString())
             callback(Date.now())
           } else {
             callback()
@@ -61,6 +61,7 @@ function convertStylus(input, output, options, callback) {
       if (options.status !== 'complete') return
       if (callLen === 0) {
         if (options.status === 'complete') {
+          console.log(GLOBAL_MIXIN_NAME_LIST.toString())
           callback(Date.now())
         } else {
           callback()

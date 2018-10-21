@@ -18,6 +18,7 @@ let OBJECT_KEY_LIST = []
 let FUNCTION_PARAMS = []
 let PROPERTY_LIST = []
 let VARIABLE_NAME_LIST = []
+let GLOBAL_MIXIN_NAME_LIST = []
 let GLOBAL_VARIABLE_NAME_LIST = []
 let lastPropertyLineno = 0
 let lastPropertyLength = 0
@@ -125,7 +126,7 @@ function isCallMixin() {
 
 function isFunctinCallMixin(node) {
   if (node.__type === 'Call') {
-    return node.block.scope
+    return node.block.scope || GLOBAL_MIXIN_NAME_LIST.indexOf(node.name) > -1
   } else {
     return node.__type === 'If' && isFunctionMixin(node.block.nodes)
   }
@@ -418,7 +419,7 @@ function visitCall({ name, args, lineno, block }) {
   let blockText = ''
   let before = handleLineno(lineno)
   oldLineno = lineno
-  if (isCallMixin() || _get(block, 'scope') || selectorLength) {
+  if (isCallMixin() || block || selectorLength || GLOBAL_MIXIN_NAME_LIST.indexOf(callName) > -1) {
     before = before || '\n'
     before += getIndentation()
     before += '@include '
@@ -744,9 +745,10 @@ function visitReturn(node) {
 }
 
 // 处理 stylus 语法树；handle stylus Syntax Tree
-export default function visitor(ast, options, globalVariableList) {
+export default function visitor(ast, options, globalVariableList, globalMixinList) {
   quote = options.quote
   autoprefixer = options.autoprefixer
+  GLOBAL_MIXIN_NAME_LIST = globalMixinList
   GLOBAL_VARIABLE_NAME_LIST = globalVariableList
   let result = visitNodes(ast.nodes) || ''
   const indentation = ' '.repeat(options.indentVueStyleBlock)
@@ -756,6 +758,7 @@ export default function visitor(ast, options, globalVariableList) {
   OBJECT_KEY_LIST = []
   PROPERTY_LIST = []
   VARIABLE_NAME_LIST = []
+  GLOBAL_MIXIN_NAME_LIST = []
   GLOBAL_VARIABLE_NAME_LIST = []
   return result + '\n'
 }
