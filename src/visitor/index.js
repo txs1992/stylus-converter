@@ -753,6 +753,7 @@ export default function visitor(ast, options, globalVariableList, globalMixinLis
   let result = visitNodes(ast.nodes) || ''
   const indentation = ' '.repeat(options.indentVueStyleBlock)
   result = result.replace(/(.*\S.*)/g, `${indentation}$1`);
+  result = result.replace(/(.*)>>>(.*)/g, `$1/deep/$2`)
   oldLineno = 1
   FUNCTION_PARAMS = []
   OBJECT_KEY_LIST = []
