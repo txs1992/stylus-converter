@@ -370,6 +370,20 @@ describe('A vue file', () => {
     })
   })
 
+  it('should be converted deep selectors', done => {
+    fs.readFile(getPath('./vue/stylus/deep.vue'), (err, res) => {
+      if (err) return
+      const result = res.toString()
+      const scss = convertVueFile(result)
+      fs.readFile(getPath('./vue/scss/deep.vue'), (err, sres) => {
+        if (err) return
+        const toText = sres.toString()
+        expect(scss).to.be.equal(toText)
+        done()
+      })
+    })
+  })
+
   it('should retain it\'s style scoped attribute', done => {
     fs.readFile(getPath('./vue/stylus/scoped.vue'), (err, res) => {
       if (err) return
