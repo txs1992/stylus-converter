@@ -2,7 +2,7 @@ const { converter } = require('../lib')
 
 function convertVueFile(vueTemplate, options) {
   let newVueTemplate = vueTemplate;
-  const styleRegEx = /<style(.*)>((\n|.)*?)<\/style>/g;
+  const styleRegEx = /<style(.*)>([\w\W]*?)<\/style>/g;
   let match;
   while ((match = styleRegEx.exec(newVueTemplate)) !== null) {
     if (match[1].includes('stylus')) {
