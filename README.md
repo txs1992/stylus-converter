@@ -54,7 +54,7 @@
 
 | Attribute | Shorthand | Description | Accepted Values | Default |
 | ---- | ---- | ---- | ---- | ---- |
-| `--quote` | `-q` | The quote type to use when converting strings | single / dobule | single |
+| `--quote` | `-q` | The quote type to use when converting strings | single / double | single |
 | `--input` | `-i` | Enter a name, which can be a path to a file or a folder | - | - |
 | `--output` | `-o` | Output name, can be a path to a file or a folder | - | - |
 | `--conver ` | `-c` | Conversion type, such as conversion to scss syntax | scss | scss |
