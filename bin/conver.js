@@ -21,7 +21,7 @@ function handleOptions() {
   const indentVueStyleBlock = argv.v || argv.indentVueStyleBlock || 0
   if (!input) throw new Error('The input parameter cannot be empty.')
   if (!output) throw new Error('The output parameter cannot be empty.')
-  if (quote !== 'single' && quote !== 'dobule') throw new Error('The quote parameter has a problem, it can only be single or double.')
+  if (quote !== 'single' && quote !== 'double') throw new Error('The quote parameter has a problem, it can only be single or double.')
   if (conver.toLowerCase() !== 'scss') throw new Error('The conver parameter can only be scss.')
 
   spinner.start('Your file is being converted. Please wait...\n')
